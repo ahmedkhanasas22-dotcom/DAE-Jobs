@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - DAE Jobs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #090d16; color: #cbd5e1; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .admin-container { width: 100%; max-width: 500px; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { font-family: 'Outfit', sans-serif; color: #38bdf8; margin-bottom: 20px; font-size: 1.4rem; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: 500; }
+        input, select, textarea { width: 100%; background: #090d16; border: 1px solid #334155; color: white; padding: 10px; border-radius: 6px; font-size: 13px; }
+        input[type="file"] { padding: 8px; cursor: pointer; color: #38bdf8; }
+        input:focus, select:focus, textarea:focus { border-color: #38bdf8; outline: none; }
+        textarea { resize: vertical; height: 100px; }
+        .action-btn { width: 100%; background: #0284c7; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .action-btn:hover { background: #0369a1; }
+        #statusMsg, #loginError { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 500; }
+        
+        #jobFormSection { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        
+        <!-- Login Box Section -->
+        <div id="loginSection">
+            <h2><i class="fa-solid fa-lock"></i> Admin Login</h2>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="adminUser" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="adminPass" placeholder="Enter password">
+            </div>
+            <button type="button" class="action-btn" onclick="checkLogin()">Login</button>
+            <div id="loginError" style="color: #f87171;"></div>
+        </div>
+
+        <!-- Job Post Form Section (Protected) -->
+        <div id="jobFormSection">
+            <h2><i class="fa-solid fa-cloud-arrow-up"></i> Post New Job</h2>
+            <form id="jobForm">
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <input type="text" id="jobTitle" placeholder="e.g. Plant Maintenance Engineer" required>
+                </div>
+                <div class="form-group">
+                    <label>Company / Organization Name</label>
+                    <input type="text" id="companyName" placeholder="e.g. Fauji Fertilizer (FFC)" required>
+                </div>
+                <div class="form-group">
+                    <label>DAE / Discipline Category</label>
+                    <select id="jobCategory" required>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Chemical">Chemical</option>
+                        <option value="Auto">Auto & Diesel</option>
+                        <option value="CAD">Architecture/CAD</option>
+                        <option value="IT">IT & Telecom</option>
+                        <option value="Designing">Designing</option>
+                        <option value="Nursing">Nursing/Medical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-image"></i> Select Job Poster from Gallery (Optional)</label>
+                    <input type="file" id="posterFile" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Apply Link (Website, Portal, or WhatsApp Direct Link)</label>
+                    <input type="url" id="applyLink" placeholder="https://example.com/apply" required>
+                </div>
+                <div class="form-group">
+                    <label>Job Description / Details</label>
+                    <textarea id="jobDesc" placeholder="Enter full qualifications, experience required, and last date..." required></textarea>
+                </div>
+                <button type="submit" class="action-btn" id="submitBtn">Publish Job</button>
+                <div id="statusMsg"></div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK & Login Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // اپنی فائر بیس کنفیگریشن یہاں درج کریں
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- Custom Login Check ---
+        window.checkLogin = function() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            
+            if (user === "Ahmedkhan" && pass === "Ahmedkhanasas21") {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('jobFormSection').style.display = 'block';
+            } else {
+                document.getElementById('loginError').innerText = "Incorrect Username or Password!";
+            }
+        }
+
+        const form = document.getElementById('jobForm');
+        const statusMsg = document.getElementById('statusMsg');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Processing & Publishing...";
+            statusMsg.style.color = "#38bdf8";
+            statusMsg.innerText = "Please wait, uploading job...";
+
+            const title = document.getElementById('jobTitle').value;
+            const company = document.getElementById('companyName').value;
+            const category = document.getElementById('jobCategory').value;
+            const applyLink = document.getElementById('applyLink').value;
+            const description = document.getElementById('jobDesc').value;
+            const fileInput = document.getElementById('posterFile');
+
+            let posterUrl = "";
+
+            try {
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    posterUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = error => reject(error);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                const currentDate = new Date().toLocaleDateString('en-US', options);
+
+                await addDoc(collection(db, "jobs"), {
+                    title: title,
+                    company: company,
+                    category: category,
+                    posterUrl: posterUrl,
+                    applyLink: applyLink,
+                    description: description,
+                    date: currentDate,
+                    timestamp: Date.now()
+                });
+
+                statusMsg.style.color = "#4ade80";
+                statusMsg.innerText = "Job Published Successfully!";
+                form.reset();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                statusMsg.style.color = "#f87171";
+                statusMsg.innerText = "Error: " + error.message;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Publish Job";
+            }
+        });
+    </script>
+</body>
+</html>
