@@ -3,111 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal - DAE Jobs</title>
+    <title>DAE Engineering Jobs Pakistan</title>
+    <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: #090d16; color: #cbd5e1; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .admin-container { width: 100%; max-width: 500px; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        h2 { font-family: 'Outfit', sans-serif; color: #38bdf8; margin-bottom: 20px; font-size: 1.4rem; text-align: center; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: 500; }
-        input, select, textarea { width: 100%; background: #090d16; border: 1px solid #334155; color: white; padding: 10px; border-radius: 6px; font-size: 13px; }
-        input[type="file"] { padding: 8px; cursor: pointer; color: #38bdf8; }
-        input:focus, select:focus, textarea:focus { border-color: #38bdf8; outline: none; }
-        textarea { resize: vertical; height: 100px; }
-        .action-btn { width: 100%; background: #0284c7; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-        .action-btn:hover { background: #0369a1; }
-        #statusMsg, #loginError { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 500; }
+        body { background-color: #090d16; color: #cbd5e1; overflow-x: hidden; }
+
+        header {
+            background: #0f172a; border-bottom: 1px solid #1e293b; padding: 12px 20px;
+            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 17px; color: #38bdf8; font-weight: 800; }
+        .logo span { color: #f97316; }
+        .badge { font-size: 11px; background: #1e293b; padding: 4px 10px; border-radius: 6px; color: #94a3b8; border: 1px solid #334155; }
+
+        .hero { background: linear-gradient(180deg, #0f172a 0%, #090d16 100%); text-align: center; padding: 30px 15px 20px; border-bottom: 1px solid #1e293b; }
+        .hero h1 { font-family: 'Outfit', sans-serif; font-size: 1.35rem; color: #ffffff; margin-bottom: 8px; }
+        .hero p { color: #94a3b8; font-size: 0.83rem; max-width: 600px; margin: 0 auto; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 15px; }
+
+        .section-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; color: #38bdf8; margin: 15px 0 10px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .cat-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+        .cat-scroll::-webkit-scrollbar { display: none; }
         
-        #jobFormSection { display: none; }
+        .cat-chip {
+            background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 6px 14px;
+            border-radius: 20px; font-size: 12px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .cat-chip:hover, .cat-chip.active { background: #0284c7; border-color: #38bdf8; color: white; }
+        .cat-chip i { color: #f97316; }
+        .cat-chip:hover i, .cat-chip.active i { color: white; }
+
+        .jobs-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .job-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; }
+        .job-card:hover { border-color: #374151; }
         
-        .link-box { background: #090d16; border: 1px dashed #38bdf8; padding: 12px; border-radius: 6px; margin-top: 15px; display: none; text-align: center; }
-        .link-box input { background: #111827; border: 1px solid #334155; color: #38bdf8; text-align: center; margin-bottom: 8px; font-weight: 600; }
-        .copy-btn { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; }
-        .copy-btn:hover { background: #059669; }
+        /* ہائی لائٹ ایفیکٹ جب کوئی ڈائریکٹ لنک سے آئے */
+        .job-card.highlight { border: 2px solid #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+
+        .job-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+        .job-card h3 { color: #38bdf8; font-size: 15px; font-weight: 600; }
+        .tag-branch { font-size: 10px; background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        
+        .company { color: #94a3b8; font-size: 12px; font-weight: 500; margin-bottom: 8px; }
+        .job-poster { width: 100%; max-height: 250px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; border: 1px solid #1f2937; }
+        .job-card p { color: #64748b; font-size: 12px; margin-bottom: 12px; line-height: 1.4; white-space: pre-line; }
+        
+        .job-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1f2937; padding-top: 10px; font-size: 11px; color: #64748b; }
+        .apply-btn { background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.2s; }
+        .apply-btn:hover { background: #0369a1; }
+
+        .whatsapp-float {
+            position: fixed; bottom: 20px; right: 20px; background-color: #22c55e; color: white;
+            width: 50px; height: 50px; border-radius: 50%; text-align: center; font-size: 26px;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; text-decoration: none;
+            animation: upDown 2s infinite ease-in-out;
+        }
+        @keyframes upDown { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
+
+        footer { text-align: center; padding: 20px; background: #06090f; color: #475569; margin-top: 30px; border-top: 1px solid #1e293b; font-size: 12px; }
+        .loading { text-align: center; color: #94a3b8; padding: 20px; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div class="admin-container">
+    <header>
+        <div class="logo">DAE <span>ENGINEERING JOBS</span></div>
+        <div class="badge">Pakistan</div>
+    </header>
+
+    <div class="hero">
+        <h1>DAE ENGINEERING JOBS PORTAL</h1>
+        <p>Verified government and private sector job opportunities across Pakistan for all technical and engineering fields.</p>
+    </div>
+
+    <div class="container">
         
-        <!-- Login Box Section -->
-        <div id="loginSection">
-            <h2><i class="fa-solid fa-lock"></i> Admin Login</h2>
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="adminUser" placeholder="Enter username">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="adminPass" placeholder="Enter password">
-            </div>
-            <button type="button" class="action-btn" onclick="checkLogin()">Login</button>
-            <div id="loginError" style="color: #f87171;"></div>
+        <div class="section-title"><i class="fa-solid fa-filter"></i> Filter by Discipline</div>
+        <div class="cat-scroll">
+            <div class="cat-chip active" onclick="filterJobs('all', this)"><i class="fa-solid fa-layer-group"></i> All Jobs</div>
+            <div class="cat-chip" onclick="filterJobs('Mechanical', this)"><i class="fa-solid fa-cogs"></i> Mechanical</div>
+            <div class="cat-chip" onclick="filterJobs('Electrical', this)"><i class="fa-solid fa-bolt"></i> Electrical</div>
+            <div class="cat-chip" onclick="filterJobs('Civil', this)"><i class="fa-solid fa-hard-hat"></i> Civil</div>
+            <div class="cat-chip" onclick="filterJobs('Electronics', this)"><i class="fa-solid fa-microchip"></i> Electronics</div>
+            <div class="cat-chip" onclick="filterJobs('Chemical', this)"><i class="fa-solid fa-flask"></i> Chemical</div>
+            <div class="cat-chip" onclick="filterJobs('Auto', this)"><i class="fa-solid fa-car"></i> Auto & Diesel</div>
+            <div class="cat-chip" onclick="filterJobs('CAD', this)"><i class="fa-solid fa-drafting-compass"></i> Architecture/CAD</div>
+            <div class="cat-chip" onclick="filterJobs('IT', this)"><i class="fa-solid fa-laptop-code"></i> IT & Telecom</div>
+            <div class="cat-chip" onclick="filterJobs('Designing', this)"><i class="fa-solid fa-pen-nib"></i> Designing</div>
+            <div class="cat-chip" onclick="filterJobs('Nursing', this)"><i class="fa-solid fa-user-nurse"></i> Nursing/Medical</div>
         </div>
 
-        <!-- Job Post Form Section (Protected) -->
-        <div id="jobFormSection">
-            <h2><i class="fa-solid fa-cloud-arrow-up"></i> Post New Job</h2>
-            <form id="jobForm">
-                <div class="form-group">
-                    <label>Job Title</label>
-                    <input type="text" id="jobTitle" placeholder="e.g. Plant Maintenance Engineer" required>
-                </div>
-                <div class="form-group">
-                    <label>Company / Organization Name</label>
-                    <input type="text" id="companyName" placeholder="e.g. Fauji Fertilizer (FFC)" required>
-                </div>
-                <div class="form-group">
-                    <label>DAE / Discipline Category</label>
-                    <select id="jobCategory" required>
-                        <option value="All Jobs">🌐 All Categories (Post to General / All Jobs)</option>
-                        <option value="Mechanical">Mechanical</option>
-                        <option value="Electrical">Electrical</option>
-                        <option value="Civil">Civil</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Chemical">Chemical</option>
-                        <option value="Auto">Auto & Diesel</option>
-                        <option value="CAD">Architecture/CAD</option>
-                        <option value="IT">IT & Telecom</option>
-                        <option value="Designing">Designing</option>
-                        <option value="Nursing">Nursing/Medical</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-solid fa-image"></i> Select Job Poster from Gallery (Optional)</label>
-                    <input type="file" id="posterFile" accept="image/*">
-                </div>
-                <div class="form-group">
-                    <label>Apply Link (Website, Portal, or WhatsApp Direct Link)</label>
-                    <input type="url" id="applyLink" placeholder="https://example.com/apply" required>
-                </div>
-                <div class="form-group">
-                    <label>Job Description / Details</label>
-                    <textarea id="jobDesc" placeholder="Enter full qualifications, experience required, and last date..." required></textarea>
-                </div>
-                <button type="submit" class="action-btn" id="submitBtn">Publish Job</button>
-                <div id="statusMsg"></div>
-                
-                <!-- Direct Job Share Link Box -->
-                <div class="link-box" id="jobLinkBox">
-                    <label style="color: #38bdf8; margin-bottom: 5px;">Direct Job Link (Click to Copy):</label>
-                    <input type="text" id="shareableLink" readonly>
-                    <button type="button" class="copy-btn" onclick="copyJobLink()"><i class="fa-solid fa-copy"></i> Copy Link</button>
-                </div>
-            </form>
+        <div class="section-title" style="margin-top: 25px;"><i class="fa-solid fa-briefcase"></i> Latest Openings</div>
+        
+        <div class="jobs-list" id="jobsContainer">
+            <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading live jobs...</div>
         </div>
 
     </div>
 
-    <!-- Firebase SDK & Admin Logic -->
+    <a href="https://chat.whatsapp.com/D2s3NJB1Ocw8yMTPbcrPEW?s=cl&p=a&mlu=4" target="_blank" class="whatsapp-float" title="Join WhatsApp Group">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <footer>
+        <p>&copy; 2026 DAE Engineering Jobs Pakistan. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Firebase SDK & Main App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // آپ کا نیا فائر بیس پروجیکٹ (dae-jobs)
         const firebaseConfig = {
             apiKey: "AIzaSyBCc8FitH2KT_3uqheu5u6wNwn4NTTE1sI",
             authDomain: "dae-jobs.firebaseapp.com",
@@ -120,133 +133,95 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        window.checkLogin = function() {
-            const user = document.getElementById('adminUser').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
-            
-            if (user === "Ahmedkhan" && pass === "Ahmedkhanasas21") {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('jobFormSection').style.display = 'block';
-            } else {
-                document.getElementById('loginError').innerText = "Incorrect Username or Password!";
+        let allJobsData = [];
+
+        async function fetchJobs() {
+            const container = document.getElementById('jobsContainer');
+            try {
+                const q = query(collection(db, "jobs"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                container.innerHTML = "";
+                allJobsData = [];
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div class="loading">No jobs available right now. Check back later!</div>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const jobData = doc.data();
+                    jobData.id = doc.id; // ہر جاب کی یونیک فائر بیس آئی ڈی
+                    allJobsData.push(jobData);
+                });
+
+                renderJobs(allJobsData);
+
+                // اگر URL میں کسی مخصوص جاب کی ID دی گئی ہو تو اس پر سکرول اور ہائی لائٹ کریں
+                const urlParams = new URLSearchParams(window.location.search);
+                const targetJobId = urlParams.get('id');
+                if (targetJobId) {
+                    setTimeout(() => {
+                        const targetCard = document.getElementById(`job-${targetJobId}`);
+                        if (targetCard) {
+                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targetCard.classList.add('highlight');
+                        }
+                    }, 300);
+                }
+
+            } catch (error) {
+                console.error("Error fetching jobs: ", error);
+                container.innerHTML = '<div class="loading" style="color:#f87171;">Failed to load jobs. Check your Firebase configuration.</div>';
             }
         }
 
-        function compressImage(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        const MAX_WIDTH = 500;
-                        const MAX_HEIGHT = 500;
-                        if (width > height) {
-                            if (width > MAX_WIDTH) {
-                                height *= MAX_WIDTH / width;
-                                width = MAX_WIDTH;
-                            }
-                        } else {
-                            if (height > MAX_HEIGHT) {
-                                width *= MAX_HEIGHT / height;
-                                height = MAX_HEIGHT;
-                            }
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        resolve(canvas.toDataURL('image/jpeg', 0.5));
-                    };
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
+        window.renderJobs = function(jobs) {
+            const container = document.getElementById('jobsContainer');
+            container.innerHTML = "";
+
+            jobs.forEach(job => {
+                let posterHtml = job.posterUrl ? `<img src="${job.posterUrl}" class="job-poster" alt="Job Poster">` : '';
+                
+                const card = document.createElement('div');
+                card.className = 'job-card';
+                card.id = `job-${job.id}`;
+                card.setAttribute('data-category', job.category);
+                card.innerHTML = `
+                    <div class="job-header">
+                        <h3>${job.title}</h3>
+                        <span class="tag-branch">${job.category}</span>
+                    </div>
+                    <div class="company"><i class="fa-regular fa-building"></i> ${job.company}</div>
+                    ${posterHtml}
+                    <p>${job.description}</p>
+                    <div class="job-footer">
+                        <span><i class="fa-regular fa-calendar"></i> ${job.date || 'Recent'}</span>
+                        <a href="${job.applyLink}" target="_blank" class="apply-btn">Apply Now</a>
+                    </div>
+                `;
+                container.appendChild(card);
             });
         }
 
-        const form = document.getElementById('jobForm');
-        const statusMsg = document.getElementById('statusMsg');
-        const submitBtn = document.getElementById('submitBtn');
-        const jobLinkBox = document.getElementById('jobLinkBox');
-        const shareableLinkInput = document.getElementById('shareableLink');
+        window.filterJobs = function(category, element) {
+            document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
+            element.classList.add('active');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Processing Image...";
-            statusMsg.style.color = "#38bdf8";
-            statusMsg.innerText = "Compressing image and uploading to database...";
-            jobLinkBox.style.display = 'none';
-
-            const title = document.getElementById('jobTitle').value;
-            const company = document.getElementById('companyName').value;
-            const category = document.getElementById('jobCategory').value;
-            const applyLink = document.getElementById('applyLink').value;
-            const description = document.getElementById('jobDesc').value;
-            const fileInput = document.getElementById('posterFile');
-
-            let posterUrl = "";
-
-            try {
-                if (fileInput.files && fileInput.files[0]) {
-                    posterUrl = await compressImage(fileInput.files[0]);
+            if (category === 'all') {
+                renderJobs(allJobsData);
+            } else {
+                const filtered = allJobsData.filter(j => j.category === category);
+                const container = document.getElementById('jobsContainer');
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="loading">No jobs found in ${category} category.</div>`;
+                } else {
+                    renderJobs(filtered);
                 }
-
-                const options = { month: 'short', day: 'numeric', year: 'numeric' };
-                const currentDate = new Date().toLocaleDateString('en-US', options);
-                const timestampVal = Date.now();
-
-                // اب یہ سنگل ڈاکومنت کے طور پر سیو ہوگا تاکہ بار بار ریپیٹ نہ ہو
-                const docRef = await addDoc(collection(db, "jobs"), {
-                    title: title,
-                    company: company,
-                    category: category,
-                    posterUrl: posterUrl,
-                    applyLink: applyLink,
-                    description: description,
-                    date: currentDate,
-                    timestamp: timestampVal
-                });
-
-                statusMsg.style.color = "#4ade80";
-                statusMsg.innerText = "Job Published Successfully!";
-                
-                const baseUrl = window.location.href.replace('admin.html', 'index.html');
-                const jobUrl = `${baseUrl}?id=${docRef.id}`;
-                
-                shareableLinkInput.value = jobUrl;
-                jobLinkBox.style.display = 'block';
-                
-                form.reset();
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                statusMsg.style.color = "#f87171";
-                statusMsg.innerText = "Error: " + (error.message || "Network or size limit exceeded");
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Publish Job";
-            }
-        });
-
-        window.copyJobLink = function() {
-            shareableLinkInput.select();
-            shareableLinkInput.setSelectionRange(0, 99999);
-            
-            try {
-                navigator.clipboard.writeText(shareableLinkInput.value).then(() => {
-                    alert("Job Link Copied to Clipboard Successfully!");
-                }).catch(() => {
-                    alert("Link selected! Long press inside the box to copy if needed.");
-                });
-            } catch (err) {
-                alert("Please manually copy the link from the box.");
             }
         }
+
+        fetchJobs();
     </script>
 </body>
 </html>
