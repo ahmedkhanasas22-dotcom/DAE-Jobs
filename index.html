@@ -43,13 +43,16 @@
         .job-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; }
         .job-card:hover { border-color: #374151; }
         
+        /* ہائی لائٹ ایفیکٹ جب کوئی ڈائریکٹ لنک سے آئے */
+        .job-card.highlight { border: 2px solid #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+
         .job-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
         .job-card h3 { color: #38bdf8; font-size: 15px; font-weight: 600; }
         .tag-branch { font-size: 10px; background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
         
         .company { color: #94a3b8; font-size: 12px; font-weight: 500; margin-bottom: 8px; }
         .job-poster { width: 100%; max-height: 250px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; border: 1px solid #1f2937; }
-        .job-card p { color: #64748b; font-size: 12px; margin-bottom: 12px; line-height: 1.4; }
+        .job-card p { color: #64748b; font-size: 12px; margin-bottom: 12px; line-height: 1.4; white-space: pre-line; }
         
         .job-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1f2937; padding-top: 10px; font-size: 11px; color: #64748b; }
         .apply-btn { background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.2s; }
@@ -112,19 +115,19 @@
         <p>&copy; 2026 DAE Engineering Jobs Pakistan. All Rights Reserved.</p>
     </footer>
 
-    <!-- Firebase SDK (Modular v10) -->
+    <!-- Firebase SDK & Main App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // اپنے پراجیکٹ کی فائر بیس کنفیگریشن یہاں لگائیں (جو آپ نے EarnHub میں استعمال کی تھی)
+        // آپ کا نیا فائر بیس پروجیکٹ (dae-jobs)
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBCc8FitH2KT_3uqheu5u6wNwn4NTTE1sI",
+            authDomain: "dae-jobs.firebaseapp.com",
+            projectId: "dae-jobs",
+            storageBucket: "dae-jobs.firebasestorage.app",
+            messagingSenderId: "1016642189187",
+            appId: "1:1016642189187:web:f21667388b1261290928b6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -147,11 +150,25 @@
                 }
 
                 querySnapshot.forEach((doc) => {
-                    const job = doc.data();
-                    allJobsData.push(job);
+                    const jobData = doc.data();
+                    jobData.id = doc.id; // ہر جاب کی یونیک فائر بیس آئی ڈی
+                    allJobsData.push(jobData);
                 });
 
                 renderJobs(allJobsData);
+
+                // اگر URL میں کسی مخصوص جاب کی ID دی گئی ہو تو اس پر سکرول اور ہائی لائٹ کریں
+                const urlParams = new URLSearchParams(window.location.search);
+                const targetJobId = urlParams.get('id');
+                if (targetJobId) {
+                    setTimeout(() => {
+                        const targetCard = document.getElementById(`job-${targetJobId}`);
+                        if (targetCard) {
+                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targetCard.classList.add('highlight');
+                        }
+                    }, 300);
+                }
 
             } catch (error) {
                 console.error("Error fetching jobs: ", error);
@@ -168,6 +185,7 @@
                 
                 const card = document.createElement('div');
                 card.className = 'job-card';
+                card.id = `job-${job.id}`;
                 card.setAttribute('data-category', job.category);
                 card.innerHTML = `
                     <div class="job-header">
