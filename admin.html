@@ -132,7 +132,6 @@
             }
         }
 
-        // فنکشن جو تصویر کا سائز چھوٹا کر دے گا تاکہ فائر بیس ایرر نہ دے
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -143,9 +142,8 @@
                         let width = img.width;
                         let height = img.height;
                         
-                        // زیادہ بڑی تصویر کا سائز کم کریں
-                        const MAX_WIDTH = 800;
-                        const MAX_HEIGHT = 800;
+                        const MAX_WIDTH = 500;
+                        const MAX_HEIGHT = 500;
                         if (width > height) {
                             if (width > MAX_WIDTH) {
                                 height *= MAX_WIDTH / width;
@@ -163,8 +161,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // کمپریس شدہ تصویر کا URL (Quality 0.7 یعنی 70%)
-                        resolve(canvas.toDataURL('image/jpeg', 0.7));
+                        resolve(canvas.toDataURL('image/jpeg', 0.5));
                     };
                     img.src = event.target.result;
                 };
@@ -181,9 +178,9 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
-            submitBtn.innerText = "Compressing & Publishing...";
+            submitBtn.innerText = "Processing Image...";
             statusMsg.style.color = "#38bdf8";
-            statusMsg.innerText = "Please wait, processing image and uploading...";
+            statusMsg.innerText = "Compressing image and uploading to database...";
             jobLinkBox.style.display = 'none';
 
             const title = document.getElementById('jobTitle').value;
@@ -197,7 +194,6 @@
 
             try {
                 if (fileInput.files && fileInput.files[0]) {
-                    // تصویر کو کمپریس کریں تاکہ سائز چھوٹا ہو جائے
                     posterUrl = await compressImage(fileInput.files[0]);
                 }
 
@@ -214,6 +210,7 @@
                     ];
 
                     for (let i = 0; i < allCategories.length; i++) {
+                        statusMsg.innerText = `Uploading to ${allCategories[i]} (${i+1}/10)...`;
                         const docRef = await addDoc(collection(db, "jobs"), {
                             title: title,
                             company: company,
@@ -241,11 +238,12 @@
                 }
 
                 statusMsg.style.color = "#4ade80";
-                statusMsg.innerText = "Job Published Successfully with Poster!";
+                statusMsg.innerText = "Job Published Successfully in All Categories with Poster!";
                 
                 const baseUrl = window.location.href.replace('admin.html', 'index.html');
                 const jobUrl = `${baseUrl}?id=${firstDocId}`;
                 
+                // یہاں اب لنک براہِ راست ان پٹ میں سیٹ ہو جائے گا اور صاف نظر آئے گا
                 shareableLinkInput.value = jobUrl;
                 jobLinkBox.style.display = 'block';
                 
@@ -253,7 +251,7 @@
             } catch (error) {
                 console.error("Error adding document: ", error);
                 statusMsg.style.color = "#f87171";
-                statusMsg.innerText = "Error: " + error.message;
+                statusMsg.innerText = "Error: " + (error.message || "Network or size limit exceeded");
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Publish Job";
@@ -263,8 +261,17 @@
         window.copyJobLink = function() {
             shareableLinkInput.select();
             shareableLinkInput.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(shareableLinkInput.value);
-            alert("Job Link Copied to Clipboard!");
+            
+            try {
+                navigator.clipboard.writeText(shareableLinkInput.value).then(() => {
+                    alert("Job Link Copied to Clipboard Successfully!");
+                }).catch(() => {
+                    // اگر ڈائریکٹ کاپی فیل ہو جائے تو موبائل کے لیے سلیکٹ اور فالس کا طریقہ
+                    alert("Link selected! Long press inside the box to copy if needed.");
+                });
+            } catch (err) {
+                alert("Please manually copy the link from the box.");
+            }
         }
     </script>
 </body>
