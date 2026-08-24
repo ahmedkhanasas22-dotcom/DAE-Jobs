@@ -23,6 +23,11 @@
         #statusMsg, #loginError { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 500; }
         
         #jobFormSection { display: none; }
+        
+        .link-box { background: #090d16; border: 1px dashed #38bdf8; padding: 12px; border-radius: 6px; margin-top: 15px; display: none; text-align: center; }
+        .link-box input { background: #111827; border: 1px solid #334155; color: #38bdf8; text-align: center; margin-bottom: 8px; font-weight: 600; }
+        .copy-btn { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; }
+        .copy-btn:hover { background: #059669; }
     </style>
 </head>
 <body>
@@ -85,24 +90,31 @@
                 </div>
                 <button type="submit" class="action-btn" id="submitBtn">Publish Job</button>
                 <div id="statusMsg"></div>
+                
+                <!-- Direct Job Share Link Box -->
+                <div class="link-box" id="jobLinkBox">
+                    <label style="color: #38bdf8; margin-bottom: 5px;">Direct Job Link (Click to Copy):</label>
+                    <input type="text" id="shareableLink" readonly>
+                    <button type="button" class="copy-btn" onclick="copyJobLink()"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                </div>
             </form>
         </div>
 
     </div>
 
-    <!-- Firebase SDK & Login Logic -->
+    <!-- Firebase SDK & Admin Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // اپنی فائر بیس کنفیگریشن یہاں درج کریں
+        // آپ کا نیا فائر بیس پروجیکٹ (dae-jobs)
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBCc8FitH2KT_3uqheu5u6wNwn4NTTE1sI",
+            authDomain: "dae-jobs.firebaseapp.com",
+            projectId: "dae-jobs",
+            storageBucket: "dae-jobs.firebasestorage.app",
+            messagingSenderId: "1016642189187",
+            appId: "1:1016642189187:web:f21667388b1261290928b6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -124,6 +136,8 @@
         const form = document.getElementById('jobForm');
         const statusMsg = document.getElementById('statusMsg');
         const submitBtn = document.getElementById('submitBtn');
+        const jobLinkBox = document.getElementById('jobLinkBox');
+        const shareableLinkInput = document.getElementById('shareableLink');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -131,6 +145,7 @@
             submitBtn.innerText = "Processing & Publishing...";
             statusMsg.style.color = "#38bdf8";
             statusMsg.innerText = "Please wait, uploading job...";
+            jobLinkBox.style.display = 'none';
 
             const title = document.getElementById('jobTitle').value;
             const company = document.getElementById('companyName').value;
@@ -155,7 +170,8 @@
                 const options = { month: 'short', day: 'numeric', year: 'numeric' };
                 const currentDate = new Date().toLocaleDateString('en-US', options);
 
-                await addDoc(collection(db, "jobs"), {
+                // فائر بیس میں جاب سیو کرنا
+                const docRef = await addDoc(collection(db, "jobs"), {
                     title: title,
                     company: company,
                     category: category,
@@ -168,6 +184,14 @@
 
                 statusMsg.style.color = "#4ade80";
                 statusMsg.innerText = "Job Published Successfully!";
+                
+                // جاب کا ڈائریک트 لنک بنانا (مین ویب سائٹ کے حساب سے)
+                const baseUrl = window.location.href.replace('admin.html', 'index.html');
+                const jobUrl = `${baseUrl}?id=${docRef.id}`;
+                
+                shareableLinkInput.value = jobUrl;
+                jobLinkBox.style.display = 'block';
+                
                 form.reset();
             } catch (error) {
                 console.error("Error adding document: ", error);
@@ -178,6 +202,14 @@
                 submitBtn.innerText = "Publish Job";
             }
         });
+
+        // لنک کاپی کرنے کا فنکشن
+        window.copyJobLink = function() {
+            shareableLinkInput.select();
+            shareableLinkInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(shareableLinkInput.value);
+            alert("Job Link Copied to Clipboard!");
+        }
     </script>
 </body>
 </html>
