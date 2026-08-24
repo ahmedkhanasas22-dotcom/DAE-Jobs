@@ -132,6 +132,46 @@
             }
         }
 
+        // فنکشن جو تصویر کا سائز چھوٹا کر دے گا تاکہ فائر بیس ایرر نہ دے
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // زیادہ بڑی تصویر کا سائز کم کریں
+                        const MAX_WIDTH = 800;
+                        const MAX_HEIGHT = 800;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // کمپریس شدہ تصویر کا URL (Quality 0.7 یعنی 70%)
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         const form = document.getElementById('jobForm');
         const statusMsg = document.getElementById('statusMsg');
         const submitBtn = document.getElementById('submitBtn');
@@ -141,9 +181,9 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
-            submitBtn.innerText = "Processing & Publishing...";
+            submitBtn.innerText = "Compressing & Publishing...";
             statusMsg.style.color = "#38bdf8";
-            statusMsg.innerText = "Please wait, uploading job...";
+            statusMsg.innerText = "Please wait, processing image and uploading...";
             jobLinkBox.style.display = 'none';
 
             const title = document.getElementById('jobTitle').value;
@@ -157,13 +197,8 @@
 
             try {
                 if (fileInput.files && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    posterUrl = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.onerror = error => reject(error);
-                        reader.readAsDataURL(file);
-                    });
+                    // تصویر کو کمپریس کریں تاکہ سائز چھوٹا ہو جائے
+                    posterUrl = await compressImage(fileInput.files[0]);
                 }
 
                 const options = { month: 'short', day: 'numeric', year: 'numeric' };
@@ -173,7 +208,6 @@
                 let firstDocId = "";
 
                 if (category === "All") {
-                    // تمام کیٹیگریز جن میں یہ جاب ایک ساتھ چلی جائے گی
                     const allCategories = [
                         "Mechanical", "Electrical", "Civil", "Electronics", 
                         "Chemical", "Auto", "CAD", "IT", "Designing", "Nursing"
@@ -193,7 +227,6 @@
                         if (i === 0) firstDocId = docRef.id;
                     }
                 } else {
-                    // اگر صرف ایک خاص کیٹیگری سلیکٹ کی ہو
                     const docRef = await addDoc(collection(db, "jobs"), {
                         title: title,
                         company: company,
@@ -208,7 +241,7 @@
                 }
 
                 statusMsg.style.color = "#4ade80";
-                statusMsg.innerText = "Job Published Successfully!";
+                statusMsg.innerText = "Job Published Successfully with Poster!";
                 
                 const baseUrl = window.location.href.replace('admin.html', 'index.html');
                 const jobUrl = `${baseUrl}?id=${firstDocId}`;
