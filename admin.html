@@ -34,7 +34,6 @@
         .copy-btn { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; }
         .copy-btn:hover { background: #059669; }
 
-        /* مدیریت جابز (Manage Jobs) سٹাইল */
         .manage-section { margin-top: 30px; border-top: 1px solid #1f2937; padding-top: 20px; }
         .admin-job-card { background: #090d16; border: 1px solid #1f2937; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .admin-job-info h4 { color: #38bdf8; font-size: 13px; }
@@ -119,7 +118,6 @@
                 </div>
             </form>
 
-            <!-- جابز مینجمنٹ (डिलीट और एडिट लिस्ट) -->
             <div class="manage-section">
                 <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-list-check"></i> Manage Existing Jobs</h3>
                 <div id="adminJobsList" style="max-height: 250px; overflow-y: auto;">
@@ -195,7 +193,6 @@
         const jobLinkBox = document.getElementById('jobLinkBox');
         const shareableLinkInput = document.getElementById('shareableLink');
 
-        // جاب لسٹ ایڈमिन पैनल में लोड करना (डिलीट/एडिट के लिए)
         async function loadAdminJobsList() {
             const container = document.getElementById('adminJobsList');
             container.innerHTML = '<p style="font-size: 12px; color: #64748b;">Loading...</p>';
@@ -234,7 +231,6 @@
             }
         }
 
-        // جاب ڈیلیٹ کرنے کا فنکشن
         window.deleteJob = async function(jobId) {
             if (confirm("کیا آپ واقعی اس جاب کو ہمیشہ کے لیے ڈیلیट کرنا چاہتے ہیں؟")) {
                 try {
@@ -248,7 +244,6 @@
             }
         }
 
-        // جاب ایڈٹ کرنے کے لیے فارम میں ڈیٹا بھرنا
         window.prepareEditJob = function(id, title, company, category, applyLink, desc) {
             document.getElementById('editJobId').value = id;
             document.getElementById('jobTitle').value = decodeURIComponent(title);
@@ -263,7 +258,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ایڈٹ موڈ کینسل کرنا
         window.cancelEditMode = function() {
             form.reset();
             document.getElementById('editJobId').value = "";
@@ -272,7 +266,6 @@
             document.getElementById('cancelEditBtn').style.display = "none";
         }
 
-        // فارಮ್ سبمٹ (نیا پوسٹ کرنا یا پرانا اپڈیٹ کرنا)
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
@@ -289,11 +282,12 @@
             try {
                 if (fileInput.files && fileInput.files[0]) {
                     submitBtn.innerText = "Processing Image...";
+                    statusMsg.style.color = "#38bdf8";
+                    statusMsg.innerText = "Compressing image...";
                     posterUrl = await compressImage(fileInput.files[0]);
                 }
 
                 if (editId) {
-                    // ---- اپڈیٹ (Update) کرنے کا لاجک ----
                     submitBtn.innerText = "Updating Job...";
                     statusMsg.style.color = "#38bdf8";
                     statusMsg.innerText = "Updating job details...";
@@ -311,13 +305,12 @@
 
                     await updateDoc(doc(db, "jobs", editId), updateData);
                     
-                    alert("جابس کامیابی سے اپڈیट ہو گئی ہے!");
+                    alert("جابس کامیابی سے اپڈیٹ ہو گئی ہے!");
                     cancelEditMode();
                     statusMsg.innerText = "";
                     loadAdminJobsList();
 
                 } else {
-                    // ---- نئی جاب پبلش کرنے کا لاجک ----
                     submitBtn.innerText = "Publishing...";
                     statusMsg.style.color = "#38bdf8";
                     statusMsg.innerText = "Uploading to database...";
@@ -334,15 +327,18 @@
                             "Chemical", "Auto", "CAD", "IT", "Designing", "Nursing"
                         ];
 
-                        for (let i = 0; i < allCategories.length; i++) {
-                            statusMsg.innerText = `Uploading to ${allCategories[i]} (${i+1}/10)...`;
+                        // اب تمام کیٹगरीز ایک ساتھ سیکنڈوں میں اپ لوڈ ہوں گی (فاسٹ موڈ)
+                        const uploadPromises = allCategories.map(async (cat, index) => {
                             const docRef = await addDoc(collection(db, "jobs"), {
-                                title: title, company: company, category: allCategories[i],
+                                title: title, company: company, category: cat,
                                 posterUrl: posterUrl, applyLink: applyLink, description: description,
                                 date: currentDate, timestamp: timestampVal
                             });
-                            if (i === 0) firstDocId = docRef.id;
-                        }
+                            if (index === 0) firstDocId = docRef.id;
+                        });
+
+                        await Promise.all(uploadPromises);
+
                     } else {
                         const docRef = await addDoc(collection(db, "jobs"), {
                             title: title, company: company, category: category,
