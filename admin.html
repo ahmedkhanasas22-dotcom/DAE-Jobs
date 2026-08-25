@@ -29,8 +29,10 @@
         
         #jobFormSection { display: none; }
         
+        /* لنک باکس کو واضح اور روشن کرنے کے لیے سٹাইল */
         .link-box { background: #090d16; border: 1px dashed #38bdf8; padding: 12px; border-radius: 6px; margin-top: 15px; display: none; text-align: center; }
-        .link-box input { background: #111827; border: 1px solid #334155; color: #38bdf8; text-align: center; margin-bottom: 8px; font-weight: 600; }
+        .link-box input { background: #0f172a !important; color: #38bdf8 !important; text-align: center; margin-bottom: 8px; font-weight: 700; border: 1px solid #38bdf8 !important; font-size: 12px; }
+        
         .copy-btn { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; }
         .copy-btn:hover { background: #059669; }
 
@@ -319,34 +321,21 @@
                     const options = { month: 'short', day: 'numeric', year: 'numeric' };
                     const currentDate = new Date().toLocaleDateString('en-US', options);
                     const timestampVal = Date.now();
-                    let firstDocId = "";
 
-                    if (category === "All") {
-                        const allCategories = [
-                            "Mechanical", "Electrical", "Civil", "Electronics", 
-                            "Chemical", "Auto", "CAD", "IT", "Designing", "Nursing"
-                        ];
-
-                        // اب تمام کیٹगरीز ایک ساتھ سیکنڈوں میں اپ لوڈ ہوں گی (فاسٹ موڈ)
-                        const uploadPromises = allCategories.map(async (cat, index) => {
-                            const docRef = await addDoc(collection(db, "jobs"), {
-                                title: title, company: company, category: cat,
-                                posterUrl: posterUrl, applyLink: applyLink, description: description,
-                                date: currentDate, timestamp: timestampVal
-                            });
-                            if (index === 0) firstDocId = docRef.id;
-                        });
-
-                        await Promise.all(uploadPromises);
-
-                    } else {
-                        const docRef = await addDoc(collection(db, "jobs"), {
-                            title: title, company: company, category: category,
-                            posterUrl: posterUrl, applyLink: applyLink, description: description,
-                            date: currentDate, timestamp: timestampVal
-                        });
-                        firstDocId = docRef.id;
-                    }
+                    // اب "All" منتخب کرنے پر 10 بار ڈیٹا بیس میں نہیں لکھا جائےगा 
+                    // بلکہ صرف ایک بار "All" کیٹगरी کے ساتھ محفوظ ہو گا تاکہ ہوم پیج پر ڈپ্লিকেট نہ ہو۔
+                    const docRef = await addDoc(collection(db, "jobs"), {
+                        title: title, 
+                        company: company, 
+                        category: category,
+                        posterUrl: posterUrl, 
+                        applyLink: applyLink, 
+                        description: description,
+                        date: currentDate, 
+                        timestamp: timestampVal
+                    });
+                    
+                    const firstDocId = docRef.id;
 
                     statusMsg.style.color = "#4ade80";
                     statusMsg.innerText = "Job Published Successfully!";
