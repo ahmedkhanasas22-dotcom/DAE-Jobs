@@ -29,11 +29,11 @@
         
         #jobFormSection { display: none; }
         
-        /* لنک باکس کو واضح اور روشن کرنے کے لیے سٹাইল */
-        .link-box { background: #090d16; border: 1px dashed #38bdf8; padding: 12px; border-radius: 6px; margin-top: 15px; display: none; text-align: center; }
-        .link-box input { background: #0f172a !important; color: #38bdf8 !important; text-align: center; margin-bottom: 8px; font-weight: 700; border: 1px solid #38bdf8 !important; font-size: 12px; }
+        /* موبائل فرینڈلی لنک باکس اور زبردست سٹائل */
+        .link-box { background: #090d16; border: 2px dashed #38bdf8; padding: 12px; border-radius: 6px; margin-top: 15px; display: none; text-align: center; }
+        .link-box input { background: #0f172a !important; color: #38bdf8 !important; text-align: center; margin-bottom: 8px; font-weight: 700; border: 1px solid #38bdf8 !important; font-size: 12px; -webkit-text-fill-color: #38bdf8 !important; opacity: 1 !important; }
         
-        .copy-btn { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; }
+        .copy-btn { background: #10b981; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 600; width: 100%; }
         .copy-btn:hover { background: #059669; }
 
         .manage-section { margin-top: 30px; border-top: 1px solid #1f2937; padding-top: 20px; }
@@ -114,9 +114,9 @@
                 <div id="statusMsg"></div>
                 
                 <div class="link-box" id="jobLinkBox">
-                    <label style="color: #38bdf8; margin-bottom: 5px;">Direct Job Link (Click to Copy):</label>
+                    <label style="color: #38bdf8; margin-bottom: 5px; font-weight: bold;">Direct Job Link Generated:</label>
                     <input type="text" id="shareableLink" readonly>
-                    <button type="button" class="copy-btn" onclick="copyJobLink()"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                    <button type="button" class="copy-btn" onclick="copyJobLink()"><i class="fa-solid fa-copy"></i> Click Here to Copy Link</button>
                 </div>
             </form>
 
@@ -322,8 +322,6 @@
                     const currentDate = new Date().toLocaleDateString('en-US', options);
                     const timestampVal = Date.now();
 
-                    // اب "All" منتخب کرنے پر 10 بار ڈیٹا بیس میں نہیں لکھا جائےगा 
-                    // بلکہ صرف ایک بار "All" کیٹगरी کے ساتھ محفوظ ہو گا تاکہ ہوم پیج پر ڈپ্লিকেট نہ ہو۔
                     const docRef = await addDoc(collection(db, "jobs"), {
                         title: title, 
                         company: company, 
@@ -340,10 +338,20 @@
                     statusMsg.style.color = "#4ade80";
                     statusMsg.innerText = "Job Published Successfully!";
                     
-                    const baseUrl = window.location.href.replace('admin.html', 'index.html');
-                    shareableLinkInput.value = `${baseUrl}?id=${firstDocId}`;
-                    jobLinkBox.style.display = 'block';
+                    // موبائل براؤزر کے لیے بالکل درست اور پکا لنک بنانا
+                    const currentUrl = window.location.href;
+                    const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'index.html');
+                    const finalShareLink = `${cleanBaseUrl}?id=${firstDocId}`;
                     
+                    // موبائل سکرین پر ویلیو زبردستی شو کرنے کے لیے ٹائم آؤٹ
+                    setTimeout(() => {
+                        jobLinkBox.style.display = 'block';
+                        shareableLinkInput.value = finalShareLink;
+                        // خود بخود کاپی بھی کر دے تاکہ یوزر کو مسئلہ نہ ہو
+                        shareableLinkInput.select();
+                        shareableLinkInput.setSelectionRange(0, 99999);
+                    }, 100);
+
                     form.reset();
                     loadAdminJobsList();
                 }
@@ -363,12 +371,25 @@
         window.copyJobLink = function() {
             shareableLinkInput.select();
             shareableLinkInput.setSelectionRange(0, 99999);
-            try {
+            
+            // جدید کلپ بورڈ API کا استعمال تاکہ ہر موبائل پر کاپی ہو جائے
+            if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(shareableLinkInput.value).then(() => {
-                    alert("Job Link Copied Successfully!");
+                    alert("✅ Job Link Copied Successfully! Now you can paste it anywhere.");
+                }).catch(err => {
+                    fallbackCopyText();
                 });
+            } else {
+                fallbackCopyText();
+            }
+        }
+
+        function fallbackCopyText() {
+            try {
+                document.execCommand('copy');
+                alert("✅ Job Link Copied Successfully!");
             } catch (err) {
-                alert("Link selected! Copy manually.");
+                alert("Please manually select and copy the link from the box.");
             }
         }
     </script>
