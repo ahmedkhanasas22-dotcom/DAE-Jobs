@@ -92,10 +92,8 @@
 
         async function initPage() {
             if (targetBookId) {
-                // Direct specific book/test opened via admin link
                 await loadQuizById(targetBookId);
             } else if (targetCategory) {
-                // Category clicked from index.html
                 await loadBooksByCategory(targetCategory);
             } else {
                 document.getElementById('loadingSection').innerHTML = '<p style="color:#f87171;">No category or book specified!</p>';
@@ -155,7 +153,7 @@
                 const data = docSnap.data();
                 document.getElementById('bookTitleHeading').innerText = data.bookName || "DAE Online Test";
                 
-                // Parse CSV data extracted from file/image
+                // Flexible Parser supporting multiple CSV layouts
                 currentQuestions = parseCSV(data.csvData);
                 
                 if (currentQuestions.length === 0) {
@@ -174,27 +172,52 @@
         }
 
         function parseCSV(text) {
+            if (!text) return [];
             let lines = text.split('\n');
             let questions = [];
-            for (let i = 1; i < lines.length; i++) {
-                let row = lines[i];
-                if (!row.trim()) continue;
+
+            for (let i = 0; i < lines.length; i++) {
+                let row = lines[i].trim();
+                if (!row) continue;
                 
-                // Simple CSV matcher handling quotes
-                let regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
-                let cols = [];
-                let match;
-                // Fallback basic split if regex fails on complex rows
-                cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                let cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
                 
+                // Format 1: Complex 13+ column format
                 if (cols.length >= 13) {
-                    let qText = cols[4] ? cols[4].replace(/"/g, '').trim() : '';
+                    let qText = cols[4];
                     let options = [
-                        { text: cols[5] ? cols[5].replace(/"/g, '').trim() : '', correct: cols[6] == '1' },
-                        { text: cols[7] ? cols[7].replace(/"/g, '').trim() : '', correct: cols[8] == '1' },
-                        { text: cols[9] ? cols[9].replace(/"/g, '').trim() : '', correct: cols[10] == '1' },
-                        { text: cols[11] ? cols[11].replace(/"/g, '').trim() : '', correct: cols[12] == '1' }
+                        { text: cols[5], correct: cols[6] == '1' || cols[6].toLowerCase() == 'true' },
+                        { text: cols[7], correct: cols[8] == '1' || cols[8].toLowerCase() == 'true' },
+                        { text: cols[9], correct: cols[10] == '1' || cols[10].toLowerCase() == 'true' },
+                        { text: cols[11], correct: cols[12] == '1' || cols[12].toLowerCase() == 'true' }
                     ].filter(opt => opt.text.length > 0);
+
+                    if (qText && options.length > 1) {
+                        questions.push({ question: qText, options: options });
+                        continue;
+                    }
+                }
+
+                // Format 2: Simple format [Question, Opt1, Opt2, Opt3, Opt4, CorrectIndex/Text]
+                if (cols.length >= 6) {
+                    let qText = cols[0];
+                    let optTexts = [cols[1], cols[2], cols[3], cols[4]].filter(o => o.length > 0);
+                    let correctVal = cols[5];
+
+                    let options = optTexts.map((optText, index) => {
+                        let isCorrect = false;
+                        if (!isNaN(correctVal)) {
+                            isCorrect = (parseInt(correctVal) === index + 1 || parseInt(correctVal) === index);
+                        } else {
+                            isCorrect = (optText.toLowerCase() === correctVal.toLowerCase());
+                        }
+                        return { text: optText, correct: isCorrect };
+                    });
+
+                    // If no correct option was flagged, default the first option as correct to prevent blocking
+                    if (!options.some(o => o.correct) && options.length > 0) {
+                        options[0].correct = true;
+                    }
 
                     if (qText && options.length > 1) {
                         questions.push({ question: qText, options: options });
@@ -233,7 +256,6 @@
                 document.getElementById('scoreTracker').innerText = `Score: ${score}`;
             } else {
                 buttonElement.classList.add('wrong');
-                // Highlight correct option
                 buttons.forEach((btn, index) => {
                     if (currentQuestions[currentQuestionIndex].options[index].correct) {
                         btn.classList.add('correct');
