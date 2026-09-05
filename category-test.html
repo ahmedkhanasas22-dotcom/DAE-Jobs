@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAE Test Preparation & MCQs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #090d16; color: #cbd5e1; padding: 15px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 700px; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-top: 20px; }
+        h2 { font-family: 'Outfit', sans-serif; color: #38bdf8; margin-bottom: 15px; font-size: 1.3rem; text-align: center; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #38bdf8; text-decoration: none; font-size: 13px; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+        
+        .book-card { background: #090d16; border: 1px solid #1f2937; padding: 15px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .book-info h4 { color: #38bdf8; font-size: 14px; margin-bottom: 4px; }
+        .book-info p { color: #94a3b8; font-size: 12px; }
+        .start-btn { background: #0284c7; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; text-decoration: none; }
+        .start-btn:hover { background: #0369a1; }
+        
+        /* Quiz Box Styling */
+        #quizBox { display: none; }
+        .question-title { font-size: 15px; color: #ffffff; margin-bottom: 15px; font-weight: 600; line-height: 1.4; }
+        .option-btn { width: 100%; background: #090d16; border: 1px solid #334155; color: #cbd5e1; padding: 12px; border-radius: 6px; margin-bottom: 10px; text-align: left; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .option-btn:hover { border-color: #38bdf8; background: #1e293b; }
+        .option-btn.correct { background: #065f46 !important; border-color: #10b981 !important; color: white; }
+        .option-btn.wrong { background: #991b1b !important; border-color: #ef4444 !important; color: white; }
+        
+        .quiz-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid #1f2937; padding-top: 15px; }
+        .next-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; display: none; }
+        .next-btn:hover { background: #059669; }
+        
+        .loading { text-align: center; color: #94a3b8; padding: 30px; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+        
+        <div id="loadingSection" class="loading">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+            <p style="margin-top: 10px;">Loading test materials...</p>
+        </div>
+
+        <!-- Books List for a Category -->
+        <div id="booksListSection" style="display: none;">
+            <h2 id="categoryTitle">Available Test Books</h2>
+            <div id="booksContainer"></div>
+        </div>
+
+        <!-- Actual Quiz Section -->
+        <div id="quizBox">
+            <h2 id="bookTitleHeading" style="font-size: 1.1rem; color: #f97316; margin-bottom: 10px; text-align: left;"></h2>
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 15px;" id="qProgress">Question 1 of 10</div>
+            <div class="question-title" id="questionText">Loading question...</div>
+            <div id="optionsContainer"></div>
+            
+            <div class="quiz-footer">
+                <span id="scoreTracker" style="font-size: 13px; font-weight: 600; color: #38bdf8;">Score: 0</span>
+                <button type="button" class="next-btn" id="nextQuestionBtn" onclick="loadNextQuestion()">Next Question <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCc8FitH2KT_3uqheu5u6wNwn4NTTE1sI",
+            authDomain: "dae-jobs.firebaseapp.com",
+            projectId: "dae-jobs",
+            storageBucket: "dae-jobs.firebasestorage.app",
+            messagingSenderId: "1016642189187",
+            appId: "1:1016642189187:web:f21667388b1261290928b6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetBookId = urlParams.get('book');
+        const targetCategory = urlParams.get('cat');
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        async function initPage() {
+            if (targetBookId) {
+                // Direct specific book/test opened via admin link
+                await loadQuizById(targetBookId);
+            } else if (targetCategory) {
+                // Category clicked from index.html
+                await loadBooksByCategory(targetCategory);
+            } else {
+                document.getElementById('loadingSection').innerHTML = '<p style="color:#f87171;">No category or book specified!</p>';
+            }
+        }
+
+        async function loadBooksByCategory(category) {
+            try {
+                const q = query(collection(db, "testBooks"), where("category", "==", category));
+                const querySnapshot = await getDocs(q);
+                
+                document.getElementById('loadingSection').style.display = 'none';
+                const listSec = document.getElementById('booksListSection');
+                listSec.style.display = 'block';
+                document.getElementById('categoryTitle').innerText = `${category} Technology Test Books`;
+
+                const container = document.getElementById('booksContainer');
+                container.innerHTML = "";
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p style="font-size: 12px; color: #64748b; text-align: center;">No test books uploaded for this technology yet.</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((documentSnap) => {
+                    const data = documentSnap.data();
+                    const card = document.createElement('div');
+                    card.className = 'book-card';
+                    card.innerHTML = `
+                        <div class="book-info">
+                            <h4>${data.bookName || 'General Test'}</h4>
+                            <p>Category: ${data.category}</p>
+                        </div>
+                        <a href="category-test.html?book=${documentSnap.id}" class="start-btn">Start Test</a>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingSection').innerHTML = '<p style="color:#f87171;">Failed to load test books.</p>';
+            }
+        }
+
+        async function loadQuizById(bookId) {
+            try {
+                const docRef = doc(db, "testBooks", bookId);
+                const docSnap = await getDoc(docRef);
+
+                document.getElementById('loadingSection').style.display = 'none';
+
+                if (!docSnap.exists()) {
+                    document.getElementById('loadingSection').innerHTML = '<p style="color:#f87171;">Test book not found!</p>';
+                    document.getElementById('loadingSection').style.display = 'block';
+                    return;
+                }
+
+                const data = docSnap.data();
+                document.getElementById('bookTitleHeading').innerText = data.bookName || "DAE Online Test";
+                
+                // Parse CSV data extracted from file/image
+                currentQuestions = parseCSV(data.csvData);
+                
+                if (currentQuestions.length === 0) {
+                    alert("No valid questions found in this test data!");
+                    return;
+                }
+
+                document.getElementById('quizBox').style.display = 'block';
+                showQuestion();
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingSection').innerHTML = '<p style="color:#f87171;">Error loading test.</p>';
+                document.getElementById('loadingSection').style.display = 'block';
+            }
+        }
+
+        function parseCSV(text) {
+            let lines = text.split('\n');
+            let questions = [];
+            for (let i = 1; i < lines.length; i++) {
+                let row = lines[i];
+                if (!row.trim()) continue;
+                
+                // Simple CSV matcher handling quotes
+                let regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
+                let cols = [];
+                let match;
+                // Fallback basic split if regex fails on complex rows
+                cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                
+                if (cols.length >= 13) {
+                    let qText = cols[4] ? cols[4].replace(/"/g, '').trim() : '';
+                    let options = [
+                        { text: cols[5] ? cols[5].replace(/"/g, '').trim() : '', correct: cols[6] == '1' },
+                        { text: cols[7] ? cols[7].replace(/"/g, '').trim() : '', correct: cols[8] == '1' },
+                        { text: cols[9] ? cols[9].replace(/"/g, '').trim() : '', correct: cols[10] == '1' },
+                        { text: cols[11] ? cols[11].replace(/"/g, '').trim() : '', correct: cols[12] == '1' }
+                    ].filter(opt => opt.text.length > 0);
+
+                    if (qText && options.length > 1) {
+                        questions.push({ question: qText, options: options });
+                    }
+                }
+            }
+            return questions;
+        }
+
+        function showQuestion() {
+            let q = currentQuestions[currentQuestionIndex];
+            document.getElementById('qProgress').innerText = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
+            document.getElementById('questionText').innerText = q.question;
+            
+            let optContainer = document.getElementById('optionsContainer');
+            optContainer.innerHTML = "";
+            document.getElementById('nextQuestionBtn').style.display = 'none';
+
+            q.options.forEach((opt) => {
+                let btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => selectOption(btn, opt.correct);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        window.selectOption = function(buttonElement, isCorrect) {
+            let buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                buttonElement.classList.add('correct');
+                score += 10;
+                document.getElementById('scoreTracker').innerText = `Score: ${score}`;
+            } else {
+                buttonElement.classList.add('wrong');
+                // Highlight correct option
+                buttons.forEach((btn, index) => {
+                    if (currentQuestions[currentQuestionIndex].options[index].correct) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            document.getElementById('nextQuestionBtn').style.display = 'block';
+        }
+
+        window.loadNextQuestion = function() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                document.getElementById('quizBox').innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <i class="fa-solid fa-trophy fa-3x" style="color: #f97316; margin-bottom: 15px;"></i>
+                        <h3 style="color: #ffffff; font-size: 1.3rem; margin-bottom: 10px;">Test Completed!</h3>
+                        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Your Final Score: <strong style="color: #38bdf8;">${score}</strong></p>
+                        <a href="index.html" class="start-btn">Return to Home</a>
+                    </div>
+                `;
+            }
+        }
+
+        initPage();
+    </script>
+</body>
+</html>
