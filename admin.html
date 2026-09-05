@@ -3,84 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - DAE Jobs Pakistan</title>
+    <title>Admin Portal - DAE Jobs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: #090d16; color: #cbd5e1; padding-bottom: 40px; }
-
-        header {
-            background: #0f172a; border-bottom: 1px solid #1e293b; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
-        }
-        .logo { font-family: 'Outfit', sans-serif; font-size: 18px; color: #38bdf8; font-weight: 800; }
-        .logo span { color: #f97316; }
-        .badge { font-size: 11px; background: #ef4444; padding: 4px 10px; border-radius: 6px; color: white; font-weight: 600; }
-
-        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-
-        .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .card h2 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #38bdf8; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: 500; }
-        .form-control {
-            width: 100%; background: #090d16; border: 1px solid #334155; border-radius: 8px;
-            padding: 10px 12px; color: white; font-size: 13px; outline: none; transition: 0.2s;
-        }
-        .form-control:focus { border-color: #38bdf8; box-shadow: 0 0 8px rgba(56, 189, 248, 0.2); }
-        textarea.form-control { resize: vertical; min-height: 90px; }
-
-        .btn {
-            background: #0284c7; color: white; border: none; padding: 10px 18px; border-radius: 8px;
-            font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px;
-        }
-        .btn:hover { background: #0369a1; }
-        .btn-danger { background: #ef4444; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-warning { background: #f59e0b; color: #000; }
-        .btn-warning:hover { background: #d97706; }
-
-        /* Admin Jobs List Styles */
-        .admin-job-item {
-            background: #090d16; border: 1px solid #1e293b; border-radius: 8px; padding: 12px;
-            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
-        }
-        .admin-job-info h4 { color: #fff; font-size: 14px; margin-bottom: 3px; }
-        .admin-job-info p { color: #64748b; font-size: 11px; }
-        .admin-actions { display: flex; gap: 6px; }
+        body { background-color: #090d16; color: #cbd5e1; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .admin-container { width: 100%; max-width: 600px; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { font-family: 'Outfit', sans-serif; color: #38bdf8; margin-bottom: 20px; font-size: 1.4rem; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: 500; }
+        input, select, textarea { width: 100%; background: #090d16; border: 1px solid #334155; color: white; padding: 10px; border-radius: 6px; font-size: 13px; }
+        input[type="file"] { padding: 8px; cursor: pointer; color: #38bdf8; }
+        input:focus, select:focus, textarea:focus { border-color: #38bdf8; outline: none; }
+        textarea { resize: vertical; height: 100px; }
         
-        .loading { text-align: center; color: #94a3b8; padding: 15px; font-size: 13px; }
+        .action-btn { width: 100%; background: #0284c7; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .action-btn:hover { background: #0369a1; }
+        
+        .secondary-btn { background: #334155; margin-top: 5px; }
+        .secondary-btn:hover { background: #475569; }
+
+        #statusMsg, #loginError { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 500; }
+        
+        #jobFormSection { display: none; }
+        
+        /* موبائل فرینڈلی لنک باکس اور زبردست سٹائل */
+        .link-box { background: #090d16; border: 2px dashed #38bdf8; padding: 12px; border-radius: 6px; margin-top: 15px; display: none; text-align: center; }
+        .link-box input { background: #0f172a !important; color: #38bdf8 !important; text-align: center; margin-bottom: 8px; font-weight: 700; border: 1px solid #38bdf8 !important; font-size: 12px; -webkit-text-fill-color: #38bdf8 !important; opacity: 1 !important; }
+        
+        .copy-btn { background: #10b981; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 600; width: 100%; }
+        .copy-btn:hover { background: #059669; }
+
+        .manage-section { margin-top: 30px; border-top: 1px solid #1f2937; padding-top: 20px; }
+        .admin-job-card { background: #090d16; border: 1px solid #1f2937; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-job-info h4 { color: #38bdf8; font-size: 13px; }
+        .admin-job-info p { color: #64748b; font-size: 11px; }
+        .admin-job-btns { display: flex; gap: 6px; }
+        .btn-edit { background: #d97706; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .btn-edit:hover { background: #b45309; }
+        .btn-delete { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .btn-delete:hover { background: #dc2626; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">DAE <span>ADMIN PANEL</span></div>
-        <div class="badge">Restricted Access</div>
-    </header>
-
-    <div class="container">
+    <div class="admin-container">
         
-        <!-- Post New Job Card -->
-        <div class="card">
-            <h2 id="formTitle"><i class="fa-solid fa-circle-plus"></i> Post New Job</h2>
+        <!-- Login Box Section -->
+        <div id="loginSection">
+            <h2><i class="fa-solid fa-lock"></i> Admin Login</h2>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="adminUser" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="adminPass" placeholder="Enter password">
+            </div>
+            <button type="button" class="action-btn" onclick="checkLogin()">Login</button>
+            <div id="loginError" style="color: #f87171;"></div>
+        </div>
+
+        <!-- Job Post / Edit Form Section -->
+        <div id="jobFormSection">
+            <h2 id="formHeading"><i class="fa-solid fa-cloud-arrow-up"></i> Post New Job</h2>
             <form id="jobForm">
                 <input type="hidden" id="editJobId">
                 <div class="form-group">
                     <label>Job Title</label>
-                    <input type="text" id="jobTitle" class="form-control" placeholder="e.g. Mechanical Supervisor" required>
+                    <input type="text" id="jobTitle" placeholder="e.g. Plant Maintenance Engineer" required>
                 </div>
                 <div class="form-group">
-                    <label>Company / Department</label>
-                    <input type="text" id="jobCompany" class="form-control" placeholder="e.g. Fauji Fertilizer / WAPDA" required>
+                    <label>Company / Organization Name</label>
+                    <input type="text" id="companyName" placeholder="e.g. Fauji Fertilizer (FFC)" required>
                 </div>
                 <div class="form-group">
-                    <label>Discipline Category</label>
-                    <select id="jobCategory" class="form-control" required>
-                        <option value="">Select Category</option>
+                    <label>DAE / Discipline Category</label>
+                    <select id="jobCategory" required>
+                        <option value="All">🌐 All Categories (Post to All Fields)</option>
                         <option value="Mechanical">Mechanical</option>
                         <option value="Electrical">Electrical</option>
                         <option value="Civil">Civil</option>
@@ -94,33 +96,40 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Poster Image URL (Optional)</label>
-                    <input type="url" id="jobPoster" class="form-control" placeholder="Paste image link here">
+                    <label><i class="fa-solid fa-image"></i> Select Job Poster from Gallery (Optional)</label>
+                    <input type="file" id="posterFile" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Apply Link (Website, Portal, or WhatsApp Direct Link)</label>
+                    <input type="url" id="applyLink" placeholder="https://example.com/apply" required>
                 </div>
                 <div class="form-group">
                     <label>Job Description / Details</label>
-                    <textarea id="jobDesc" class="form-control" placeholder="Write requirements, last date, etc..." required></textarea>
+                    <textarea id="jobDesc" placeholder="Enter full qualifications, experience required, and last date..." required></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Apply Link / WhatsApp Link</label>
-                    <input type="url" id="jobApply" class="form-control" placeholder="https://..." required>
+                
+                <button type="submit" class="action-btn" id="submitBtn">Publish Job</button>
+                <button type="button" id="cancelEditBtn" class="action-btn secondary-btn" style="display:none;" onclick="cancelEditMode()">Cancel Edit</button>
+                
+                <div id="statusMsg"></div>
+                
+                <div class="link-box" id="jobLinkBox">
+                    <label style="color: #38bdf8; margin-bottom: 5px; font-weight: bold;">Direct Job Link Generated:</label>
+                    <input type="text" id="shareableLink" readonly>
+                    <button type="button" class="copy-btn" onclick="copyJobLink()"><i class="fa-solid fa-copy"></i> Click Here to Copy Link</button>
                 </div>
-                <button type="submit" class="btn" id="submitBtn"><i class="fa-solid fa-paper-plane"></i> Publish Job</button>
-                <button type="button" class="btn btn-danger" id="cancelEditBtn" style="display:none; margin-left: 8px;" onclick="resetForm()">Cancel Edit</button>
             </form>
-        </div>
 
-        <!-- Manage Existing Jobs Card -->
-        <div class="card">
-            <h2><i class="fa-solid fa-list-check"></i> Manage Existing Jobs</h2>
-            <div id="adminJobsContainer">
-                <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading jobs...</div>
+            <div class="manage-section">
+                <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-list-check"></i> Manage Existing Jobs</h3>
+                <div id="adminJobsList" style="max-height: 250px; overflow-y: auto;">
+                    <p style="font-size: 12px; color: #64748b;">Loading jobs...</p>
+                </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -137,135 +146,252 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let allAdminJobs = [];
+        window.checkLogin = function() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            
+            if (user === "Ahmedkhan" && pass === "Ahmedkhanasas21") {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('jobFormSection').style.display = 'block';
+                loadAdminJobsList();
+            } else {
+                document.getElementById('loginError').innerText = "Incorrect Username or Password!";
+            }
+        }
 
-        // Fetch Jobs for Admin Panel
-        async function fetchAdminJobs() {
-            const container = document.getElementById('adminJobsContainer');
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        const MAX_WIDTH = 500;
+                        const MAX_HEIGHT = 500;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.5));
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        const form = document.getElementById('jobForm');
+        const statusMsg = document.getElementById('statusMsg');
+        const submitBtn = document.getElementById('submitBtn');
+        const jobLinkBox = document.getElementById('jobLinkBox');
+        const shareableLinkInput = document.getElementById('shareableLink');
+
+        async function loadAdminJobsList() {
+            const container = document.getElementById('adminJobsList');
+            container.innerHTML = '<p style="font-size: 12px; color: #64748b;">Loading...</p>';
+            
             try {
                 const q = query(collection(db, "jobs"), orderBy("timestamp", "desc"));
                 const querySnapshot = await getDocs(q);
                 
                 container.innerHTML = "";
-                allAdminJobs = [];
-
                 if (querySnapshot.empty) {
-                    container.innerHTML = '<div class="loading">No jobs found in database.</div>';
+                    container.innerHTML = '<p style="font-size: 12px; color: #64748b;">No jobs found.</p>';
                     return;
                 }
 
-                querySnapshot.forEach((docSnap) => {
-                    const job = docSnap.data();
-                    job.id = docSnap.id;
-                    allAdminJobs.push(job);
+                querySnapshot.forEach((documentSnap) => {
+                    const job = documentSnap.data();
+                    const jobId = documentSnap.id;
 
                     const item = document.createElement('div');
-                    item.className = 'admin-job-item';
+                    item.className = 'admin-job-card';
                     item.innerHTML = `
-                        <div class="admin-job-info">
+                        <div class="admin-job-info" style="max-width: 65%;">
                             <h4>${job.title}</h4>
-                            <p>${job.company} | <b>${job.category}</b></p>
+                            <p>${job.company} | <span style="color:#f97316;">${job.category}</span></p>
                         </div>
-                        <div class="admin-actions">
-                            <button class="btn btn-warning" onclick="window.editJob('${job.id}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn btn-danger" onclick="window.deleteJob('${job.id}')"><i class="fa-solid fa-trash"></i></button>
+                        <div class="admin-job-btns">
+                            <button type="button" class="btn-edit" onclick="prepareEditJob('${jobId}', '${encodeURIComponent(job.title)}', '${encodeURIComponent(job.company)}', '${job.category}', '${encodeURIComponent(job.applyLink)}', '${encodeURIComponent(job.description)}')">Edit</button>
+                            <button type="button" class="btn-delete" onclick="deleteJob('${jobId}')">Delete</button>
                         </div>
                     `;
                     container.appendChild(item);
                 });
-
-            } catch (error) {
-                console.error("Error loading admin jobs:", error);
-                container.innerHTML = '<div class="loading" style="color:#ef4444;">Error loading jobs from Firebase.</div>';
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p style="font-size: 12px; color: #f87171;">Failed to load jobs list.</p>';
             }
         }
 
-        // Handle Form Submit (Add or Update)
-        document.getElementById('jobForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const editId = document.getElementById('editJobId').value;
-            const submitBtn = document.getElementById('submitBtn');
-            
-            const jobData = {
-                title: document.getElementById('jobTitle').value,
-                company: document.getElementById('jobCompany').value,
-                category: document.getElementById('jobCategory').value,
-                posterUrl: document.getElementById('jobPoster').value,
-                description: document.getElementById('jobDesc').value,
-                applyLink: document.getElementById('jobApply').value,
-                date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-                timestamp: Date.now()
-            };
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-
-            try {
-                if (editId) {
-                    // Update Job
-                    await updateDoc(doc(db, "jobs", editId), jobData);
-                    alert("Job updated successfully!");
-                } else {
-                    // Add New Job
-                    await addDoc(collection(db, "jobs"), jobData);
-                    alert("Job posted successfully!");
-                }
-                resetForm();
-                fetchAdminJobs();
-            } catch (error) {
-                console.error("Error saving job: ", error);
-                alert("Failed to save job. Check console.");
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publish Job';
-            }
-        });
-
-        // Delete Job Function
-        window.deleteJob = async function(id) {
-            if (confirm("Are you sure you want to delete this job?")) {
+        window.deleteJob = async function(jobId) {
+            if (confirm("کیا آپ واقعی اس جاب کو ہمیشہ کے لیے ڈیلیट کرنا چاہتے ہیں؟")) {
                 try {
-                    await deleteDoc(doc(db, "jobs", id));
-                    alert("Job deleted successfully!");
-                    fetchAdminJobs();
-                } catch (error) {
-                    console.error("Error deleting job:", error);
-                    alert("Failed to delete job.");
+                    await deleteDoc(doc(db, "jobs", jobId));
+                    alert("جابس کامیابی سے ڈیلیਟ ہو گئی!");
+                    loadAdminJobsList();
+                } catch (err) {
+                    console.error(err);
+                    alert("ڈیلیट کرنے میں خرابی پیش آئی۔");
                 }
             }
         }
 
-        // Edit Job Function
-        window.editJob = function(id) {
-            const job = allAdminJobs.find(j => j.id === id);
-            if (!job) return;
-
-            document.getElementById('editJobId').value = job.id;
-            document.getElementById('jobTitle').value = job.title;
-            document.getElementById('jobCompany').value = job.company;
-            document.getElementById('jobCategory').value = job.category;
-            document.getElementById('jobPoster').value = job.posterUrl || '';
-            document.getElementById('jobDesc').value = job.description;
-            document.getElementById('jobApply').value = job.applyLink;
-
-            document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Job Posting';
-            document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-check"></i> Update Job';
-            document.getElementById('cancelEditBtn').style.display = 'inline-flex';
-
+        window.prepareEditJob = function(id, title, company, category, applyLink, desc) {
+            document.getElementById('editJobId').value = id;
+            document.getElementById('jobTitle').value = decodeURIComponent(title);
+            document.getElementById('companyName').value = decodeURIComponent(company);
+            document.getElementById('jobCategory').value = category;
+            document.getElementById('applyLink').value = decodeURIComponent(applyLink);
+            document.getElementById('jobDesc').value = decodeURIComponent(desc);
+            
+            document.getElementById('formHeading').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Job';
+            submitBtn.innerText = "Update Job";
+            document.getElementById('cancelEditBtn').style.display = "block";
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Reset Form Function
-        window.resetForm = function() {
-            document.getElementById('jobForm').reset();
-            document.getElementById('editJobId').value = '';
-            document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-circle-plus"></i> Post New Job';
-            document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publish Job';
-            document.getElementById('cancelEditBtn').style.display = 'none';
+        window.cancelEditMode = function() {
+            form.reset();
+            document.getElementById('editJobId').value = "";
+            document.getElementById('formHeading').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Post New Job';
+            submitBtn.innerText = "Publish Job";
+            document.getElementById('cancelEditBtn').style.display = "none";
         }
 
-        // Load jobs on startup
-        fetchAdminJobs();
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            
+            const editId = document.getElementById('editJobId').value;
+            const title = document.getElementById('jobTitle').value;
+            const company = document.getElementById('companyName').value;
+            const category = document.getElementById('jobCategory').value;
+            const applyLink = document.getElementById('applyLink').value;
+            const description = document.getElementById('jobDesc').value;
+            const fileInput = document.getElementById('posterFile');
+
+            let posterUrl = "";
+            try {
+                if (fileInput.files && fileInput.files[0]) {
+                    submitBtn.innerText = "Processing Image...";
+                    statusMsg.style.color = "#38bdf8";
+                    statusMsg.innerText = "Compressing image...";
+                    posterUrl = await compressImage(fileInput.files[0]);
+                }
+
+                if (editId) {
+                    submitBtn.innerText = "Updating Job...";
+                    statusMsg.style.color = "#38bdf8";
+                    statusMsg.innerText = "Updating job details...";
+
+                    let updateData = {
+                        title: title,
+                        company: company,
+                        category: category,
+                        applyLink: applyLink,
+                        description: description
+                    };
+                    if (posterUrl) {
+                        updateData.posterUrl = posterUrl;
+                    }
+
+                    await updateDoc(doc(db, "jobs", editId), updateData);
+                    
+                    alert("جابس کامیابی سے اپڈیٹ ہو گئی ہے!");
+                    cancelEditMode();
+                    statusMsg.innerText = "";
+                    loadAdminJobsList();
+
+                } else {
+                    submitBtn.innerText = "Publishing...";
+                    statusMsg.style.color = "#38bdf8";
+                    statusMsg.innerText = "Uploading to database...";
+                    jobLinkBox.style.display = 'none';
+
+                    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                    const currentDate = new Date().toLocaleDateString('en-US', options);
+                    const timestampVal = Date.now();
+
+                    const docRef = await addDoc(collection(db, "jobs"), {
+                        title: title, 
+                        company: company, 
+                        category: category,
+                        posterUrl: posterUrl, 
+                        applyLink: applyLink, 
+                        description: description,
+                        date: currentDate, 
+                        timestamp: timestampVal
+                    });
+                    
+                    const firstDocId = docRef.id;
+
+                    statusMsg.style.color = "#4ade80";
+                    statusMsg.innerText = "Job Published Successfully!";
+                    
+                    // موبائل براؤزر کے لیے بالکل درست اور پکا لنک بنانا
+                    const currentUrl = window.location.href;
+                    const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'index.html');
+                    const finalShareLink = `${cleanBaseUrl}?id=${firstDocId}`;
+                    
+                    // موبائل سکرین پر ویلیو زبردستی شو کرنے کے لیے ٹائم آؤٹ
+                    setTimeout(() => {
+                        jobLinkBox.style.display = 'block';
+                        shareableLinkInput.value = finalShareLink;
+                        // خود بخود کاپی بھی کر دے تاکہ یوزر کو مسئلہ نہ ہو
+                        shareableLinkInput.select();
+                        shareableLinkInput.setSelectionRange(0, 99999);
+                    }, 100);
+
+                    form.reset();
+                    loadAdminJobsList();
+                }
+
+            } catch (error) {
+                console.error("Error: ", error);
+                statusMsg.style.color = "#f87171";
+                statusMsg.innerText = "Error: " + (error.message || "Failed");
+            } finally {
+                submitBtn.disabled = false;
+                if (!document.getElementById('editJobId').value) {
+                    submitBtn.innerText = "Publish Job";
+                }
+            }
+        });
+
+        window.copyJobLink = function() {
+            shareableLinkInput.select();
+            shareableLinkInput.setSelectionRange(0, 99999);
+            
+            // جدید کلپ بورڈ API کا استعمال تاکہ ہر موبائل پر کاپی ہو جائے
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareableLinkInput.value).then(() => {
+                    alert("✅ Job Link Copied Successfully! Now you can paste it anywhere.");
+                }).catch(err => {
+                    fallbackCopyText();
+                });
+            } else {
+                fallbackCopyText();
+            }
+        }
+
+        function fallbackCopyText() {
+            try {
+                document.execCommand('copy');
+                alert("✅ Job Link Copied Successfully!");
+            } catch (err) {
+                alert("Please manually select and copy the link from the box.");
+            }
+        }
     </script>
 </body>
 </html>
