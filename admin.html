@@ -57,6 +57,7 @@
 
     <div class="admin-container">
         
+        <!-- Login Section -->
         <div id="loginSection">
             <h2><i class="fa-solid fa-lock"></i> Admin Login</h2>
             <div class="form-group">
@@ -71,6 +72,7 @@
             <div id="loginError" style="color: #f87171;"></div>
         </div>
 
+        <!-- Dashboard Section -->
         <div id="jobFormSection">
             <h2><i class="fa-solid fa-gauge-high"></i> Admin Dashboard</h2>
             
@@ -192,6 +194,7 @@
 
     </div>
 
+    <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -514,4 +517,3 @@
     </script>
 </body>
 </html>
-
