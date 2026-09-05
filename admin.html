@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal - DAE Jobs</title>
+    <title>Admin Portal - DAE Jobs & Test Prep</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #090d16; color: #cbd5e1; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .admin-container { width: 100%; max-width: 600px; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .admin-container { width: 100%; max-width: 650px; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         h2 { font-family: 'Outfit', sans-serif; color: #38bdf8; margin-bottom: 20px; font-size: 1.4rem; text-align: center; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: 500; }
@@ -25,11 +25,16 @@
         .secondary-btn { background: #334155; margin-top: 5px; }
         .secondary-btn:hover { background: #475569; }
 
-        #statusMsg, #loginError { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 500; }
+        .tab-switcher { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #1f2937; padding-bottom: 15px; }
+        .tab-btn { flex: 1; background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; transition: 0.2s; text-align: center; }
+        .tab-btn.active { background: #0284c7; border-color: #38bdf8; color: white; }
+
+        #statusMsg, #loginError, #prepStatusMsg { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 500; }
         
         #jobFormSection { display: none; }
-        
-        /* موبائل فرینڈلی لنک باکس اور زبردست سٹائل */
+        .admin-section-content { display: none; }
+        .admin-section-content.active { display: block; }
+
         .link-box { background: #090d16; border: 2px dashed #38bdf8; padding: 12px; border-radius: 6px; margin-top: 15px; display: none; text-align: center; }
         .link-box input { background: #0f172a !important; color: #38bdf8 !important; text-align: center; margin-bottom: 8px; font-weight: 700; border: 1px solid #38bdf8 !important; font-size: 12px; -webkit-text-fill-color: #38bdf8 !important; opacity: 1 !important; }
         
@@ -51,7 +56,6 @@
 
     <div class="admin-container">
         
-        <!-- Login Box Section -->
         <div id="loginSection">
             <h2><i class="fa-solid fa-lock"></i> Admin Login</h2>
             <div class="form-group">
@@ -66,66 +70,109 @@
             <div id="loginError" style="color: #f87171;"></div>
         </div>
 
-        <!-- Job Post / Edit Form Section -->
         <div id="jobFormSection">
-            <h2 id="formHeading"><i class="fa-solid fa-cloud-arrow-up"></i> Post New Job</h2>
-            <form id="jobForm">
-                <input type="hidden" id="editJobId">
-                <div class="form-group">
-                    <label>Job Title</label>
-                    <input type="text" id="jobTitle" placeholder="e.g. Plant Maintenance Engineer" required>
-                </div>
-                <div class="form-group">
-                    <label>Company / Organization Name</label>
-                    <input type="text" id="companyName" placeholder="e.g. Fauji Fertilizer (FFC)" required>
-                </div>
-                <div class="form-group">
-                    <label>DAE / Discipline Category</label>
-                    <select id="jobCategory" required>
-                        <option value="All">🌐 All Categories (Post to All Fields)</option>
-                        <option value="Mechanical">Mechanical</option>
-                        <option value="Electrical">Electrical</option>
-                        <option value="Civil">Civil</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Chemical">Chemical</option>
-                        <option value="Auto">Auto & Diesel</option>
-                        <option value="CAD">Architecture/CAD</option>
-                        <option value="IT">IT & Telecom</option>
-                        <option value="Designing">Designing</option>
-                        <option value="Nursing">Nursing/Medical</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-solid fa-image"></i> Select Job Poster from Gallery (Optional)</label>
-                    <input type="file" id="posterFile" accept="image/*">
-                </div>
-                <div class="form-group">
-                    <label>Apply Link (Website, Portal, or WhatsApp Direct Link)</label>
-                    <input type="url" id="applyLink" placeholder="https://example.com/apply" required>
-                </div>
-                <div class="form-group">
-                    <label>Job Description / Details</label>
-                    <textarea id="jobDesc" placeholder="Enter full qualifications, experience required, and last date..." required></textarea>
-                </div>
-                
-                <button type="submit" class="action-btn" id="submitBtn">Publish Job</button>
-                <button type="button" id="cancelEditBtn" class="action-btn secondary-btn" style="display:none;" onclick="cancelEditMode()">Cancel Edit</button>
-                
-                <div id="statusMsg"></div>
-                
-                <div class="link-box" id="jobLinkBox">
-                    <label style="color: #38bdf8; margin-bottom: 5px; font-weight: bold;">Direct Job Link Generated:</label>
-                    <input type="text" id="shareableLink" readonly>
-                    <button type="button" class="copy-btn" onclick="copyJobLink()"><i class="fa-solid fa-copy"></i> Click Here to Copy Link</button>
-                </div>
-            </form>
+            <h2><i class="fa-solid fa-gauge-high"></i> Admin Dashboard</h2>
+            
+            <div class="tab-switcher">
+                <button type="button" class="tab-btn active" id="tabJobBtn" onclick="switchAdminTab('job')"><i class="fa-solid fa-briefcase"></i> Post/Manage Jobs</button>
+                <button type="button" class="tab-btn" id="tabPrepBtn" onclick="switchAdminTab('prep')"><i class="fa-solid fa-book-open"></i> Add MCQs / Test Book</button>
+            </div>
 
-            <div class="manage-section">
-                <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-list-check"></i> Manage Existing Jobs</h3>
-                <div id="adminJobsList" style="max-height: 250px; overflow-y: auto;">
-                    <p style="font-size: 12px; color: #64748b;">Loading jobs...</p>
+            <div id="jobAdminTab" class="admin-section-content active">
+                <h3 id="formHeading" style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-cloud-arrow-up"></i> Post New Job</h3>
+                <form id="jobForm">
+                    <input type="hidden" id="editJobId">
+                    <div class="form-group">
+                        <label>Job Title</label>
+                        <input type="text" id="jobTitle" placeholder="e.g. Plant Maintenance Engineer" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company / Organization Name</label>
+                        <input type="text" id="companyName" placeholder="e.g. Fauji Fertilizer (FFC)" required>
+                    </div>
+                    <div class="form-group">
+                        <label>DAE / Discipline Category</label>
+                        <select id="jobCategory" required>
+                            <option value="All">🌐 All Categories (Post to All Fields)</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Civil">Civil</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Chemical">Chemical</option>
+                            <option value="Auto">Auto & Diesel</option>
+                            <option value="CAD">Architecture/CAD</option>
+                            <option value="IT">IT & Telecom</option>
+                            <option value="Designing">Designing</option>
+                            <option value="Nursing">Nursing/Medical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-image"></i> Select Job Poster from Gallery (Optional)</label>
+                        <input type="file" id="posterFile" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label>Apply Link (Website, Portal, or WhatsApp Direct Link)</label>
+                        <input type="url" id="applyLink" placeholder="https://example.com/apply" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Job Description / Details</label>
+                        <textarea id="jobDesc" placeholder="Enter full qualifications, experience required, and last date..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="action-btn" id="submitBtn">Publish Job</button>
+                    <button type="button" id="cancelEditBtn" class="action-btn secondary-btn" style="display:none;" onclick="cancelEditMode()">Cancel Edit</button>
+                    
+                    <div id="statusMsg"></div>
+                    
+                    <div class="link-box" id="jobLinkBox">
+                        <label style="color: #38bdf8; margin-bottom: 5px; font-weight: bold;">Direct Job Link Generated:</label>
+                        <input type="text" id="shareableLink" readonly>
+                        <button type="button" class="copy-btn" onclick="copyLink('shareableLink')"><i class="fa-solid fa-copy"></i> Click Here to Copy Job Link</button>
+                    </div>
+                </form>
+
+                <div class="manage-section">
+                    <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-list-check"></i> Manage Existing Jobs</h3>
+                    <div id="adminJobsList" style="max-height: 250px; overflow-y: auto;">
+                        <p style="font-size: 12px; color: #64748b;">Loading jobs...</p>
+                    </div>
                 </div>
             </div>
+
+            <div id="prepAdminTab" class="admin-section-content">
+                <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-book-medical"></i> Add MCQs Book & Test Prep</h3>
+                <form id="prepForm">
+                    <div class="form-group">
+                        <label>Select Discipline Category</label>
+                        <select id="prepCategory" required>
+                            <option value="Electrical">Electrical Technology</option>
+                            <option value="Mechanical">Mechanical Technology</option>
+                            <option value="Civil">Civil Technology</option>
+                            <option value="Electronics">Electronics Technology</option>
+                            <option value="Chemical">Chemical Technology</option>
+                            <option value="IT">IT & Computer Science</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Book Code / Subject Name</label>
+                        <input type="text" id="bookName" placeholder="e.g. ACET-336 (AC Machines)" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-file-csv"></i> Upload MCQs File (.csv or Excel format)</label>
+                        <input type="file" id="mcqsFile" accept=".csv, .xlsx, .xls" required>
+                    </div>
+                    
+                    <button type="submit" class="action-btn" id="submitPrepBtn">Publish Book & MCQs</button>
+                    <div id="prepStatusMsg"></div>
+
+                    <div class="link-box" id="prepLinkBox">
+                        <label style="color: #38bdf8; margin-bottom: 5px; font-weight: bold;">Direct Test / Book Link Generated:</label>
+                        <input type="text" id="prepShareableLink" readonly>
+                        <button type="button" class="copy-btn" onclick="copyLink('prepShareableLink')"><i class="fa-solid fa-copy"></i> Click Here to Copy Test Link</button>
+                    </div>
+                </form>
+            </div>
+
         </div>
 
     </div>
@@ -156,6 +203,25 @@
                 loadAdminJobsList();
             } else {
                 document.getElementById('loginError').innerText = "Incorrect Username or Password!";
+            }
+        }
+
+        window.switchAdminTab = function(tabName) {
+            const jobTab = document.getElementById('jobAdminTab');
+            const prepTab = document.getElementById('prepAdminTab');
+            const btnJob = document.getElementById('tabJobBtn');
+            const btnPrep = document.getElementById('tabPrepBtn');
+
+            if (tabName === 'job') {
+                jobTab.classList.add('active');
+                prepTab.classList.remove('active');
+                btnJob.classList.add('active');
+                btnPrep.classList.remove('active');
+            } else {
+                prepTab.classList.add('active');
+                jobTab.classList.remove('active');
+                btnPrep.classList.add('active');
+                btnJob.classList.remove('active');
             }
         }
 
@@ -338,16 +404,13 @@
                     statusMsg.style.color = "#4ade80";
                     statusMsg.innerText = "Job Published Successfully!";
                     
-                    // موبائل براؤزر کے لیے بالکل درست اور پکا لنک بنانا
                     const currentUrl = window.location.href;
                     const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'index.html');
                     const finalShareLink = `${cleanBaseUrl}?id=${firstDocId}`;
                     
-                    // موبائل سکرین پر ویلیو زبردستی شو کرنے کے لیے ٹائم آؤٹ
                     setTimeout(() => {
                         jobLinkBox.style.display = 'block';
                         shareableLinkInput.value = finalShareLink;
-                        // خود بخود کاپی بھی کر دے تاکہ یوزر کو مسئلہ نہ ہو
                         shareableLinkInput.select();
                         shareableLinkInput.setSelectionRange(0, 99999);
                     }, 100);
@@ -368,28 +431,91 @@
             }
         });
 
-        window.copyJobLink = function() {
-            shareableLinkInput.select();
-            shareableLinkInput.setSelectionRange(0, 99999);
+        // Test Prep Book Form Submission handler with Direct Share Link
+        const prepForm = document.getElementById('prepForm');
+        const prepStatusMsg = document.getElementById('prepStatusMsg');
+        const submitPrepBtn = document.getElementById('submitPrepBtn');
+        const prepLinkBox = document.getElementById('prepLinkBox');
+        const prepShareableLinkInput = document.getElementById('prepShareableLink');
+
+        prepForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitPrepBtn.disabled = true;
+            submitPrepBtn.innerText = "Saving Book & MCQs...";
+            prepStatusMsg.style.color = "#38bdf8";
+            prepStatusMsg.innerText = "Processing files...";
+            prepLinkBox.style.display = 'none';
+
+            try {
+                const category = document.getElementById('prepCategory').value;
+                const bookName = document.getElementById('bookName').value;
+                const mcqsFileInput = document.getElementById('mcqsFile').files[0];
+                
+                const reader = new FileReader();
+                reader.onload = async function(event) {
+                    const fileContent = event.target.result;
+                    
+                    const docRef = await addDoc(collection(db, "testBooks"), {
+                        category: category,
+                        bookName: bookName,
+                        csvData: fileContent,
+                        timestamp: Date.now()
+                    });
+
+                    const bookDocId = docRef.id;
+
+                    prepStatusMsg.style.color = "#4ade80";
+                    prepStatusMsg.innerText = "✅ Book & MCQs Published Successfully!";
+                    
+                    // Generate direct link for Test Prep
+                    const currentUrl = window.location.href;
+                    const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'test.html');
+                    const finalTestLink = `${cleanBaseUrl}?book=${bookDocId}`;
+                    
+                    setTimeout(() => {
+                        prepLinkBox.style.display = 'block';
+                        prepShareableLinkInput.value = finalTestLink;
+                        prepShareableLinkInput.select();
+                        prepShareableLinkInput.setSelectionRange(0, 99999);
+                    }, 100);
+
+                    prepForm.reset();
+                    submitPrepBtn.disabled = false;
+                    submitPrepBtn.innerText = "Publish Book & MCQs";
+                };
+                reader.readAsText(mcqsFileInput);
+
+            } catch (err) {
+                console.error(err);
+                prepStatusMsg.style.color = "#f87171";
+                prepStatusMsg.innerText = "Error publishing book: " + err.message;
+                submitPrepBtn.disabled = false;
+                submitPrepBtn.innerText = "Publish Book & MCQs";
+            }
+        });
+
+        window.copyLink = function(elementId) {
+            const inputField = document.getElementById(elementId);
+            inputField.select();
+            inputField.setSelectionRange(0, 99999);
             
-            // جدید کلپ بورڈ API کا استعمال تاکہ ہر موبائل پر کاپی ہو جائے
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(shareableLinkInput.value).then(() => {
-                    alert("✅ Job Link Copied Successfully! Now you can paste it anywhere.");
+                navigator.clipboard.writeText(inputField.value).then(() => {
+                    alert("✅ Link Copied Successfully! Now you can share it.");
                 }).catch(err => {
-                    fallbackCopyText();
+                    fallbackCopy(inputField);
                 });
             } else {
-                fallbackCopyText();
+                fallbackCopy(inputField);
             }
         }
 
-        function fallbackCopyText() {
+        function fallbackCopy(inputField) {
             try {
                 document.execCommand('copy');
-                alert("✅ Job Link Copied Successfully!");
+                alert("✅ Link Copied Successfully!");
             } catch (err) {
-                alert("Please manually select and copy the link from the box.");
+                alert("Please manually select and copy the link.");
             }
         }
     </script>
