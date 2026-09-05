@@ -338,16 +338,13 @@
                     statusMsg.style.color = "#4ade80";
                     statusMsg.innerText = "Job Published Successfully!";
                     
-                    // موبائل براؤزر کے لیے بالکل درست اور پکا لنک بنانا
                     const currentUrl = window.location.href;
                     const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'index.html');
                     const finalShareLink = `${cleanBaseUrl}?id=${firstDocId}`;
                     
-                    // موبائل سکرین پر ویلیو زبردستی شو کرنے کے لیے ٹائم آؤٹ
                     setTimeout(() => {
                         jobLinkBox.style.display = 'block';
                         shareableLinkInput.value = finalShareLink;
-                        // خود بخود کاپی بھی کر دے تاکہ یوزر کو مسئلہ نہ ہو
                         shareableLinkInput.select();
                         shareableLinkInput.setSelectionRange(0, 99999);
                     }, 100);
@@ -372,7 +369,6 @@
             shareableLinkInput.select();
             shareableLinkInput.setSelectionRange(0, 99999);
             
-            // جدید کلپ بورڈ API کا استعمال تاکہ ہر موبائل پر کاپی ہو جائے
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(shareableLinkInput.value).then(() => {
                     alert("✅ Job Link Copied Successfully! Now you can paste it anywhere.");
@@ -380,7 +376,7 @@
                     fallbackCopyText();
                 });
             } else {
-                fallbackCopyText();
+                fallbackCopyTest();
             }
         }
 
