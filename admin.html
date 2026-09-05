@@ -6,6 +6,7 @@
     <title>Admin Portal - DAE Jobs & Test Prep</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.0.2/tesseract.min.js"></script>
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -93,7 +94,7 @@
                     <div class="form-group">
                         <label>DAE / Discipline Category</label>
                         <select id="jobCategory" required>
-                            <option value="All">🌐 All Categories (Post to All Fields)</option>
+                            <option value="All">🌐 All Categories</option>
                             <option value="Mechanical">Mechanical</option>
                             <option value="Electrical">Electrical</option>
                             <option value="Civil">Civil</option>
@@ -107,16 +108,16 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label><i class="fa-solid fa-image"></i> Select Job Poster from Gallery (Optional)</label>
+                        <label><i class="fa-solid fa-image"></i> Select Job Poster (Optional)</label>
                         <input type="file" id="posterFile" accept="image/*">
                     </div>
                     <div class="form-group">
-                        <label>Apply Link (Website, Portal, or WhatsApp Direct Link)</label>
+                        <label>Apply Link</label>
                         <input type="url" id="applyLink" placeholder="https://example.com/apply" required>
                     </div>
                     <div class="form-group">
                         <label>Job Description / Details</label>
-                        <textarea id="jobDesc" placeholder="Enter full qualifications, experience required, and last date..." required></textarea>
+                        <textarea id="jobDesc" placeholder="Enter full qualifications..." required></textarea>
                     </div>
                     
                     <button type="submit" class="action-btn" id="submitBtn">Publish Job</button>
@@ -140,7 +141,8 @@
             </div>
 
             <div id="prepAdminTab" class="admin-section-content">
-                <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-book-medical"></i> Add MCQs Book & Test Prep</h3>
+                <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-book-medical"></i> Smart Auto-MCQs Extractor</h3>
+                <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px;">کوئی بھی فائل (CSV/Excel) یا کتاب/نوٹس کی تصویر (Picture/Screenshot) اپ لوڈ کریں؛ سسٹم خود بخود سوالات نکال کر ٹیسٹ بنا دے گا۔</p>
                 <form id="prepForm">
                     <div class="form-group">
                         <label>Select Discipline Category</label>
@@ -158,15 +160,19 @@
                         <input type="text" id="bookName" placeholder="e.g. ACET-336 (AC Machines)" required>
                     </div>
                     <div class="form-group">
-                        <label><i class="fa-solid fa-file-csv"></i> Upload MCQs File (.csv or Excel format)</label>
-                        <input type="file" id="mcqsFile" accept=".csv, .xlsx, .xls" required>
+                        <label><i class="fa-solid fa-file-arrow-up"></i> Upload Any File or Picture (CSV, Excel, Image, Screenshot)</label>
+                        <input type="file" id="universalFile" accept=".csv, .xlsx, .xls, image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-file-pdf"></i> Upload Downloadable PDF Notes (Optional)</label>
+                        <input type="file" id="notesFile" accept=".pdf">
                     </div>
                     
-                    <button type="submit" class="action-btn" id="submitPrepBtn">Publish Book & MCQs</button>
+                    <button type="submit" class="action-btn" id="submitPrepBtn">Auto-Extract & Publish MCQs</button>
                     <div id="prepStatusMsg"></div>
 
                     <div class="link-box" id="prepLinkBox">
-                        <label style="color: #38bdf8; margin-bottom: 5px; font-weight: bold;">Direct Test / Book Link Generated:</label>
+                        <label style="color: #38bdf8; margin-bottom: 5px; font-weight: bold;">Direct Test Link Generated:</label>
                         <input type="text" id="prepShareableLink" readonly>
                         <button type="button" class="copy-btn" onclick="copyLink('prepShareableLink')"><i class="fa-solid fa-copy"></i> Click Here to Copy Test Link</button>
                     </div>
@@ -196,7 +202,6 @@
         window.checkLogin = function() {
             const user = document.getElementById('adminUser').value.trim();
             const pass = document.getElementById('adminPass').value.trim();
-            
             if (user === "Ahmedkhan" && pass === "Ahmedkhanasas21") {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('jobFormSection').style.display = 'block';
@@ -232,21 +237,10 @@
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        const MAX_WIDTH = 500;
-                        const MAX_HEIGHT = 500;
-                        if (width > height) {
-                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                        } else {
-                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
+                        let width = img.width, height = img.height;
+                        if (width > 500) { height *= 500 / width; width = 500; }
+                        canvas.width = width; canvas.height = height;
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
                         resolve(canvas.toDataURL('image/jpeg', 0.5));
                     };
                     img.src = event.target.result;
@@ -264,21 +258,17 @@
         async function loadAdminJobsList() {
             const container = document.getElementById('adminJobsList');
             container.innerHTML = '<p style="font-size: 12px; color: #64748b;">Loading...</p>';
-            
             try {
                 const q = query(collection(db, "jobs"), orderBy("timestamp", "desc"));
                 const querySnapshot = await getDocs(q);
-                
                 container.innerHTML = "";
                 if (querySnapshot.empty) {
                     container.innerHTML = '<p style="font-size: 12px; color: #64748b;">No jobs found.</p>';
                     return;
                 }
-
                 querySnapshot.forEach((documentSnap) => {
                     const job = documentSnap.data();
                     const jobId = documentSnap.id;
-
                     const item = document.createElement('div');
                     item.className = 'admin-job-card';
                     item.innerHTML = `
@@ -294,21 +284,14 @@
                     container.appendChild(item);
                 });
             } catch (err) {
-                console.error(err);
                 container.innerHTML = '<p style="font-size: 12px; color: #f87171;">Failed to load jobs list.</p>';
             }
         }
 
         window.deleteJob = async function(jobId) {
-            if (confirm("کیا آپ واقعی اس جاب کو ہمیشہ کے لیے ڈیلیट کرنا چاہتے ہیں؟")) {
-                try {
-                    await deleteDoc(doc(db, "jobs", jobId));
-                    alert("جابس کامیابی سے ڈیلیਟ ہو گئی!");
-                    loadAdminJobsList();
-                } catch (err) {
-                    console.error(err);
-                    alert("ڈیلیट کرنے میں خرابی پیش آئی۔");
-                }
+            if (confirm("کیا آپ واقعی اس جاب کو ڈیلیट کرنا چاہتے ہیں؟")) {
+                await deleteDoc(doc(db, "jobs", jobId));
+                loadAdminJobsList();
             }
         }
 
@@ -319,7 +302,6 @@
             document.getElementById('jobCategory').value = category;
             document.getElementById('applyLink').value = decodeURIComponent(applyLink);
             document.getElementById('jobDesc').value = decodeURIComponent(desc);
-            
             document.getElementById('formHeading').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Job';
             submitBtn.innerText = "Update Job";
             document.getElementById('cancelEditBtn').style.display = "block";
@@ -337,7 +319,6 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
-            
             const editId = document.getElementById('editJobId').value;
             const title = document.getElementById('jobTitle').value;
             const company = document.getElementById('companyName').value;
@@ -349,89 +330,36 @@
             let posterUrl = "";
             try {
                 if (fileInput.files && fileInput.files[0]) {
-                    submitBtn.innerText = "Processing Image...";
-                    statusMsg.style.color = "#38bdf8";
-                    statusMsg.innerText = "Compressing image...";
                     posterUrl = await compressImage(fileInput.files[0]);
                 }
-
                 if (editId) {
-                    submitBtn.innerText = "Updating Job...";
-                    statusMsg.style.color = "#38bdf8";
-                    statusMsg.innerText = "Updating job details...";
-
-                    let updateData = {
-                        title: title,
-                        company: company,
-                        category: category,
-                        applyLink: applyLink,
-                        description: description
-                    };
-                    if (posterUrl) {
-                        updateData.posterUrl = posterUrl;
-                    }
-
+                    let updateData = { title, company, category, applyLink, description };
+                    if (posterUrl) updateData.posterUrl = posterUrl;
                     await updateDoc(doc(db, "jobs", editId), updateData);
-                    
-                    alert("جابس کامیابی سے اپڈیٹ ہو گئی ہے!");
                     cancelEditMode();
-                    statusMsg.innerText = "";
                     loadAdminJobsList();
-
                 } else {
-                    submitBtn.innerText = "Publishing...";
-                    statusMsg.style.color = "#38bdf8";
-                    statusMsg.innerText = "Uploading to database...";
-                    jobLinkBox.style.display = 'none';
-
-                    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-                    const currentDate = new Date().toLocaleDateString('en-US', options);
-                    const timestampVal = Date.now();
-
                     const docRef = await addDoc(collection(db, "jobs"), {
-                        title: title, 
-                        company: company, 
-                        category: category,
-                        posterUrl: posterUrl, 
-                        applyLink: applyLink, 
-                        description: description,
-                        date: currentDate, 
-                        timestamp: timestampVal
+                        title, company, category, posterUrl, applyLink, description,
+                        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                        timestamp: Date.now()
                     });
-                    
-                    const firstDocId = docRef.id;
-
-                    statusMsg.style.color = "#4ade80";
-                    statusMsg.innerText = "Job Published Successfully!";
-                    
                     const currentUrl = window.location.href;
                     const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'index.html');
-                    const finalShareLink = `${cleanBaseUrl}?id=${firstDocId}`;
-                    
-                    setTimeout(() => {
-                        jobLinkBox.style.display = 'block';
-                        shareableLinkInput.value = finalShareLink;
-                        shareableLinkInput.select();
-                        shareableLinkInput.setSelectionRange(0, 99999);
-                    }, 100);
-
+                    jobLinkBox.style.display = 'block';
+                    shareableLinkInput.value = `${cleanBaseUrl}?id=${docRef.id}`;
                     form.reset();
                     loadAdminJobsList();
                 }
-
             } catch (error) {
-                console.error("Error: ", error);
-                statusMsg.style.color = "#f87171";
-                statusMsg.innerText = "Error: " + (error.message || "Failed");
+                statusMsg.innerText = "Error: " + error.message;
             } finally {
                 submitBtn.disabled = false;
-                if (!document.getElementById('editJobId').value) {
-                    submitBtn.innerText = "Publish Job";
-                }
+                submitBtn.innerText = "Publish Job";
             }
         });
 
-        // Test Prep Book Form Submission handler with Direct Share Link
+        // Smart Universal MCQs & Picture Extractor Form Handler
         const prepForm = document.getElementById('prepForm');
         const prepStatusMsg = document.getElementById('prepStatusMsg');
         const submitPrepBtn = document.getElementById('submitPrepBtn');
@@ -441,56 +369,90 @@
         prepForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitPrepBtn.disabled = true;
-            submitPrepBtn.innerText = "Saving Book & MCQs...";
+            submitPrepBtn.innerText = "Processing File / Picture...";
             prepStatusMsg.style.color = "#38bdf8";
-            prepStatusMsg.innerText = "Processing files...";
+            prepStatusMsg.innerText = "Analyzing content and extracting MCQs...";
             prepLinkBox.style.display = 'none';
 
             try {
                 const category = document.getElementById('prepCategory').value;
                 const bookName = document.getElementById('bookName').value;
-                const mcqsFileInput = document.getElementById('mcqsFile').files[0];
+                const fileInput = document.getElementById('universalFile').files[0];
+                const notesFileInput = document.getElementById('notesFile').files[0];
                 
-                const reader = new FileReader();
-                reader.onload = async function(event) {
-                    const fileContent = event.target.result;
-                    
-                    const docRef = await addDoc(collection(db, "testBooks"), {
-                        category: category,
-                        bookName: bookName,
-                        csvData: fileContent,
-                        timestamp: Date.now()
+                let notesPdfData = "";
+                if (notesFileInput) {
+                    notesPdfData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(notesFileInput);
                     });
+                }
 
-                    const bookDocId = docRef.id;
+                let csvContent = "";
 
-                    prepStatusMsg.style.color = "#4ade80";
-                    prepStatusMsg.innerText = "✅ Book & MCQs Published Successfully!";
+                if (fileInput.type.startsWith('image/')) {
+                    prepStatusMsg.innerText = "Reading text from image using OCR...";
+                    const worker = await Tesseract.createWorker('eng');
+                    await worker.load();
+                    await worker.loadLanguage('eng');
+                    await worker.initialize('eng');
+                    const ret = await worker.recognize(fileInput);
+                    await worker.terminate();
+
+                    const rawText = ret.data.text;
+                    const lines = rawText.split('\n').filter(l => l.trim().length > 3);
+                    let parsedRows = ["Topic,Question Number,Last Revision (Date),Type of Question / Task,Question / Task,Answer 1 ,Correct (1) / Incorrect (0),Answer 2,Correct (1) / Incorrect (0),Answer 3,Correct (1) / Incorrect (0),Answer 4,Correct (1) / Incorrect (0)"];
                     
-                    // Generate direct link for Test Prep
-                    const currentUrl = window.location.href;
-                    const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'test.html');
-                    const finalTestLink = `${cleanBaseUrl}?book=${bookDocId}`;
-                    
-                    setTimeout(() => {
-                        prepLinkBox.style.display = 'block';
-                        prepShareableLinkInput.value = finalTestLink;
-                        prepShareableLinkInput.select();
-                        prepShareableLinkInput.setSelectionRange(0, 99999);
-                    }, 100);
+                    for (let i = 0; i < lines.length; i++) {
+                        let line = lines[i].trim();
+                        if (line.includes('?') || line.length > 15) {
+                            let q = line.replace(/,/g, " ");
+                            let optA = lines[i+1] ? lines[i+1].replace(/^[a-dA-D][).] */, "").replace(/,/g, " ") : "Option A";
+                            let optB = lines[i+2] ? lines[i+2].replace(/^[a-dA-D][).] */, "").replace(/,/g, " ") : "Option B";
+                            let optC = lines[i+3] ? lines[i+3].replace(/^[a-dA-D][).] */, "").replace(/,/g, " ") : "Option C";
+                            let optD = lines[i+4] ? lines[i+4].replace(/^[a-dA-D][).] */, "").replace(/,/g, " ") : "Option D";
+                            parsedRows.push(`General,${i+1},2026-01-01,MC,"${q}","${optA}",1,"${optB}",0,"${optC}",0,"${optD}",0`);
+                        }
+                    }
+                    csvContent = parsedRows.join('\n');
+                } else {
+                    csvContent = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (event) => resolve(event.target.result);
+                        reader.readAsText(fileInput);
+                    });
+                }
 
-                    prepForm.reset();
-                    submitPrepBtn.disabled = false;
-                    submitPrepBtn.innerText = "Publish Book & MCQs";
-                };
-                reader.readAsText(mcqsFileInput);
+                const docRef = await addDoc(collection(db, "testBooks"), {
+                    category: category,
+                    bookName: bookName,
+                    csvData: csvContent,
+                    notesPdf: notesPdfData,
+                    timestamp: Date.now()
+                });
 
+                prepStatusMsg.style.color = "#4ade80";
+                prepStatusMsg.innerText = "✅ MCQs Extracted & Published Successfully!";
+                
+                const currentUrl = window.location.href;
+                const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'index.html');
+                
+                setTimeout(() => {
+                    prepLinkBox.linkBox = 'block';
+                    prepLinkBox.style.display = 'block';
+                    prepShareableLinkInput.value = `${cleanBaseUrl}?book=${docRef.id}`;
+                    prepShareableLinkInput.select();
+                }, 100);
+
+                prepForm.reset();
             } catch (err) {
                 console.error(err);
                 prepStatusMsg.style.color = "#f87171";
-                prepStatusMsg.innerText = "Error publishing book: " + err.message;
+                prepStatusMsg.innerText = "Error: " + err.message;
+            } finally {
                 submitPrepBtn.disabled = false;
-                submitPrepBtn.innerText = "Publish Book & MCQs";
+                submitPrepBtn.innerText = "Auto-Extract & Publish MCQs";
             }
         });
 
@@ -498,25 +460,9 @@
             const inputField = document.getElementById(elementId);
             inputField.select();
             inputField.setSelectionRange(0, 99999);
-            
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(inputField.value).then(() => {
-                    alert("✅ Link Copied Successfully! Now you can share it.");
-                }).catch(err => {
-                    fallbackCopy(inputField);
-                });
-            } else {
-                fallbackCopy(inputField);
-            }
-        }
-
-        function fallbackCopy(inputField) {
-            try {
-                document.execCommand('copy');
+            navigator.clipboard.writeText(inputField.value).then(() => {
                 alert("✅ Link Copied Successfully!");
-            } catch (err) {
-                alert("Please manually select and copy the link.");
-            }
+            });
         }
     </script>
 </body>
