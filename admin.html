@@ -393,10 +393,8 @@
 
                 if (fileInput.type.startsWith('image/')) {
                     prepStatusMsg.innerText = "Reading text from image using OCR...";
+                    // Fixed Tesseract Worker Initialization for v4.x
                     const worker = await Tesseract.createWorker('eng');
-                    await worker.load();
-                    await worker.loadLanguage('eng');
-                    await worker.initialize('eng');
                     const ret = await worker.recognize(fileInput);
                     await worker.terminate();
 
@@ -439,7 +437,6 @@
                 const cleanBaseUrl = currentUrl.split('?')[0].replace('admin.html', 'index.html');
                 
                 setTimeout(() => {
-                    prepLinkBox.linkBox = 'block';
                     prepLinkBox.style.display = 'block';
                     prepShareableLinkInput.value = `${cleanBaseUrl}?book=${docRef.id}`;
                     prepShareableLinkInput.select();
