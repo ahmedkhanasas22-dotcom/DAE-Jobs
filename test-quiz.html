@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online MCQs Test - DAE Electrical</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #090d16; color: #cbd5e1; }
+
+        header {
+            background: #0f172a; border-bottom: 1px solid #1e293b; padding: 12px 20px;
+            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 17px; color: #38bdf8; font-weight: 800; text-decoration: none; }
+        .logo span { color: #f97316; }
+        .back-btn { font-size: 12px; background: #1e293b; padding: 6px 12px; border-radius: 6px; color: #38bdf8; border: 1px solid #334155; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        
+        .quiz-header {
+            background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+        }
+        .quiz-title { color: #ffffff; font-size: 16px; font-weight: 700; font-family: 'Outfit', sans-serif; }
+        .quiz-timer { background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); padding: 5px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; }
+
+        .question-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 20px; margin-bottom: 15px; }
+        .q-number { color: #38bdf8; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
+        .q-text { color: #ffffff; font-size: 15px; font-weight: 600; margin-bottom: 15px; line-height: 1.5; white-space: pre-line; }
+
+        .options-list { display: flex; flex-direction: column; gap: 10px; }
+        .option-item {
+            background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px 15px;
+            color: #e2e8f0; font-size: 13px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center;
+        }
+        .option-item:hover:not(.disabled) { border-color: #38bdf8; background: #253349; }
+        .option-item.disabled { cursor: default; }
+        .option-item.correct { background: #16a34a !important; border-color: #22c55e !important; color: white !important; font-weight: 600; }
+        .option-item.wrong { background: #dc2626 !important; border-color: #ef4444 !important; color: white !important; font-weight: 600; }
+
+        .quiz-footer-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .nav-action-btn { background: #0284c7; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .nav-action-btn:hover { background: #0369a1; }
+        .nav-action-btn:disabled { background: #1e293b; color: #475569; cursor: not-allowed; }
+
+        .result-box { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 30px; text-align: center; display: none; }
+        .result-box h2 { color: #ffffff; font-size: 22px; margin-bottom: 10px; font-family: 'Outfit', sans-serif; }
+        .result-score { font-size: 36px; color: #38bdf8; font-weight: 800; margin: 15px 0; }
+        .result-msg { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="electrical-books.html" class="logo">DAE <span>ENGINEERING JOBS</span></a>
+        <a href="electrical-books.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Books List</a>
+    </header>
+
+    <div class="container">
+        
+        <div id="quizContainer">
+            <div class="quiz-header">
+                <div class="quiz-title" id="bookTitleDisplay">Loading Book...</div>
+                <div class="quiz-timer"><i class="fa-regular fa-clock"></i> Practice Mode</div>
+            </div>
+
+            <div class="question-card" id="questionCardBox"></div>
+
+            <div class="quiz-footer-nav">
+                <button class="nav-action-btn" id="prevBtn" onclick="prevQuestion()" disabled><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <span id="progressIndicator" style="color:#94a3b8; font-size:13px; font-weight:600;">Question 1 of 0</span>
+                <button class="nav-action-btn" id="nextBtn" onclick="nextQuestion()" disabled>Next <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="result-box" id="resultBox">
+            <h2>Test Completed Successfully!</h2>
+            <div class="result-score" id="finalScoreText">0 / 0</div>
+            <p class="result-msg" id="resultMessageText">Great job practicing your technical engineering concepts.</p>
+            <a href="electrical-books.html" class="nav-action-btn" style="text-decoration: none; display: inline-block;">Back to Books</a>
+        </div>
+
+    </div>
+
+    <script>
+        const allBooks = {
+            "et326": {
+                title: "AC Machine (ET-326)",
+                questions: [
+                    { q: "The power factor of an alternator depends on\nآلٹرنیٹر کا پاور فیکٹر کس چیز پر منحصر ہوتا ہے", options: ["Load لوڈ", "Speed of rotor روٹر کی سپیڈ", "Core Losses کور لاسسز", "Armature Losses آرمیچر لاسسز"], correct: 0 },
+                    { q: "As the speed of an alternator increases\nجب آلٹرنیٹر کی رفتار بڑھتی ہے تو", options: ["The frequency increases \nفریکیوئینسی بڑھتی ہے", "The frequency decreases فریکیوئینسی کم ہے", "The frequency remains constant but power factor decreases فریکوئنسی مستقل رہتی ہے مگر پاور فیکٹر کم ہو جاتا ہے", "None of the above کوئی بھی نہیں"], correct: 0 },
+                    { q: "An exciter for generator is a\nجنریٹر کے لیے ایکسائٹر کیا ہوتا ہے", options: ["Series Motor سیریز موٹر", "Shunt Motor شنٹ موٹر", "Series generator سیریز جنریٹر", "Shunt generator شنٹ جنریٹر"], correct: 3 },
+                    { q: "In order that two alternators be put in parallel, which of the following factors should be identical for both\nدو آلٹرنیٹرز کو متوازی چلانے کے لیے کون سی چیزیں ایک جیسی ہونی چاہئیں", options: ["Voltage وولٹیج", "Frequency فریکیوئینسی", "Phase Sequence فیز سیکوئنس", "All of the above تمام"], correct: 3 },
+                    { q: "What kind of rotor is most suitable for turbo alternators\nٹربو آلٹرنیٹر کے لیے کون سا روٹر زیادہ موزوں ہے", options: ["Salient pole type سائینلٹ پول ٹائپ", "Non salient pole type نان سائینلٹ پول ٹائپ", "Both A and B above", "None of the above کوئی نہیں"], correct: 1 },
+                    { q: "Critical speed of a motor is the speed at which\nموٹر کی کریٹیکل اسپیڈ وہ اسپیڈ ہے جس پر", options: ["Resonance occurs ریزوننس ہوتی ہے", "Maximum torque is produced", "Efficiency is maximum", "Zero power factor occurs"], correct: 0 },
+                    { q: "The rotor of a synchronous motor has\nسنکرونس موٹر کے روٹر میں ہوتا ہے", options: ["Slip rings", "DC excitation ڈی سی ایکسائٹیشن", "Squirrel cage", "None"], correct: 1 },
+                    { q: "Synchronous motor can run at\nسنکرونس موٹر کس پر چل سکتی ہے", options: ["Synchronous speed only صرف سنکرونس اسپیڈ", "Sub-synchronous speed", "Super-synchronous speed", "Any speed"], correct: 0 },
+                    { q: "A synchronous motor is not self-starting because\nسنکرونس موٹر خود بخود اسٹارٹ کیوں نہیں ہوتی",options: ["Stator field is rotating", "Rotor field is stationary", "Direction of instantaneous torque reverses with high frequency", "None"], correct: 2 },
+                    { q: "The stator of a 3-phase alternator is wound for a 3-phase distribution similar to that of\nتھری فیز آلٹرنیٹر کا اسٹی também", options: ["3-phase induction motor تھری فیز انڈکشن موٹر", "DC generator", "Transformer", "Converter"], correct: 0 },
+                    { q: "Distribution factor is defined as the ratio of\nڈسٹری بیوشن فیکٹر کس کا تناسب ہے", options: ["Actual voltage to arithmetic sum", "Vector sum to arithmetic sum", "Arithmetic sum to vector sum", "None"], correct: 1 },
+                    { q: "Pitch factor is the ratio of\nپچ فیکٹر کس کا تناسب ہے", options: ["Chorded EMF to full pitch EMF", "Full pitch to chorded", "Total EMF to resultant", "None"], correct: 0 },
+                    { q: "Armature reaction in an alternator affects\nآلٹرنیٹر میں آرمیچر ری ایکشن کیا اثر ڈالتا ہے", options: ["Terminal voltage ٹرمینل وولٹیج", "Frequency", "Speed", "Power"], correct: 0 },
+                    { q: "In a salient pole synchronous machine, reluctance is\nسیلینٹ پول سنکرونس مشین میں ریلکٹنس", options: ["Minimum along polar axis", "Maximum along polar axis", "Constant", "Zero"], correct: 0 },
+                    { q: "Damper winding in a synchronous generator is used to\nڈیمپਰ وائنڈنگ کا مقصد کیا ہے", options: ["Eliminate hunting ہنٹنگ ختم کرنا", "Improve power factor", "Increase voltage", "Reduce losses"], correct: 0 },
+                    { q: "Regulation of an alternator can be determined by\nآلٹرنیٹر ریگুলেشن کا طریقہ", options: ["Synchronous impedance method", "Ampere-turn method", "ZPF method", "All of these یہ سب"], correct: 3 },
+                    { q: "The frequency of voltage generated by an alternator depends on\nجنریٹ شدہ وولٹیج کی فریکوئنسی کس پر ہے", options: ["Number of poles and speed پولز اور اسپیڈ", "Load only", "Rating", "Size"], correct: 0 },
+                    { q: "A 3-phase alternator has star connected winding with neutral. Line voltage is\nتھری فیز اسٹار کنیکٹڈ آلٹرنیٹر کی لائن وولٹیج ہوتی ہے", options: ["Equal to phase voltage", "1.732 times phase voltage", "0.577 times", "Zero"], correct: 1 },
+                    { q: "In an alternator, armature reaction at unity power factor is\nیونٹی پاور فیکٹر پر آرمیچر ری ایکشن ہوتا ہے", options: ["Cross-magnetizing کراس میگنیٹائزिंग", "Demagnetizing", "Magnetizing", "None"], correct: 0 },
+                    { q: "At zero power factor lagging, armature reaction is\nزیرو پاور فیکٹر لیگنگ پر آرمیچر ری ایکشن ہے", options: ["Purely demagnetizing خالص ڈی میگنیٹائزنگ", "Purely magnetizing", "Cross-magnetizing", "None"], correct: 0 },
+                    { q: "At zero power factor leading, armature reaction is\nزیرو پاور فیکٹر لیڈنگ پر آرمیچر ری ایکشن ہے", options: ["Purely magnetizing خالص میگنیٹائزنگ", "Demagnetizing", "Cross-magnetizing", "None"], correct: 0 },
+                    { q: "The efficiency of an alternator is maximum when\nآلٹرنیٹر کی ایفیشنسی زیادہ ہوتی ہے جب",options: ["Variable losses equal fixed losses", "Losses are zero", "Load is half", "Load is full"], correct: 0 },
+                    { q: "Parallel operation of alternators requires matching of\nمتوازی آپریشن کے لیے ضروری ہے",options: ["Voltage, frequency, phase sequence", "Color", "Weight", "Make"], correct: 0 },
+                    { q: "Dark lamp method is used for\nڈارک لیمپ میڈیم کس کے لیے ہے",options: ["Synchronizing alternators سنکرونائزنگ", "Speed control", "Testing efficiency", "Fault finding"], correct: 0 },
+                    { q: "Synchronoscope indicates\nسنکروسکوپ کیا ظاہر کرتا ہے",options: ["Phase angle and frequency difference فیز اینگل اور فریکوئنسی کا فرق", "Voltage only", "Current only", "Power"], correct: 0 },
+                    { q: "Hunting in synchronous motor can be reduced by\nہنٹنگ کم کی جا سکتی ہے",options: ["Damper winding ڈیمپپر وائنڈنگ", "Increasing load", "Changing poles", "Adding resistance"], correct: 0 },
+                    { q: "V-curves of synchronous motor show relation between\nوی کروز کس کا تعلق دکھاتے ہیں",options: ["Armature current and field current آرمیچر کرنٹ اور فیلڈ کرنٹ", "Voltage and current", "Speed and torque", "Power and power factor"], correct: 0 },
+                    { q: "Inverted V-curves show relation between\nانورٹڈ وی کروز کس کا تعلق دکھاتے ہیں",options: ["Power factor and field current پاور فیکٹر اور فیلڈ کرنٹ", "Current and voltage", "Speed and load", "Efficiency"], correct: 0 },
+                    { q: "A synchronous condenser is\nسنکرونس کنڈینسر کیا ہے",options: ["Over-excited synchronous motor running on no-load اوور ایکسائٹڈ سنکرونس موٹر بغیر لوڈ", "Capacitor bank", "Inductor", "Battery"], correct: 0 },
+                    { q: "Starting torque of a synchronous motor is\nسنکرونس موٹر کا اسسٹارٹنگ ٹارک ہوتا ہے",options: ["Zero صفر", "High", "Medium", "Infinite"], correct: 0 },
+                    { q: "An induction motor works on the principle of\nانڈکشن موٹر کس اصول پر ہے",options: ["Electromagnetic induction برقی مقناطیسی القاء", "Static induction", "Self induction", "Mutual induction only"], correct: 0 },
+                    { q: "Slip of an induction motor is given by\nسلپ کا فارمولا",options: ["(Ns - N) / Ns", "N / Ns", "Ns / N", "(N - Ns) / N"], correct: 0 },
+                    { q: "At starting, the slip of an induction motor is\nاسٹارٹ پر سلپ ہوتی ہے",options: ["1 (or 100%)", "0", "0.5", "0.1"], correct: 0 },
+                    { q: "The frequency of rotor current in a 3-phase induction motor is\nروٹر کرنٹ کی فریکوئنسی ہوتی ہے",options: ["s * f", "f", "s / f", "zero"], correct: 0 },
+                    { q: "Torque of an induction motor is proportional to\nٹارک کس کے متناسب ہے",options: ["Square of supply voltage سپلائی وولٹیج کا مربع", "Voltage", "Current only", "Resistance"], correct: 0 },
+                    { q: "Maximum torque in an induction motor is\nزیادہ سے زیادہ ٹارک",options: ["Independent of rotor resistance روٹر ریزسٹنس سے آزاد", "Proportional to rotor resistance", "Inversely proportional", "Equal to slip"], correct: 0 },
+                    { q: "Crawling in an induction motor is caused by\nکراولنگ کی وجہ کیا ہے",options: ["Harmonics (specifically 7th)", "Low voltage", "High load", "Open circuit"], correct: 0 },
+                    { q: "Cogging (magnetic locking) in induction motor occurs when\nکاگنگ کیوں ہوتی ہے",options: ["Number of stator and rotor slots are equal اسٹی اور روٹر سلاٹ برابر ہوں", "Slots are unequal", "Voltage is high", "Bearing fails"], correct: 0 },
+                    { q: "Double cage induction motor is used for\nڈبل کیج انڈکشن موٹر کا مقصد",options: ["High starting torque زیادہ اسسٹارٹنگ ٹارک", "Low starting torque", "High speed", "Variable speed"], correct: 0 },
+                    { q: "Slip ring induction motor has the advantage of\nسلپ رنگ موٹر کا فائدہ",options: ["High starting torque with external resistance بیرونی مزاحمت سے زیادہ اسسٹارٹنگ ٹارک", "Low cost", "No maintenance", "High efficiency"], correct: 0 },
+                    { q: "Speed of a 3-phase induction motor can be controlled by\nاسپیڈ کنٹرول کا طریقہ",options: ["Stator voltage control", "Changing number of poles", "Rotor resistance control", "All of these یہ سب"], correct: 3 },
+                    { q: "Blocked rotor test on induction motor determines\nبلاکیڈ روٹر ٹیسٹ سے کیا معلوم ہوتا ہے",options: ["Short circuit impedance شارٹ سرکٹ ایمپیڈنس", "Core loss", "Friction loss", "No load current"], correct: 0 },
+                    { q: "No load test on induction motor determines\nنو لوڈ ٹیسٹ سے کیا معلوم ہوتا ہے",options: ["No load losses and magnetizing current نو لوڈ لاسسز اور میگنیٹائزنگ کرنٹ", "Full load torque", "Slip", "Rotor resistance"], correct: 0 },
+                    { q: "A single phase induction motor is\nسنگل فیز انڈکشن موٹر ہوتی ہے",options: ["Not self starting خود اسٹارٹ نہیں ہوتی", "Self starting", "Synchronous", "DC motor"], correct: 0 },
+                    { q: "Split phase motor uses\nسپلٹ فیز موٹر میں ہوتا ہے",options: ["Auxiliary winding معاون وائنڈنگ", "DC supply", "Three phase supply", "Slip rings"], correct: 0 },
+                    { q: "Capacitor start induction motor has\nکیپیسٹر اسٹارٹ موٹر میں ہوتا ہے",options: ["High starting torque زیادہ اسسٹارٹنگ ٹارک", "Low starting torque", "Zero torque", "Constant speed"], correct: 0 },
+                    { q: "Shaded pole motor is used for\nشیڈڈ پول موٹر کا استعمال",options: ["Low power applications (toys, fans) کم پاور (کھلونے، پنکھے)", "Heavy traction", "Large pumps", "Compressors"], correct: 0 },
+                    { q: "Universal motor can run on\nیونیورسل موٹر کس پر چل سکتی ہے",options: ["Both AC and DC اے سی اور ڈی سی دونوں", "AC only", "DC only", "Battery only"], correct: 0 },
+                    { q: "Stepper motor rotates in\nاسٹیپر موٹر گھومتی ہے",options: ["Discrete steps (steps/pulses) ڈسکرٹ اسٹیپس", "Continuous smooth motion", "Random direction", "High speed only"], correct: 0 },
+                    { q: "Brushless DC motor uses\nبرش لیس ڈی سی موٹر استعمال کرتی ہے",options: ["Electronic commutation الیکٹرانک کمیوٹیشن", "Mechanical brushes", "Slip rings", "Commutator segments"], correct: 0 },
+                    { q: "AC generator is also called\nآلٹرنیٹر کا دوسرا نام",options: ["Alternator", "Dynamo", "Inverter", "Rectifier"], correct: 0 },
+                    { q: "Stator core of an alternator is made of\nاسٹی کور کس کی بنی ہوتی ہے",options: ["Silicon steel laminations سلیکن اسٹیل لیمینیشن", "Copper", "Cast iron", "Aluminum"], correct: 0 },
+                    { q: "The function of damper winding is to prevent\nڈیمپر وائنڈنگ روکتی ہے",options: ["Hunting", "Sparking", "Overheating", "Overvoltage"], correct: 0 },
+                    { q: "Synchronous speed formula is\nسنکرونس اسپیڈ کا فارمولا",options: ["Ns = 120f / P", "Ns = 60f / P", "Ns = P / 120f", "Ns = 120P / f"], correct: 0 },
+                    { q: "Power factor of synchronous motor can be adjusted by changing\nپاور فیکٹر کس سے کنٹرول ہوتا ہے",options: ["Excitation ایکسائٹیشن", "Load", "Speed", "Frequency"], correct: 0 },
+                    { q: "Induction generator is loaded when driven at\nانڈکشن جنریٹر لوڈ ہوتا ہے جب اسپیڈ ہو",options: ["Above synchronous speed سنکرونس اسپیڈ سے زیادہ", "Below synchronous speed", "Synchronous speed", "Zero speed"], correct: 0 },
+                    { q: "Stator of induction motor receives supply from\nاسٹی کو سپلائی ملتی ہے",options: ["3-phase AC supply", "DC supply", "Single phase", "Battery"], correct: 0 },
+                    { q: "Rotor copper losses in induction motor are proportional to\nروٹر کاپر لاسسز متناسب ہیں",options: ["Slip (s)", "Synchronous speed", "Voltage squared", "Resistance squared"], correct: 0 },
+                    { q: "A 3-phase induction motor running at 5% slip has frequency of rotor emf equal to\n5% سلپ پر روٹر فریکوئنسی کیا ہوگی (اگر f=50Hz ہو)",options: ["2.5 Hz", "5 Hz", "50 Hz", "0 Hz"], correct: 0 },
+                    { q: "The purpose of starter in a motor is to\nموٹر میں اسٹرارٹر کا مقصد ہے",options: ["Limit starting current اسسٹارٹنگ کرنٹ محدود کرنا", "Increase speed", "Reverse direction", "Stop motor"], correct: 0 }
+                ]
+            },
+            "et332": {
+                title: "Electrical Power Generation (ET-332)",
+                questions: [
+                    { q: "What is the primary process in a coal-fired thermal power plant? (کوئلے سے چلنے والے تھرمل پاور پلانٹ میں بنیادی عمل کیا ہے؟)", options: ["A) Burning oil to produce steam (تیل جلانا بھاپ پیدا کرنے کے لیے)", "B) Burning coal to produce heat for steam generation (کوئلہ جلانا گرمی پیدا کرنے کے لیے بھاپ بنانے کے لیے)", "C) Using nuclear fission (نیوکلیئر فیشن کا استعمال)", "D) Wind energy conversion (ونڈ انرجی کنورژن)"], correct: 1 },
+                    { q: "Which component pulverizes coal before feeding it to the boiler? (بوائلر میں کول کو فیڈ کرنے سے پہلے کون سا جزو اسے پلسرائز کرتا ہے؟)", options: ["A) Superheater (سوپر ہیٹر)", "B) Coal handling plant (کول ہینڈلنگ پلانٹ)", "C) Condenser (کنڈنسر)", "D) Economizer (اکنامائزر)"], correct: 1 },
+                    { q: "What is the function of an economizer in a thermal power station? (تھرمل پاور اسٹیشن میں اکنامائزر کا کیا کام ہے؟)", options: ["A) To heat incoming feed water using flue gases (آنے والے فیڈ واٹر کو فلو گیسوں سے گرم کرنا)", "B) To generate electricity (بجلی پیدا کرنا)", "C) To cool down steam (بھاپ کو ٹھنڈا کرنا)", "D) To store coal (کوئلہ ذخیرہ کرنا)"], correct: 0 },
+                    { q: "What is the purpose of a condenser in a steam power plant? (اسٹیم پاور پلانٹ میں کنڈنسر کا کیا مقصد ہے؟)", options: ["A) To increase steam pressure (بھاپ کا دباؤ بڑھانا)", "B) To condense exhaust steam back into water to create a vacuum (ایگزاسٹ بھاپ کو دوبارہ پانی میں تبدیل کرکے ویکیوم بنانا)", "C) To burn fuel (ایندھن جلانا)", "D) To supply air to the boiler (بوائلر کو ہوا فراہم کرنا)"], correct: 1 },
+                    { q: "Which type of water turbine is best suited for high head and low discharge? (زیادہ ہیڈ اور کم ڈسچارج کے لیے کون سا واٹر ٹربائن بہترین ہے؟)", options: ["A) Francis turbine (فرانسس ٹربائن)", "B) Pelton wheel turbine (پیلٹن وہیل ٹربائن)", "C) Kaplan turbine (کیپلن ٹربائن)", "D) Propeller turbine (پروپیلر ٹربائن)"], correct: 1 },
+                    { q: "Kaplan turbine is typically used for: (کیپلن ٹربائن عام طور پر کس کے لیے استعمال ہوتی ہے؟)", options: ["A) High head and low flow (زیادہ ہیڈ اور کم فلو)", "B) Medium head and medium flow", "C) Low head and high flow (کم ہیڈ اور زیادہ فلو)", "D) Very high head (بہت زیادہ ہیڈ)"], correct: 2 },
+                    { q: "What is the main function of a surge tank in a hydroelectric power plant? (ہائیڈرو الیکٹرک پاور پلانٹ میں سرج ٹینک کا بنیادی کام کیا ہے؟)", options: ["A) To generate electricity", "B) To protect penstock from water hammer pressure surges (پین اسٹاک کو واٹر ہیمر پریشر سے بچانا)", "C) To store fuel", "D) To cool the generator"], correct: 1 },
+                    { q: "Penstock is used to: (پین اسٹاک کس لیے استعمال ہوتا ہے؟)", options: ["A) Carry water from reservoir to the turbine (ریزروائر سے ٹربائن تک پانی لے جانا)", "B) Generate steam", "C) Exhaust gases", "D) Transmit electricity"], correct: 0 },
+                    { q: "What is the core fuel generally used in nuclear power reactors? (نیوکلیئر پاور ری ایکٹرز میں بنیادی اینھن کیا ہے؟)", options: ["A) Coal (کوئلہ)", "B) Uranium-235 or Plutonium-239 (یورینیم-۲۳۵ یا پلুটونیئم-۲۳۹)", "C) Diesel (ڈیزل)", "D) Natural gas (قدرتی گیس)"], correct: 1 },
+                    { q: "What is the function of a moderator in a nuclear reactor? (نیوکلیئر ری ایکٹر میں ماڈریٹر کا کیا کام ہے؟)", options: ["A) To speed up neutrons (نیوٹران کی رفتار بڑھانا)", "B) To slow down fast moving neutrons (تیز رفتار نیوٹرانوں کی رفتار سست کرنا)", "C) To stop the reactor completely", "D) To generate steam directly"], correct: 1 },
+                    { q: "Control rods in a nuclear reactor are made of materials like boron or cadmium to: (نیوکلیئر ری ایکٹر میں کنٹرول راڈز کس لیے استعمال ہوتے ہیں؟)", options: ["A) Absorb neutrons and control reaction rate (نیوٹران جذب کرنا اور ردعمل کی رفتار کنٹرول کرنا)", "B) Increase fuel temperature", "C) Produce water", "D) Cool the core"], correct: 0 },
+                    { q: "Gas turbine power plants are mainly used for: (گیس ٹربائن پاور پلانٹس بنیادی طور پر کس لیے استعمال ہوتے ہیں؟)", options: ["A) Base load operation (بیس لوڈ)", "B) Peak load operation (پیک لوڈ آپریشن)", "C) Continuous supply for remote areas", "D) Water pumping"], correct: 1 },
+                    { q: "What is a major advantage of a gas turbine power plant? (گیس ٹربائن پاور پلانٹ کا بڑا فائدہ کیا ہے؟)", options: ["A) High thermal efficiency", "B) Quick starting and loading (فوری اسٹارٹنگ اور لوڈنگ)", "C) Zero emissions", "D) Low fuel cost"], correct: 1 },
+                    { q: "Solar photovoltaic (PV) cells convert sunlight directly into: (سোলার پی وی سیلز سورج کی روشنی کو کس میں بدلتے ہیں؟)", options: ["A) Mechanical energy", "B) Electrical energy (DC) (برقی توانائی DC)", "C) Thermal energy", "D) Chemical energy"], correct: 1 },
+                    { q: "Wind energy conversion systems convert wind kinetic energy into: (ونڈ انرجی سسٹمز ہوا کی کائنےٹیک انرجی کو کس میں بدلتے ہیں؟)", options: ["A) Electrical energy (برقی توانائی)", "B) Potential energy", "C) Nuclear energy", "D) Sound energy"], correct: 0 },
+                    { q: "Geothermal energy utilizes: (جیو تھرمل توانائی کس کا استعمال کرتی ہے؟)", options: ["A) Solar radiation", "B) Heat from inside the earth (زمین کے اندر کی حرارت)", "C) Ocean waves", "D) Wind speed"], correct: 1 },
+                    { q: "Biomass energy is derived from: (بائماس انرجی کس سے حاصل ہوتی ہے؟)", options: ["A) Organic matter and plant/animal waste (نامیاتی مادے اور پودوں/جانوروں کے فضلے سے)", "B) Petroleum only", "C) Pure minerals", "D) Water currents"], correct: 0 },
+                    { q: "Base load power plants are characterized by: (بیس لوڈ پاور پلانٹس کی خصوصیت کیا ہے؟)", options: ["A) Low capital cost", "B) High running hours and constant power output (زیادہ چلنے کے اوقات اور مستقل آؤٹ پٹ)", "C) Only run during peak hours", "D) Intermittent operation"], correct: 1 },
+                    { q: "Peak load power plants are designed to operate during: (پیک لوڈ پاور پلانٹس کس وقت چلتے ہیں؟)", options: ["A) Maximum consumer demand hours (جب صارفین کی مانگ زیادہ ہو)", "B) Night time only", "C) Maintenance periods", "D) Low demand periods"], correct: 0 },
+                    { q: "Load factor is defined as: (لوڈ فیکٹر کی تعریف کیا ہے؟)", options: ["A) Average load divided by peak load over a period (اوسط لوڈ تقسیم زیادہ سے زیادہ لوڈ)", "B) Peak load divided by average load", "C) Maximum demand divided by installed capacity", "D) Total energy generated divided by fuel consumed"], correct: 0 },
+                    { q: "Diversity factor is usually: (ڈائیورسٹی فیکٹر عام طور پر ہوتا ہے؟)", options: ["A) Less than 1", "B) Greater than 1 (ایک سے زیادہ)", "C) Equal to 0", "D) Equal to 1"], correct: 1 },
+                    { q: "Plant capacity factor is the ratio of: (پلانٹ کیپیسٹی فیکٹر کس کا تناسب ہے؟)", options: ["A) Actual energy produced to maximum possible energy if running at full rating (اصل پیدا شدہ توانائی تقسیم زیادہ سے زیادہ ممکنہ توانائی)", "B) Peak load to average load", "C) Connected load to peak load", "D) None"], correct: 0 },
+                    { q: "The reserve capacity of a power plant should be: (پلانٹ کی ریزرو کیپیسٹی کتنی ہونی چاہیے؟)", options: ["A) Less than peak load", "B) Greater than or equal to the capacity of the largest set (سب سے بڑے یونٹ کی گنجائش کے برابر یا زیادہ)", "C) Zero", "D) Equal to average load"], correct: 1 },
+                    { q: "Cost of electricity generation depends on: (بجلی کی پیداوار کی لاگت کس پر منحصر ہے؟)", options: ["A) Fixed cost and operating/running cost (فکسڈ لاگت اور رننگ لاگت)", "B) Only fuel cost", "C) Only labor cost", "D) Weather conditions"], correct: 0 },
+                    { q: "Two-part tariff consists of: (ٹو پارٹ ٹیرف میں کیا شامل ہے؟)", options: ["A) Fixed charge based on maximum demand and running charge based on energy consumed (زیادہ سے زیادہ مانگ پر فکسڈ چارج اور استعمال شدہ انرجی پر چارج)", "B) Flat rate only", "C) Free electricity", "D) Power factor charge only"], correct: 0 },
+                    { q: "Cogeneration means: (کو جنریشن سے کیا مراد ہے؟)", options: ["A) Generating electricity only", "B) Simultaneous production of electricity and useful thermal energy (بجلی اور مفید حرارتی توانائی کا ایک ساتھ حصول)", "C) Using two generators in parallel", "D) Using diesel and coal together"], correct: 1 },
+                    { q: "Hydraulic efficiency of a water turbine is: (واٹر ٹربائن کی ہائیڈرولک ایفیشنسی کیا ہے؟)", options: ["A) Power delivered to runner divided by power supplied by water (رنر کو ملنے والی پاور تقسیم پانی کی سپلائی کردہ پاور)", "B) Generator output to turbine input", "C) Overall efficiency", "D) Electrical efficiency"], correct: 0 },
+                    { q: "Combined cycle power plant uses: (کمبائنڈ سائیکل پاور پلانٹ میں استعمال ہوتا ہے؟)", options: ["A) Gas turbine and steam turbine together (گیس ٹربائن اور اسٹیم ٹربائن دونوں)", "B) Coal and diesel", "C) Hydro and solar", "D) Wind and nuclear"], correct: 0 },
+                    { q: "What is the purpose of a cooling tower in thermal power plants? (تھرمل پاور پلانٹس میں کولنگ ٹاور کا مقصد کیا ہے؟)", options: ["A) To cool down circulating water from the condenser (کنڈنسر کے پانی کو ٹھنڈا کرنا)", "B) To cool steam directly", "C) To heat the boiler", "D) To generate wind"], correct: 0 },
+                    { q: "In a hydroelectric plant, spillway is used to: (ہائیڈرو پلانٹ میں اسپل وے کا کیا کام ہے؟)", options: ["A) Discharge excess flood water safely (سیلاب کا اضافی پانی محفوظ طریقے سے نکالنا)", "B) Control turbine speed", "C) Generate power", "D) Filter water"], correct: 0 },
+                    { q: "Which energy source is renewable and inexhaustible? (کون سا توانائی کا ذریعہ قابل تجدید ہے؟)", options: ["A) Coal", "B) Solar energy (شمسی توانائی)", "C) Natural gas", "D) Petroleum"], correct: 1 },
+                    { q: "A pumped storage hydro plant is used for: (پمپڈ اسٹوریج ہائیڈرو پلانٹ کس لیے ہے؟)", options: ["A) Peak load management (پیک لوڈ مینجمنٹ)", "B) Base load only", "C) Water supply to cities", "D) Flood control only"], correct: 0 },
+                    { q: "Draft tube in a reaction turbine helps in: (ری ایکشن ٹربائن میں ڈرافٹ ٹیوب کا کیا کام ہے؟)", options: ["A) Recovering kinetic energy of exiting water and creating vacuum (خارج ہونے والے پانی کی توانائی بحال کرنا اور ویکیوم بنانا)", "B) Increasing water speed", "C) Supplying high pressure water", "D) Filtering impurities"], correct: 0 },
+                    { q: "Deaerator in a thermal power station is used to: (تھرمل پاور اسٹیشن میں ڈی ایریٹر کا کام ہے؟)", options: ["A) Remove dissolved oxygen and gases from feed water (فیڈ واٹر سے آکسیجن اور گیسیں نکالنا)", "B) Add air to water", "C) Increase water temperature to maximum", "D) Filter coal dust"], correct: 0 },
+                    { q: "Electrostatic precipitator (ESP) is used in thermal plants to: (الیکٹروسٹیٹک پریسیپیٹیٹر کا کام کیا ہے؟)", options: ["A) Remove fly ash from flue gases (فلو گیسوں سے راکھ یا ایش ختم کرنا)", "B) Generate static electricity", "C) Precipitate water vapor", "D) Clean coal"], correct: 0 },
+                    { q: "The efficiency of a modern thermal power plant is approximately: (جدید تھرمل پاور پلانٹ کی ایفیشنسی کتنی ہوتی ہے؟)", options: ["A) 30% to 40% (۳۰٪ سے ۴۰٪)", "B) 80% to 90%", "C) 10% to 20%", "D) 95%"], correct: 0 },
+                    { q: "Load curve represents: (لوڈ کرو کیا ظاہر کرتا ہے؟)", options: ["A) Load variation against time (وقت کے لحاظ سے لوڈ میں تبدیلی)", "B) Total energy consumed", "C) Voltage against current", "D) Cost of power"], correct: 0 },
+                    { q: "Maximum demand of a power station is: (پاور اسٹیشن کی زیادہ سے زیادہ مانگ کیا ہے؟)", options: ["A) Greatest load on the station during a given period (دیے گئے وقت میں سب سے زیادہ لوڈ)", "B) Average load", "C) Minimum load", "D) Installed capacity"], correct: 0 },
+                    { q: "Grid station is used for: (گرڈ اسٹیشن کس لیے استعمال ہوتا ہے؟)", options: ["A) Transforming and distributing electrical power (بجلی کی ولٹیج تبدیل کرنا اور تقسیم کرنا)", "B) Generating electricity", "C) Consuming power", "D) Storing coal"], correct: 0 },
+                    { q: "What is a nuclear reactor core? (نیوکلیئر ری ایکٹر کور کیا ہے؟)", options: ["A) Where nuclear fission chain reaction takes place (جہاں نیوکلیئر فیشن کا عمل ہوتا ہے)", "B) Cooling water tank", "C) Generator housing", "D) Control room"], correct: 0 },
+                    { q: "In a hydroelectric plant, surge tank acts as: (ہائیڈرو پلانٹ میں سرج ٹینک کا کردار ہے؟)",options: ["A) Weak point for pressure relief / water reservoir storage (پریشر کم کرنے کے لیے عارضی ذخیرہ)", "B) Main water source", "C) Turbine housing", "D) Spillway"], correct: 0 },
+                    { q: "What is solar photovoltaic effect? (سোলার پی وی ایفیکٹ کیا ہے؟)", options: ["A) Generation of voltage/current in a material upon exposure to light (روشنی پڑنے پر وولٹیج/کرنٹ بننا)", "B) Heating of water by sun", "C) Wind generation by sun", "D) Chemical reaction"], correct: 0 },
+                    { q: "Biogas mainly consists of: (بائیو گیس میں زیادہ تر کیا ہوتا ہے؟)", options: ["A) Methane and Carbon dioxide (میتھین اور کاربن ڈائی آکسائیڈ)", "B) Hydrogen and Nitrogen", "C) Oxygen only", "D) Pure propane"], correct: 0 },
+                    { q: "What is the main advantage of interconnected power systems? (انٹر کنیکٹڈ پاور سسٹمز کا بڑا فائدہ کیا ہے؟)", options: ["A) High reliability and economy of operation (زیادہ بھروسہ اور سستا آپریشن)", "B) Complex control", "C) High losses", "D) Low voltage"], correct: 0 },
+                    { q: "Which power plant has the highest starting speed and quick response? (کس پاور پلانٹ کو فوری اسٹارٹ کیا جا سکتا ہے؟)", options: ["A) Hydroelectric power plant / Gas turbine (ہائیڈرو یا گیس ٹربائن)", "B) Nuclear power plant", "C) Large thermal plant", "D) Geothermal plant"], correct: 0 }
+                ]
+            },
+            "et363": {
+                title: "Starters and Speed Controllers (ET-363)",
+                questions: [
+                    { q: "DOL starter is generally used for starting which type of motor? (ڈی او ایل اسٹارٹر عموماً کس موٹر کو اسٹارٹ کرنے کے لیے استعمال ہوتا ہے؟)", options: ["a) Single phase induction motor (سنگل فیز انڈکشن موٹر)", "b) Three phase squirrel cage induction motor (تھری فیز اسکوائرل کیج انڈکشن موٹر)", "c) DC shunt motor (ڈی سی شنٹ موٹر)", "d) Universal motor (یونیورسل موٹر)"], correct: 1 },
+                    { q: "In an automatic star delta starter, how many magnetic contactors are normally used? (آٹو میٹک اسٹار ڈیلٹا اسٹارٹر میں عموماً کتنے میگنیٹک کونٹیکٹر استعمال ہوتے ہیں؟)", options: ["a) 1 (۱)", "b) 2 (۲)", "c) 3 (۳)", "d) 4 (۴)"], correct: 2 },
+                    { q: "What is the main purpose of using a starter for a 3-phase induction motor? (تھری فیز انڈکشن موٹر کے لیے اسٹارٹر استعمال کرنے کا بنیادی مقصد کیا ہے؟)", options: ["a) To increase speed (اسپیڈ بڑھانا)", "b) To limit high starting current (اسٹارٹنگ کرنٹ کو محدود کرنا)", "c) To reverse direction", "d) To increase power factor"], correct: 1 },
+                    { q: "A star-delta starter reduces the starting current to approximately: (اسٹار ڈیلٹا اسٹارٹر اسٹارٹنگ کرنٹ کو تقریباً کتنا کم کرتا ہے؟)", options: ["a) 1/3rd of direct online starting current (براہ راست اسٹارٹنگ کرنٹ کا ایک تہائی)", "b) Half", "c) Double", "d) Same"], correct: 0 },
+                    { q: "Auto-transformer starter uses an auto-transformer to: (آٹو ٹرانسفارمر اسٹارٹر کیا کرتا ہے؟)", options: ["a) Reduce voltage applied to stator during starting (اسٹارٹ کے وقت اسٹیو پر وولٹیج کم کرتا ہے)", "b) Increase frequency", "c) Increase motor speed", "d) Rectify AC to DC"], correct: 0 },
+                    { q: "Rotor resistance starter is used with which type of induction motor? (روٹر ریزسٹنس اسٹارٹر کس موٹر کے ساتھ استعمال ہوتا ہے؟)", options: ["a) Squirrel cage motor", "b) Slip ring induction motor (سلپ رنگ انڈکشن موٹر)", "c) Synchronous motor", "d) Single phase motor"], correct: 1 },
+                    { q: "In a DC shunt motor starter, NVC stands for: (ڈی سی شنٹ موٹر اسٹارٹر میں NVC کا مخفف کیا ہے؟)", options: ["a) No Voltage Coil (نو وولٹیج کوائل)", "b) Negative Voltage Control", "c) Normal Voltage Current", "d) None"], correct: 0 },
+                    { q: "OLR in motor control circuits stands for: (موٹر کنٹرول سرکٹس میں OLR کا مطلب ہے؟)", options: ["a) Overload Relay (اوورلوڈ ریلے)", "b) Open Line Resistance", "c) Output Load Ratio", "d) Oil Level Regulator"], correct: 0 },
+                    { q: "The 3-point starter is used for starting: (تھری پوائنٹ اسٹارٹر کس کے لیے استعمال ہوتا ہے؟)", options: ["a) DC shunt and compound motors (ڈی سی شنٹ اور کمپاؤنڈ موٹرز)", "b) Synchronous motors only", "c) 3-phase induction motors", "d) Alternators"], correct: 0 },
+                    { q: "Why is a 4-point starter used instead of a 3-point starter? (تھری پوائنٹ کی بجائے فور پوائنٹ اسٹارٹر کیوں استعمال ہوتا ہے؟)", options: ["a) To overcome the speed variation drawback caused by NVC connected in field circuit (فیلڈ سرکٹ سے آزاد ہو کر اسپیڈ کے اثر کو ختم کرنے کے لیے)", "b) To increase current", "c) To reduce cost", "d) For AC motors"], correct: 0 },
+                    { q: "What is the function of the overload release (OLR) in a motor starter? (موٹر اسٹارٹر میں اوورلوڈ ریلیز کا کیا کام ہے؟)", options: ["a) Protects motor against overload currents (موٹر کو اوورلوڈ سے بچانا)", "b) Increases speed", "c) Controls voltage", "d) Improves power factor"], correct: 0 },
+                    { q: "In variable frequency drives (VFD), speed control is achieved by changing: (VFD میں اسپیڈ کنٹرول کیسے کی جاتی ہے؟)", options: ["a) Supply frequency and voltage (سپلائی فریکوئنسی اور وولٹیج بدل کر)", "b) Number of poles only", "c) Rotor resistance only", "d) Shaft weight"], correct: 0 },
+                    { q: "Rheostatic speed control of DC shunt motor involves inserting resistance in: (ڈی سی شنٹ موٹر کی ریوسٹیٹ اسپیڈ کنٹرول میں مزاحمت کہاں لگائی جاتی ہے؟)", options: ["a) Armature circuit or field circuit (آرمیچر یا فیلڈ سرکٹ میں)", "b) Supply mains only", "c) Neutral wire", "d) Frame"], correct: 0 },
+                    { q: "Ward-Leonard speed control system provides: (وارڈ لیونارڈ اسپیڈ کنٹرول سسٹم کیا فراہم کرتا ہے؟)", options: ["a) Very smooth wide range speed control in both directions (دونوں سمتوں میں وسیع اور ہموار اسپیڈ کنٹرول)", "b) Fixed speed", "c) Low efficiency", "d) Only high speed"], correct: 0 },
+                    { q: "In a 3-phase induction motor, plugging means: (تھری فیز انڈکشن موٹر میں پلگنگ سے کیا مراد ہے؟)", options: ["a) Reversing supply phase sequence to brake/reverse motor (بریک لگانے کے لیے سپلائی فیز الٹنا)", "b) Unplugging cable", "c) Connecting capacitor", "d) Increasing load"], correct: 0 },
+                    { q: "Dynamic braking of a DC motor involves: (ڈی سی موٹر کی ڈائنامک بریکنگ میں کیا ہوتا ہے؟)", options: ["a) Disconnecting armature from supply and connecting across a braking resistor (آرمیچر کو سپلائی سے ہٹا کر ریزسٹر پر جوڑنا)", "b) Reversing supply", "c) Shorting field", "D) Stopping generator"], correct: 0 },
+                    { q: "Regenerative braking occurs when: (ری جنریٹو بریکنگ کب ہوتی ہے؟)", options: ["a) Motor speed exceeds synchronous speed, acting as generator (موٹر کی اسپیڈ سنکرونس سے بڑھ جائے اور جنریٹر بنے)", "b) Motor stops", "c) Voltage drops to zero", "d) Load is disconnected"], correct: 0 },
+                    { q: "Soft starter for induction motors is mainly used to: (انڈکشن موٹر کے لیے سافٹ اسٹارٹر کا مقصد کیا ہے؟)", options: ["a) Reduce mechanical shocks and starting current surges (مکینیکل جھٹکے اور اسٹارٹنگ کرنٹ کم کرنا)", "b) Increase motor speed above rated", "c) Convert AC to DC", "d) Act as transformer"], correct: 0 },
+                    { q: "Thyristor (SCR) based speed controllers are used for: (تھائرسسٹر بیسڈ اسپیڈ کنٹرولرز کس کے لیے ہیں؟)", options: ["a) Precise and efficient speed control of DC and AC motors (موٹرز کی درست اور بہترین اسپیڈ کنٹرول)", "b) Manual braking", "C) Mechanical cooling", "D) Measuring resistance"], correct: 0 },
+                    { q: "In AC motor speed control using pole changing, the speed is: (پول چینجنگ سے AC موٹر کی اسپیڈ)", options: ["a) Inversely proportional to number of poles (پولز کی تعداد کے معکوس تناسب میں ہوتی ہے)", "b) Directly proportional", "c) Constant", "d) Zero"], correct: 0 },
+                    { q: "What does a magnetic contactor do in a control circuit? (کنٹرول سرکٹ میں میگنیٹیک کونٹیکٹر کا کام کیا ہے؟)", options: ["a) Switches electrical power circuits remotely (ریموٹ طریقے سے پاور سرکٹ کو آن/آف کرنا)", "b) Measures current", "c) Steps up voltage", "d) Acts as fuse"], correct: 0 },
+                    { q: "Push button stations in motor control are normally: (پش بٹن اسٹیشن عموماً ہوتے ہیں؟)", options: ["a) Momentary contact type (Normally Open or Normally Close) (عارضی کانٹیکٹ والے NO یا NC)", "b) Permanent latching switches", "c) Circuit breakers", "d) Relays"], correct: 0 },
+                    { q: "Thermal overload relay operates on the principle of: (تھرمل اوورلوڈ ریلے کس اصول پر کام کرتی ہے؟)", options: ["a) Bimetallic strip bending due to heating from excessive current (زیادہ کرنٹ سے بیمیٹلک اسٹریپ کا گرم ہو کر مڑنا)", "b) Magnetic attraction", "c) Electromagnetic induction", "d) Electrostatic charge"], correct: 0 },
+                    { q: "In a DOL starter circuit, the start push button is connected in: (DOL اسٹارٹر سرکٹ میں اسٹارٹ پش بٹن ہوتا ہے؟)", options: ["a) Series with the contactor coil (کونٹیکٹر کوائل کے ساتھ سیریز میں)", "b) Parallel with contactor", "c) Across supply lines", "d) Ground wire"], correct: 0 },
+                    { q: "The holding contact (auxiliary contact NO) connected across the start push button is used for: (ہولڈنگ کانٹیکٹ کا مقصد کیا ہے؟)", options: ["a) Latching/maintaining control circuit path after start button is released (بٹن چھوڑنے کے بعد سرکٹ جاری رکھنا)", "b) Stopping motor", "c) Overload protection", "d) Short circuit protection"], correct: 0 },
+                    { q: "In slip ring induction motor starter, as the motor accelerates, external rotor resistance is: (سلپ رنگ موٹر اسٹارٹر میں جیسے اسپیڈ بڑھتی ہے، روٹر ریزسٹنس کو)", options: ["a) Gradually cut out / reduced (تدریجی طور پر کم کیا جاتا ہے)", "b) Increased", "c) Kept constant", "d) Shorted to ground"], correct: 0 },
+                    { q: "Why can squirrel cage motors not use rotor resistance starting? (اسکوائرل کیج موٹر میں روٹر ریزسٹنس اسٹارٹر کیوں استعمال نہیں ہوتا؟)", options: ["a) Rotor bars are permanently short-circuited internally (روٹر بارز اندر سے مستقل شارٹ ہوتی ہیں)", "b) Rotor has slip rings", "c) Voltage is too high", "d) Cost is low"], correct: 0 },
+                    { q: "Frequency inverter controls the speed of AC motor by varying: (فریکوئنسی انورٹر اسپیڈ کیسے بدلتا ہے؟)", options: ["a) Output frequency (آؤٹ پٹ فریکوئنسی بدل کر)", "b) Shaft size", "c) Load weight", "d) Bearing friction"], correct: 0 },
+                    { q: "In DC motor speed control, field flux weakening results in: (ڈی سی موٹر میں فیلڈ ف럭س کم کرنے سے کیا ہوتا ہے؟)", options: ["a) Speed above rated speed (اسپیڈ ریٹڈ اسپیڈ سے بڑھ جاتی ہے)", "b) Speed below base speed", "c) Zero speed", "d) Constant speed"], correct: 1 },
+                    { q: "Armature voltage control of DC motor is used for speeds: (آرمیچر وولٹیج کنٹرول کس اسپیڈ کے لیے ہے؟)", options: ["a) Below base speed (بیس اسپیڈ سے کم کے لیے)", "b) Above base speed", "c) Infinite speed", "d) Zero speed"], correct: 0 },
+                    { q: "Which starter provides zero voltage or under-voltage protection? (کون سا اسٹارٹر نو وولٹیج پروٹیکشن دیتا ہے؟)", options: ["a) 3-point and 4-point starters (تھری اور فور پوائنٹ اسٹارٹرز)", "b) Direct switch", "c) Fuse", "d) Isolator"], correct: 0 },
+                    { q: "The handle of a 3-point starter is held in ON position by: (تھری پوائنٹ اسٹارٹر کا ہینڈل کون پکڑتا ہے؟)", options: ["a) Electromagnet / NVC (الیکٹromagnet / NVC)", "b) Mechanical spring", "c) Screw", "d) Operator's hand"], correct: 0 },
+                    { q: "If supply voltage fails, what happens to 3-point starter handle? (سپلائی فیل ہونے پر تھری پوائنٹ اسٹارٹر کا ہینڈل کیا کرتا ہے؟)", options: ["a) Returns to OFF position due to spring action (اسپرنگ کی وجہ سے آف پوزیشن پر واپس آتا ہے)", "b) Stays in ON position", "c) Burns out", "d) Locks permanently"], correct: 0 },
+                    { q: "In auto-transformer starter, tappings are usually provided at: (آٹو ٹرانسفارمر اسٹارٹر میں ٹیپنگز عام طور پر ہوتی ہیں؟)", options: ["a) 50%, 65%, 80% etc.", "b) 10%, 20%", "c) 90%, 100%", "d) Fixed 5%"], correct: 0 },
+                    { q: "Star-delta starter can only be used with motors designed for: (اسٹار ڈیلٹا اسٹارٹر کس موٹر کے لیے ہے؟)", options: ["a) Delta running (ڈیلٹا رننگ موٹرز)", "b) Star running only", "c) Single phase", "d) DC supply"], correct: 0 },
+                    { q: "In star connection of star-delta starter, voltage across each stator phase is reduced by a factor of: (اسٹار کنکشن میں فیز وولٹیج کتنی کم ہوتی ہے؟)", options: ["a) 1.732 (root 3)", "b) 2", "c) 3", "d) 5"], correct: 0 },
+                    { q: "Inverter duty motors are specially designed to operate with: (انورٹر ڈیوٹی موٹرز کس کے ساتھ چلنے کے لیے ہیں؟)", options: ["a) VFD / Inverters (VFD / انورٹرز)", "b) Direct battery", "c) Water wheel", "d) Steam engine"], correct: 0 },
+                    { q: "PWM in VFD stands for: (VFD میں PWM کا مطلب ہے؟)", options: ["a) Pulse Width Modulation (پلس ودھ ماڈیولیشن)", "b) Phase Wave Motion", "c) Power Watt Meter", "d) Peak Voltage Maximum"], correct: 0 },
+                    { q: "Harmonics in VFD output can cause: (VFD آؤٹ پٹ میں ہارمونکس کیا کرتے ہیں؟)", options: ["a) Additional heating and losses in motor (موٹر میں اضافی حرارت اور نقصانات)", "b) Increased efficiency", "c) Higher speed", "d) Cooling"], correct: 0 },
+                    { q: "An electric braking method where kinetic energy is fed back to supply is: (کون سی بریکنگ میں توانائی واپس سپلائی میں جاتی ہے؟)", options: ["a) Regenerative braking (ری جنریٹو بریکنگ)", "b) Plugging", "c) Mechanical braking", "d) Rheostatic braking"], correct: 0 },
+                    { q: "The main disadvantage of plugging is: (پلگنگ کا بڑا نقصان کیا ہے؟)", options: ["a) High power loss and high current surge (زیادہ پاور لاس اور کرنٹ کا جھٹکا)", "b) Low braking torque", "c) Slow stop", "d) Motor damage always"], correct: 0 },
+                    { q: "In DC motor armature control, speed is directly proportional to: (ڈی سی موٹر آرمیچر کنٹرول میں اسپیڈ کس کے متناسب ہے؟)", options: ["a) Back EMF / Armature voltage (بیک EMF / آرمیچر وولٹیج)", "b) Field current", "c) Resistance", "d) Flux squared"], correct: 0 },
+                    { q: "Control transformers in motor control panels are used to: (کنٹرول پینلز میں کنٹرول ٹرانسفارمر کا کام ہے؟)", options: ["a) Step down voltage for control circuits (e.g. 24V or 110V) (کنٹرول سرکٹ کے لیے وولٹیج کم کرنا)", "b) Step up voltage for motor", "c) Measure power", "d) Store energy"], correct: 0 },
+                    { q: "Limit switches are used to: (لمٹ سوئچز کس لیے استعمال ہوتے ہیں؟)", options: ["a) Control travel limit of moving mechanical parts of machine (مشین کے حرکت کرنے والے حصے کی حد طے کرنا)", "b) Measure temperature", "c) Control frequency", "d) Step up voltage"], correct: 0 },
+                    { q: "Proximity sensors detect objects: (پراکسیمیٹی سینسرز کیا کرتے ہیں؟)", options: ["a) Without physical contact (بغیر کسی جسمانی رابطے کے اشیاء کا پتہ لگانا)", "b) By physical touch only", "c) By sound", "d) By weight"], correct: 0 },
+                    { q: "A timer relay in control circuits provides: (ٹائمر ریلے کا کام ہے؟)", options: ["a) Time delay before switching contacts (کنٹیکٹر آن/آف ہونے میں وقت کا وقفہ دینا)", "b) Instantaneous trip", "c) Voltage step-up", "d) Current amplification"], correct: 0 },
+                    { q: "Interlocking in motor starters ensures that: (انٹر لاکنگ کا مقصد کیا ہے؟)", options: ["a) Two contradictory operations cannot occur simultaneously (دو مخالف کام ایک ساتھ نہ ہوں)", "b) Motor runs fast", "c) Current increases", "d) Voltage drops"], correct: 0 },
+                    { q: "Emergency stop push buttons are normally: (ایمرجنسی اسٹاپ پش بٹن عموماً ہوتے ہیں؟)", options: ["a) Normally Closed (NC) type with latching (NC ٹائپ اور لیتھنگ والے)", "b) Normally Open", "c) Temporary", "d) Toggle type"], correct: 0 },
+                    { q: "Phase failure relay protects 3-phase motor against: (فیز فیلریل ریلے کس سے حفاظت کرتی ہے؟)", options: ["a) Single phasing / loss of one phase (سنگل فیزنگ یا ایک فیز غائب ہونے سے)", "b) Over speed", "c) Low frequency", "d) High resistance"], correct: 0 },
+                    { q: "Earth leakage circuit breaker (ELCB) protects against: (ELCB کس سے حفاظت کرتی ہے؟)", options: ["a) Earth fault / leakage currents (ارتھ فాల్ٹ یا لیکیج کرنٹ سے)", "b) Overload only", "c) Short circuit only", "d) Overvoltage"], correct: 0 },
+                    { q: "In slip ring motor, starting torque is controlled by: (سلپ رنگ موٹر میں اسٹرارٹنگ ٹارک کس سے کنٹرول ہوتا ہے؟)", options: ["a) External rotor resistance (بیرونی روٹر ریزسٹنس سے)", "b) Stator voltage", "c) Frequency", "d) Number of poles"], correct: 0 },
+                    { q: "The starting torque of DOL starter compared to full load torque is: (DOL اسٹرارٹر کا اسٹرارٹنگ ٹارک ہوتا ہے؟)", options: ["a) High (Equal to or greater than full load torque)", "b) Zero", "c) Very low", "d) Half"], correct: 0 },
+                    { q: "In manual star-delta starter, handle is first moved to: (मैनुअल اسٹار ڈیلٹا میں ہینڈل پہلے کہاں جاتا ہے؟)", options: ["a) Star position (اسٹار پوزیشن)", "b) Delta position", "c) OFF position", "d) Reverse position"], correct: 0 },
+                    { q: "In a starter, thermal overload relay works on: (تھرمل اوورلوڈ ریلے کس پر مبنی ہے؟)", options: ["a) Heating effect of current (کرنٹ کے حرارتی اثر پر)", "b) Magnetic pull", "c) Light effect", "d) Chemical action"], correct: 0 },
+                    { q: "Speed regulation of DC shunt motor is: (ڈی سی شنٹ موٹر کی اسپیڈ ریگुलेशन ہوتی ہے؟)", options: ["a) Good / fairly constant (اچھی اور تقریبا مستقل)", "b) Poor", "c) Zero", "d) Negative"], correct: 0 },
+                    { q: "Why starters are not required for very small motors (below 0.5 HP)? (بہت چھوٹی موٹرز کے لیے اسٹارٹر کیوں نہیں چاہیے؟)", options: ["a) Their winding impedance naturally limits starting current (ان کی وائنڈنگ کا impedance کرنٹ خود محدود رکھتا ہے)", "b) They have high speed", "c) They use DC", "d) Cost is high"], correct: 0 },
+                    { q: "In closed-loop speed control system, feedback is obtained from: (کلوزڈ لوپ اسپیڈ کنٹرول میں فیڈ بیک کہاں سے لی جاتی ہے؟)", options: ["a) Tachogenerator or encoder (ٹیکو جنریٹر یا انکوڈر سے)", "b) Voltmeter", "c) Ammeter", "d) Switch"], correct: 0 },
+                    { q: "The device used to convert AC mains to adjustable DC for motor control is: (AC کو کنٹرول ایبل DC میں بدلنے والا آلہ؟)", options: ["a) Controlled Rectifier / Converter (کنٹرولڈ ریکٹیفائر / کنورٹر)", "b) Inverter", "c) Transformer", "d) Alternator"], correct: 0 },
+                    { q: "In PLC based motor control, PLC stands for: (PLC کا مطلب کیا ہے؟)", options: ["a) Programmable Logic Controller (پروگرام ایبل لاجک کنٹرولر)", "b) Power Line Control", "c) Phase Logic Circuit", "d) Permanent Load Current"], correct: 0 },
+                    { q: "Maintenance of motor starters mainly involves checking: (اسٹارٹر کی مینٹیننس میں کیا چیک ہوتا ہے؟)", options: ["a) Contacts condition, tightness and thermal relay setting (کانٹیکٹر کی حالت اور ریلی سیٹنگ)", "b) Color of box", "c) Weight", "d) Brand name"], correct: 0 }
+                ]
+            },
+            "et345": {
+                title: "Electrical Transmission & Distribution (ET-345)",
+                questions: [
+                    { q: "Low voltage system is:\nکم وولٹیج سسٹم کیا ہوتا ہے؟", options: ["Below 1kV — 1kV سے کم", "Above 11kV — 11kV سے زیادہ", "33kV — 33kV", "132kV — 132kV"], correct: 0 },
+                    { q: "A circuit breaker is used as:\nسرکٹ بریکر کس کے طور پر استعمال ہوتا ہے؟", options: ["Isolator — آئسولیٹر", "Relay — ریلے", "Protection device — حفاظتی آلہ", "Transformer — ٹرانسفارمر"], correct: 2 },
+                    { q: "Fuse works on:\nفیوز کس اصول پر کام کرتا ہے؟", options: ["Ohm’s law — اوہم کا قانون", "Heating effect — حرارتی اثر", "Magnetic effect — مقناطیسی اثر", "Chemical effect — کیمیائی اثر"], correct: 1 },
+                    { q: "Lightning arrester protects:\nلائٹننگ اریسٹر کس سے حفاظت کرتا ہے؟", options: ["Overcurrent — زائد کرنٹ", "Overvoltage — زائد وولٹیج", "Undervoltage — کم وولٹیج", "Short circuit — شارٹ سرکٹ"], correct: 1 },
+                    { q: "Relay is used for:\nریلے کس کے لیے استعمال ہوتا ہے؟", options: ["Measurement — پیمائش", "Protection — حفاظت", "Generation — پیداوار", "Transmission — ترسیل"], correct: 1 },
+                    { q: "Busbar is:\nبس بار کیا ہے؟", options: ["Insulator — انسولیٹر", "Conductor — موصل", "Transformer — ٹرانسفارمر", "Relay — ریلے"], correct: 1 },
+                    { q: "Transmission line carries:\nٹرانسمیشن لائن کیا لے جاتی ہے؟", options: ["Low voltage — کم وولٹیج", "Medium voltage — درمیانہ وولٹیج", "High voltage — زیادہ وولٹیج", "Zero voltage — صفر وولٹیج"], correct: 2 },
+                    { q: "Frequency in Pakistan is:\nپاکستان میں فریکوئنسی کیا ہے؟", options: ["25 Hz — 25 ہرٹز", "50 Hz — 50 ہرٹز", "60 Hz — 60 ہرٹز", "100 Hz — 100 ہرٹز"], correct: 1 },
+                    { q: "Unit of resistance:\nمزاحمت کی اکائی؟", options: ["Volt — وولٹ", "Ampere — ایمپیئر", "Ohm — اوہم", "Watt — واٹ"], correct: 2 },
+                    { q: "Overcurrent relay works when:\nاوور کرنٹ ریلے کب کام کرتا ہے؟", options: ["Voltage increases — وولٹیج بڑھ جائے", "Current increases — کرنٹ بڑھ جائے", "Frequency decreases — فریکوئنسی کم ہو", "Power decreases — پاور کم ہو"], correct: 1 },
+                    { q: "Isolator is used for:\nآئیسولیٹر کس لیے استعمال ہوتا ہے؟", options: ["Switching under load — لوڈ کے ساتھ سوئچنگ", "Isolation without load — بغیر لوڈ علیحدگی", "Voltage control — وولٹیج کنٹرول", "Current control — کرنٹ کنٹرول"], correct: 1 },
+                    { q: "Short circuit means:\nشارٹ سرکٹ کا مطلب؟", options: ["High resistance — زیادہ مزاحمت", "Low resistance path — کم مزاحمت راستہ", "Open circuit — اوپن سرکٹ", "No current — کرنٹ نہیں"], correct: 1 },
+                    { q: "Transformer works on:\nٹرانسفارمر کس اصول پر کام کرتا ہے؟", options: ["Electrostatic — الیکٹروسٹیٹک", "Electromagnetic induction — برقی مقناطیسی القاء", "Chemical — کیمیائی", "Thermal — حرارتی"], correct: 1 },
+                    { q: "Unit of power:\nطاقت کی اکائی؟", options: ["Volt — وولٹ", "Watt — واٹ", "Ampere — ایمپیئر", "Ohm — اوہم"], correct: 1 },
+                    { q: "Power factor is:\nپاور فیکٹر کیا ہے؟", options: ["V/I — وولٹ/کرنٹ", "P/V — پاور/وولٹیج", "Cosθ — کوس تھیٹا", "Sinθ — سائن تھیٹا"], correct: 2 },
+                    { q: "Transmission efficiency depends on:\nٹرانسمیشن ایفیشنسی کس پر منحصر ہے؟", options: ["Voltage — وولٹیج", "Current — کرنٹ", "Resistance — مزاحمت", "All of these — یہ سب"], correct: 3 },
+                    { q: "Circuit breaker opens:\nسرکٹ بریکر کب کھلتا ہے؟", options: ["Normal condition — نارمل حالت", "Fault condition — خرابی کی حالت", "No load — بغیر لوڈ", "Idle condition — غیر فعال حالت"], correct: 1 },
+                    { q: "Distribution system delivers:\nڈسٹری بیوشن سسٹم کیا فراہم کرتا ہے؟", options: ["Generation — پیداوار", "Power to consumers — صارفین کو بجلی", "Transmission — ترسیل", "Storage — ذخیرہ"], correct: 1 },
+                    { q: "Earth wire is used for:\nارتھ وائر کس کے لیے؟", options: ["Voltage increase — وولٹیج بڑھانا", "Protection — حفاظت", "Current increase — کرنٹ بڑھانا", "Power factor — پاور فیکٹر"], correct: 1 },
+                    { q: "Unit of frequency:\nفریکوئنسی کی اکائی؟", options: ["Hertz — ہرٹز", "Ohm — اوہم", "Volt — وولٹ", "Watt — واٹ"], correct: 0 },
+                    { q: "Insulator is used to:\nانسولیٹر کا کام؟", options: ["Conduct electricity — بجلی چلانا", "Prevent leakage — لیکیج روکنا", "Increase current — کرنٹ بڑھانا", "Store energy — توانائی ذخیرہ کرنا"], correct: 1 },
+                    { q: "Corona effect occurs in:\nکورونا ایفیکٹ کہاں ہوتا ہے؟", options: ["Low voltage — کم وولٹیج", "High voltage lines — ہائی وولٹیج لائنز", "DC circuits — ڈی سی سرکٹس", "Batteries — بیٹری"], correct: 1 },
+                    { q: "Main function of relay:\nریلے کا بنیادی کام؟", options: ["Control — کنٹرول", "Protection — حفاظت", "Measurement — پیمائش", "Generation — پیداوار"], correct: 1 },
+                    { q: "Fuse is:\nفیوز کیا ہے؟", options: ["Reusable — دوبارہ استعمال", "One-time device — ایک بار استعمال", "Motor — موٹر", "Generator — جنریٹر"], correct: 1 },
+                    { q: "Circuit breaker can be reset:\nسرکٹ بریکر کو دوبارہ استعمال کیا جا سکتا ہے؟", options: ["Yes — ہاں", "No — نہیں", "Sometimes — کبھی کبھار", "Never — کبھی نہیں"], correct: 0 },
+                    { q: "Transmission voltage is increased to:\nٹرانسمیشن وولٹیج کیوں بڑھایا جاتا ہے؟", options: ["Reduce losses — نقصانات کم کرنے", "Increase losses — نقصانات بڑھانے", "Stop current — کرنٹ روکنے", "None — کوئی نہیں"], correct: 0 },
+                    { q: "Unit of current:\nکرنٹ کی اکائی؟", options: ["Volt — وولٹ", "Ampere — ایمپیئر", "Ohm — اوہم", "Watt — واٹ"], correct: 1 },
+                    { q: "Protective devices include:\nحفاظتی آلات میں شامل ہیں:", options: ["Relay — ریلے", "Fuse — فیوز", "Circuit breaker — سرکٹ بریکر", "All of these — یہ سب"], correct: 3 },
+                    { q: "Overvoltage protection is done by:\nاوور وولٹیج سے حفاظت کیسے ہوتی ہے؟", options: ["Relay — ریلے", "Arrester — اریسٹر", "Fuse — فیوز", "Transformer — ٹرانسفارمر"], correct: 1 },
+                    { q: "Distribution voltage level:\nڈسٹری بیوشن وولٹیج کی سطح؟", options: ["Low — کم", "Medium — درمیانی", "High — زیادہ", "Very high — بہت زیادہ"], correct: 0 },
+                    { q: "Which device is used to step up voltage?\nوولٹیج بڑھانے کے لیے کون سا آلہ استعمال ہوتا ہے؟", options: ["Step-down transformer — اسٹیپ ڈاؤن ٹرانسفارمر", "Step-up transformer — اسٹیپ اپ ٹرانسفارمر", "Motor — موٹر", "Generator — جنریٹر"], correct: 1 },
+                    { q: "Unit of energy is:\nتوانائی کی اکائی؟", options: ["Joule — جول", "Watt — واٹ", "Volt — وولٹ", "Ampere — ایمپیئر"], correct: 0 },
+                    { q: "What is the function of a capacitor?\nکیپیسٹر کا کام کیا ہے؟", options: ["Store energy — توانائی ذخیرہ کرنا", "Increase resistance — مزاحمت بڑھانا", "Reduce voltage — وولٹیج کم کرنا", "Generate current — کرنٹ پیدا کرنا"], correct: 0 },
+                    { q: "Which device converts AC to DC?\nکون سا آلہ AC کو DC میں تبدیل کرتا ہے؟", options: ["Transformer — ٹرانسفارمر", "Rectifier — ریکٹیفائر", "Inverter — انورٹر", "Motor — موٹر"], correct: 1 },
+                    { q: "Ohm’s law is:\nاوہم کا قانون کیا ہے؟", options: ["V = IR — وولٹیج = کرنٹ × مزاحمت", "P = VI — پاور = وولٹیج × کرنٹ", "I = V/R — کرنٹ = وولٹیج ÷ مزاحمت", "Both A and C — دونوں A اور C"], correct: 3 },
+                    { q: "Which material is a conductor?\nکون سا مادہ موصل ہے؟", options: ["Wood — لکڑی", "Plastic — پلاسٹک", "Copper — تانبا", "Rubber — ربڑ"], correct: 2 },
+                    { q: "Which device measures current?\nکرنٹ ناپنے کا آلہ؟", options: ["Ammeter — ایمیٹر", "Voltmeter — وولٹ میٹر", "Wattmeter — واٹ میٹر", "Ohmmeter — اوہم میٹر"], correct: 0 },
+                    { q: "Which device measures voltage?\nوولٹیج ناپنے کا آلہ؟", options: ["Ammeter — ایمیٹر", "Voltmeter — وولٹ میٹر", "Wattmeter — واٹ میٹر", "Ohmmeter — اوہم میٹر"], correct: 1 },
+                    { q: "Which device measures resistance?\nمزاحمت ناپنے کا آلہ؟", options: ["Ammeter — ایمیٹر", "Voltmeter — وولٹ میٹر", "Ohmmeter — اوہم میٹر", "Wattmeter — واٹ میٹر"], correct: 2 },
+                    { q: "Which device measures power?\nپاور ناپنے کا آلہ؟", options: ["Ammeter — ایمیٹر", "Voltmeter — وولٹ میٹر", "Wattmeter — واٹ میٹر", "Ohmmeter — اوہم میٹر"], correct: 2 },
+                    { q: "Which type of current changes direction?\nکون سا کرنٹ اپنی سمت بدلتا ہے؟", options: ["AC — اے سی", "DC — ڈی سی", "Both — دونوں", "None — کوئی نہیں"], correct: 0 },
+                    { q: "Which type of current flows in one direction?\nکون سا کرنٹ ایک ہی سمت میں بہتا ہے؟", options: ["AC — اے سی", "DC — ڈی سی", "Both — دونوں", "None — کوئی نہیں"], correct: 1 },
+                    { q: "What is the unit of capacitance?\nکیپیسٹینس کی اکائی؟", options: ["Ohm — اوہم", "Farad — فیراڈ", "Henry — ہنری", "Volt — وولٹ"], correct: 1 },
+                    { q: "What is the unit of inductance?\nانڈکٹینس کی اکائی؟", options: ["Ohm — اوہم", "Farad — فیراڈ", "Henry — ہنری", "Watt — واٹ"], correct: 2 },
+                    { q: "Transformer changes:\nٹرانسفارمر کیا تبدیل کرتا ہے؟", options: ["Voltage — وولٹیج", "Frequency — فریکوئنسی", "Power — پاور", "Resistance — مزاحمت"], correct: 0 },
+                    { q: "Power is equal to:\nپاور برابر ہوتی ہے:", options: ["V × I — وولٹیج × کرنٹ", "I × R — کرنٹ × مزاحمت", "V ÷ I — وولٹیج ÷ کرنٹ", "None — کوئی نہیں"], correct: 0 },
+                    { q: "Efficiency is always:\nایفیشنسی ہمیشہ ہوتی ہے:", options: ["Greater than 100% — 100% سے زیادہ", "Equal to 100% — 100% کے برابر", "Less than or equal to 100% — 100% یا اس سے کم", "Zero — صفر"], correct: 2 },
+                    { q: "Which loss occurs in transformer core?\nٹرانسفارمر کور میں کون سا نقصان ہوتا ہے؟", options: ["Copper loss — کاپر لاس", "Iron loss — آئرن لاس", "Mechanical loss — مکینیکل لاس", "Load loss — لوڈ لاس"], correct: 1 },
+                    { q: "Which loss occurs in winding?\nوائنڈنگ میں کون سا نقصان ہوتا ہے؟", options: ["Copper loss — کاپر لاس", "Iron loss — آئرن لاس", "Core loss — کور لاس", "Flux loss — فلکس لاس"], correct: 0 },
+                    { q: "Which device is used for switching?\nسوئچنگ کے لیے کون سا آلہ استعمال ہوتا ہے؟", options: ["Switch — سوئچ", "Relay — ریلے", "Fuse — فیوز", "Transformer — ٹرانسفارمر"], correct: 0 },
+                    { q: "Which device stores charge?\nچارج ذخیرہ کرنے والا آلہ؟", options: ["Capacitor — کیپیسٹر", "Resistor — ریزسٹر", "Inductor — انڈکٹر", "Transformer — ٹرانسفارمر"], correct: 0 },
+                    { q: "Which device opposes current?\nکرنٹ کی مخالفت کون کرتا ہے؟", options: ["Capacitor — کیپیسٹر", "Inductor — انڈکٹر", "Resistor — ریزسٹر", "Battery — بیٹری"], correct: 2 },
+                    { q: "Which device produces magnetic field?\nکون سا آلہ مقناطیسی میدان پیدا کرتا ہے؟", options: ["Inductor — انڈکٹر", "Capacitor — کیپیسٹر", "Resistor — ریزسٹر", "Fuse — فیوز"], correct: 0 },
+                    { q: "Which device converts DC to AC?\nکون سا آلہ DC کو AC میں تبدیل کرتا ہے؟", options: ["Rectifier — ریکٹیفائر", "Inverter — انورٹر", "Transformer — ٹرانسفارمر", "Relay — ریلے"], correct: 1 },
+                    { q: "Which parameter is measured in Hertz?\nہرٹز میں کیا ناپا جاتا ہے؟", options: ["Voltage — وولٹیج", "Current — کرنٹ", "Frequency — فریکوئنسی", "Resistance — مزاحمت"], correct: 2 },
+                    { q: "Which device is used for protection against short circuit?\nشارٹ سرکٹ سے حفاظت کے لیے کون سا آلہ؟", options: ["Fuse — فیوز", "Capacitor — کیپیسٹر", "Inductor — انڈکٹر", "Transformer — ٹرانسفارمر"], correct: 0 },
+                    { q: "Which system supplies electricity to homes?\nگھروں کو بجلی کون سا نظام فراہم کرتا ہے؟", options: ["Generation — پیداوار", "Transmission — ترسیل", "Distribution — تقسیم", "Protection — حفاظت"], correct: 2 },
+                    { q: "Which device isolates circuit?\nسرکٹ کو علیحدہ کرنے والا آلہ؟", options: ["Isolator — آئسولیٹر", "Relay — ریلے", "Fuse — فیوز", "Motor — موٹر"], correct: 0 },
+                    { q: "Which factor reduces transmission losses?\nٹرانسمیشن نقصانات کم کرنے والا عنصر؟", options: ["High current — زیادہ کرنٹ", "Low voltage — کم وولٹیج", "High voltage — زیادہ وولٹیج", "High resistance — زیادہ مزاحمت"], correct: 2 },
+                    { q: "Efficiency is:\nایفیشنسی کیا ہے؟", options: ["Output/Input — آؤٹ پٹ/ان پٹ", "Input/Output — ان پٹ/آؤٹ پٹ", "Power loss — پاور نقصان", "Voltage drop — وولٹیج ڈراپ"], correct: 0 }
+                ]
+            },
+            "et303": {
+                title: "Telecommunications (ET-303)",
+                questions: [
+                    { q: "Telecommunication means:\nٹیلی کمیونیکیشن سے کیا مراد ہے؟", options: ["Wireless only - صرف واٹر لیں", "Communication over distance - فاصلے پر مواصلات", "Internet only - صرف انٹرنیٹ", "Telephone only - صرف ٹیلیفون"], correct: 1 },
+                    { q: "PSTN stands for:\nPSTN کا مکمل نام کیا ہے؟", options: ["Public Switching Telephone Network - پبلک سو پچنگ ٹیلیفون نیٹ ورک", "Public Switched Telephone Network - پبلک سوئچڈ ٹیلیفون نیٹ ورک", "Private Telephone Network - پرائیویٹ ٹیلیفون نیٹ ورک", "Packet Switching Network - پیکٹ سوپچنگ نیٹ ورک"], correct: 1 },
+                    { q: "Basic parts of telephony system include:\nٹیلی فونی سسٹم کے بنیادی حصے کون سے ہیں؟", options: ["Transmitter – ٹرانسمیٹر", "Receiver - ریسیور", "Medium - میڈیم", "All of these - یہ سب"], correct: 3 },
+                    { q: "Telephone exchange connects:\nٹیلیفون ایکسچینج کس کو آپس میں ملاتا ہے؟", options: ["Computers - کمپیوٹرز", "Subscribers - سبسکرائبرز", "Satellites - سیٹلائٹس", "Routers - روٹرز"], correct: 1 },
+                    { q: "Trunk exchange is used for:\nٹرنگ ایکسچینج کس مقصد کے لیے استعمال ہوتا ہے؟", options: ["Local calls - لوکل کالز", "International calls - بین الاقوامی کالز", "Long-distance calls - طویل فاصلے کی کالز", "Mobile calls - موبائل کالز"], correct: 2 },
+                    { q: "Signal from microphone is:\nمائیکروفون سے نکلنے والا سگنل کیسا ہوتا ہے؟", options: ["Digital - ڈیجیٹل", "Analog - اینالاگ", "Binary - بائنری", "Pulse - پلس"], correct: 1 },
+                    { q: "Internet is:\nانٹرنیٹ کیا ہے؟", options: ["Small network - چھوٹا نیٹ ورک", "Largest data network - سب سے بڑا ڈیٹا نیٹ ورک", "Private network - پرائیویٹ نیٹ ورک", "LAN - لوکل ایریا نیٹ ورک"], correct: 1 },
+                    { q: "Cable TV network is used for:\nکیبل ٹی وی نیٹ ورک کس کے لیے استعمال ہوتا ہے؟", options: ["Voice - آواز", "Data - ڈیٹا", "Video - ویڈیو", "All - یہ سب"], correct: 3 },
+                    { q: "ADSL is used for:\nADSL کس مقصد کے لیے استعمال ہوتا ہے؟", options: ["Power supply - پاور سپلائی", "Internet access – انٹرنیٹ تک رسائی", "Switching - سوچنگ", "Routing - روٹنگ"], correct: 1 },
+                    { q: "Mobile network uses:\nموبائل نیٹ ورک کس چیز کا استعمال کرتا ہے؟", options: ["Copper cable - کاپر کیبل", "Optical fiber - آپٹیکل فائبر", "Radio waves - ریڈیو ویوز", "None - کوئی نہیں"], correct: 2 },
+                    { q: "Interconnection of networks is needed for:\nنیٹ ورکس کو آپس میں جوڑنے کی ضرورت کیوں ہوتی ہے؟", options: ["Isolation – علیحدگی", "Communication - مواصلات", "Storage - ذخیرہ", "Power - طاقت"], correct: 1 },
+                    { q: "ISDN stands for:\nISDN کا مکمل نام کیا ہے؟", options: ["Integrated Service Digital Network - انٹیگریٹڈ سروس ڈیجیٹل نیٹ ورک", "Internet Service Data Network - انٹرنیٹ سروس ڈیٹا نیٹ ورک", "Internal System Data Network - انٹرنل سسٹم ڈیٹا نیٹ ورک", "None - کوئی نہیں"], correct: 0 },
+                    { q: "Network topology defines:\nنیٹ ورک ٹوپولوجی کیا بیان کرتی ہے؟", options: ["Speed - رفتار", "Structure - ساخت", "Power - طاقت", "Cost - لاگت"], correct: 1 },
+                    { q: "Star topology has:\nاسٹار ٹوپولوجی میں کیا ہوتا ہے؟", options: ["No center - کوئی مرکز نہیں", "Central node - مرکزی نوڈ", "Ring structure - رنگ ساخت", "Mesh links - میش روابط"], correct: 1 },
+                    { q: "Ring topology data flows:\nرنگ ٹوپولوجی میں ڈیٹا کا بہاؤ کیسا ہوتا ہے؟", options: ["Random - بے ترتیب", "Circular - دائرے میں", "Star - اسٹار", "Linear - سیدھا"], correct: 1 },
+                    { q: "Mesh topology provides:\nمیش ٹوپولوجی کیا فراہم کرتی ہے؟", options: ["Low reliability - کم اعتبار", "High reliability - زیادہ اعتبار", "No links - کوئی لنک نہیں", "Single path - ایک راستہ"], correct: 1 },
+                    { q: "Multiplexing is used to:\nملٹی پلیکسنگ کا مقصد کیا ہے؟", options: ["Divide signal - سگنل کو تقسیم کرنا", "Combine signals - سگنلز کو ملانا", "Amplify signal - سگنل کو بڑھانا", "Filter signal - سگنل کو فلٹر کرنا"], correct: 1 },
+                    { q: "FDM stands for:\nFDM کا مکمل نام کیا ہے؟", options: ["Frequency Division Multiplexing - فریکوئنسی ڈویژن ملٹی پلیکسنگ", "Fast Data Mode - فاسٹ ڈیٹا موڈ", "Fixed Data Method - فکسڈ ڈیٹا میتھڈ", "None - کوئی نہیں"], correct: 0 },
+                    { q: "TDM stands for:\nTDM کا مکمل نام کیا ہے؟", options: ["Time Division Multiplexing - ٹائم ڈویژن ملٹی پلیکسنگ", "Transmission Data Mode - ٹرانسمیشن ڈیٹا موڈ", "Total Data Method - ٹوٹل ڈیٹا میتھڈ", "None - کوئی نہیں"], correct: 0 },
+                    { q: "Main link components are:\nٹرانسمیشن لنک کے بنیادی اجزاء کیا ہیں؟", options: ["Transmitter - ٹرانسمیٹر", "Receiver - ریسیور", "Medium - میڈیم", "All - یہ سب"], correct: 3 },
+                    { q: "AM stands for:\nAM سے کیا مراد ہے؟", options: ["Amplitude Modulation – ایمپلی ٹیوڈ ماڈیولیشن", "Analog Mode - اینالاگ موڈ", "Audio Mode - آڈیو موڈ", "None - کوئی نہیں"], correct: 0 },
+                    { q: "FM varies:\nFM میں کیا تبدیل ہوتا ہے؟", options: ["Amplitude - ایمپلی ٹیوڈ", "Frequency - فریکوئنسی", "Phase - فیز", "Voltage - وولٹیج"], correct: 1 },
+                    { q: "PCM is used for:\nPCM کس لیے استعمال ہوتا ہے؟", options: ["Analog transmission - اینالاگ ٹرانسمیشن", "Digital conversion - ڈیجیٹل تبدیلی", "Amplification – ایمپلی فکیشن", "Routing - روٹنگ"], correct: 1 },
+                    { q: "PSK stands for:\nPSK کا مکمل نام کیا ہے؟", options: ["Phase Shift Keying - فیز شفٹ کینگ", "Pulse Signal Keying - پلس سگنل کینگ", "Phase Signal Kernel - فیز سگنل کرنل", "None - کوئی نہیں"], correct: 0 },
+                    { q: "FSK stands for:\nFSK کا مکمل نام کیا ہے؟", options: ["Frequency Shift Keying - فریکوئنسی شفٹ کینگ", "Fast Signal Keying - فاسٹ سگنل کینگ", "Fixed Signal Kernel - فکسڈ سگنل کرنل", "None - کوئی نہیں"], correct: 0 },
+                    { q: "Optical fiber uses:\nآپٹیکل فائبر کس چیز کو استعمال کرتا ہے؟", options: ["Electrical signals - برقی سگنلز", "Light signals – روشنی کے سگنلز", "Magnetic waves - مقناطیسی لہریں", "Sound waves - صوتی لہریں"], correct: 1 },
+                    { q: "Coaxial cable is used for:\nکو ایکسٹل کیبل کس کے لیے استعمال ہوتی ہے؟", options: ["Power - پاور", "Communication - مواصلات", "Storage - ذخیرہ", "Switching - سوچنگ"], correct: 1 },
+                    { q: "Attenuation means:\nائینیوایشن سے کیا مراد ہے؟", options: ["Signal increase – سگنل میں اضافہ", "Signal loss - سگنل میں کمی", "Signal delay - سگنل میں تاخیر", "Noise - شور"], correct: 1 },
+                    { q: "Satellite communication uses:\nسیٹلائٹ کمیونیکیشن کس میڈیم کو استعمال کرتی ہے؟", options: ["Wire - وائر", "Fiber - فائبر", "Free space - خلا", "None - کوئی نہیں"], correct: 2 },
+                    { q: "PCM frame duration is:\nPCM فریم کا دورانیہ کتنا ہوتا ہے؟", options: ["100 μs - 100 مائیکرو سیکنڈ", "125 μs - 125 مائیکرو سیکنڈ", "150 μs - 150 مائیکرو سیکنڈ", "200 μs - 200 مائیکرو سیکنڈ"], correct: 1 },
+                    { q: "Access network connects:\nایکسیس نیٹ ورک کس کو کنیکٹ کرتا ہے؟", options: ["Core network - کور نیٹ ورک", "End user - آخری صارف", "Router - روٹر", "Server - سرور"], correct: 1 },
+                    { q: "Local loop connects:\nلوکل لوپ کس کو کنیکٹ کرتا ہے؟", options: ["Exchange to user - ایکسچینج سے صارف", "User to user - صارف سے صارف", "Router to router - روٹر سے روٹر", "Server to client - سرور سے کلائنٹ"], correct: 0 },
+                    { q: "Core network connects:\nکور نیٹ ورک کیا کنیکٹ کرتا ہے؟", options: ["Few nodes - چند نوڈز", "Many nodes - بہت سے نوڈز", "No nodes - کوئی نوڈ نہیں", "Single node - ایک نوڈ"], correct: 1 },
+                    { q: "PDH stands for:\nPDH کا مکمل نام کیا ہے؟", options: ["Plesiochronous Digital Hierarchy - پلیسیو کرونس ڈیجیٹل ہائیرارکی", "Packet Data Hub - پیکٹ ڈیٹا ہب", "Power Data Hub - پاور ڈیٹا ہب", "None - کوئی نہیں"], correct: 0 },
+                    { q: "SDH stands for:\nSDH کا مکمل نام کیا ہے؟", options: ["Synchronous Digital Hierarchy - سنکرونس ڈیجیٹل ہائیرارکی", "Signal Data Hub - سگنل ڈیٹا ہب", "System Data Hub - سسٹم ڈیٹا ہب", "None - کوئی نہیں"], correct: 0 },
+                    { q: "Broadband provides:\nبراڈ بینڈ کیا فراہم کرتا ہے؟", options: ["Low speed - کم رفتار", "High speed - زیادہ رفتار", "No speed - کوئی رفتار نہیں", "Fixed speed - مقررہ رفتار"], correct: 1 },
+                    { q: "Circuit switching establishes:\nسرکٹ سوئچنگ کیا قائم کرتی ہے؟", options: ["Permanent path - مستقل راستہ", "Temporary path - عارضی راستہ", "No path - کوئی راستہ نہیں", "Wireless path - وائرلیس راستہ"], correct: 1 },
+                    { q: "Switching types are:\nسوئچنگ کی اقسام کتنی ہیں؟", options: ["1 - ایک", "2 - دو", "3 - تین", "4 - چار"], correct: 2 },
+                    { q: "Subscriber line connects to:\nسبسکرائبر لائن کس سے جڑتی ہے؟", options: ["Router - روٹر", "Line card - لائن کارڈ", "Satellite - سیٹلائٹ", "Switch - سوئچ"], correct: 1 },
+                    { q: "ISDN basic rate is:\nISDN کی بیسک ریٹ کیا ہے؟", options: ["2B+D", "30B+D", "Fiber - فائبر", "None - کوئی نہیں"], correct: 0 },
+                    { q: "Primary rate ISDN contains:\nISDN پرائمری ریٹ میں کیا شامل ہوتا ہے؟", options: ["2B+D", "30B+D", "1B+D", "10B+D"], correct: 1 },
+                    { q: "Switching system is used for:\nسوئچنگ سسٹم کس لیے استعمال ہوتا ہے؟", options: ["Storage - ذخیرہ", "Routing calls - کالز کو روٹ کرنا", "Power supply - پاور سپلائی", "Cooling - ٹھنڈک"], correct: 1 },
+                    { q: "Packet switching divides data into:\nپیکٹ سوئچنگ ڈیٹا کو کس میں تقسیم کرتی ہے؟", options: ["Signals - سگنلز", "Frames - فریمز", "Packets - پیکٹس", "Blocks - بلاکس"], correct: 2 },
+                    { q: "Time slot is used in:\nٹائم سلاٹ کہاں استعمال ہوتا ہے؟", options: ["FDM - ایف ڈی ایم", "TDM - ٹی ڈی ایم", "AM - اے ایم", "FM - ایف ایم"], correct: 1 },
+                    { q: "Noise in communication causes:\nکمیونیکیشن میں نوائز کیا پیدا کرتا ہے؟", options: ["Clarity - وضاحت", "Distortion - بگاڑ", "Amplification – ایمپلی فکیشن", "Modulation – ماڈیولیشن"], correct: 1 },
+                    { q: "Bandwidth means:\nبینڈ وڈتھ سے کیا مراد ہے؟", options: ["Power - طاقت", "Frequency range - فریکوئنسی کی حد", "Voltage - وولٹیج", "Resistance - مزاحمت"], correct: 1 },
+                    { q: "Optical fiber works on:\nآپٹیکل فائبر کس اصول پر کام کرتا ہے؟", options: ["Reflection - انعکاس", "Refraction - انعطاف", "Total internal reflection – مکمل اندرونی انعکاس", "Diffraction - ڈیفریکشن"], correct: 2 },
+                    { q: "Repeater is used to:\nریپیٹر کس لیے استعمال ہوتا ہے؟", options: ["Reduce signal - سگنل کم کرنا", "Amplify signal - سگنل بڑھانا", "Store data - ڈیٹا محفوظ کرنا", "Filter noise - شور فلٹر کرنا"], correct: 1 },
+                    { q: "Router works at:\nروٹر کس لیئر پر کام کرتا ہے؟", options: ["Physical layer - فزیکل لیئر", "Data link layer - ڈیٹا لنک لیئر", "Network layer - نیٹ ورک لیئر", "Application layer - ایپلیکیشن لیئر"], correct: 2 },
+                    { q: "Modem converts:\nموڈیم کیا تبدیل کرتا ہے؟", options: ["Digital to analog - ڈیجیٹل کو اینالاگ", "Analog to digital - اینالاگ کو ڈیجیٹل", "Both - دونوں", "None - کوئی نہیں"], correct: 2 },
+                    { q: "Transmission media are:\nٹرانسمیشن میڈیا کیا ہوتے ہیں؟", options: ["Wired - وائرڈ", "Wireless - وائرلیس", "Both - دونوں", "None - کوئی نہیں"], correct: 2 },
+                    { q: "Twisted pair cable is used in:\nٹوسٹڈ پیئر کیبل کہاں استعمال ہوتی ہے؟", options: ["Telephony - ٹیلی فونی", "Satellite - سیٹلائٹ", "Radio - ریڈیو", "Fiber - فائبر"], correct: 0 },
+                    { q: "Propagation delay depends on:\nپروپیگیشن ڈیلے کس پر منحصر ہوتا ہے؟", options: ["Distance - فاصلہ", "Speed - رفتار", "Medium - میڈیم", "All - یہ سب"], correct: 3 },
+                    { q: "Signal distortion occurs due to:\nسگنل ڈسٹورشن کس وجہ سے ہوتا ہے؟", options: ["Noise - شور", "Attenuation - اٹینیوایشن", "Interference - مداخلت", "All - سب"], correct: 3 },
+                    { q: "Wireless communication uses:\nوائرلیس کمیونیکیشن کس کو استعمال کرتی ہے؟", options: ["Cable - کیبل", "Fiber - فائبر", "Air - ہوا", "Copper - کاپر"], correct: 2 },
+                    { q: "Satellite orbit is:\nسیٹلائٹ کا مدار کیا ہوتا ہے؟", options: ["Circular - دائرہ نما", "Elliptical - بیضوی", "Both - دونوں", "None - کوئی نہیں"], correct: 2 },
+                    { q: "Multiplexer combines:\nملٹی پلیکسر کیا ملاتا ہے؟", options: ["Signals - سگنلز", "Data - ڈیٹا", "Channels - چینلز", "All - یہ سب"], correct: 3 },
+                    { q: "Demultiplexer separates:\nڈی ملٹی پلیکسر کیا الگ کرتا ہے؟", options: ["Signals – سگنلز", "Data - ڈیٹا", "Channels - چینلز", "All - یہ سب"], correct: 3 },
+                    { q: "Digital communication is:\nڈیجیٹل کمیونیکیشن کیا ہے؟", options: ["Continuous - مسلسل", "Discrete - منقطع", "Analog - اینالاگ", "None - کوئی نہیں"], correct: 1 },
+                    { q: "Analog communication is:\nاینالاگ کمیونیکیشن کیا ہے؟", options: ["Discrete - منقطع", "Continuous - مسلسل", "Binary - بائنری", "None - کوئی نہیں"], correct: 1 }
+                ]
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('book') || 'et326';
+
+        const currentBook = allBooks[bookId] || allBooks['et326'];
+        const questions = currentBook.questions;
+
+        document.getElementById('bookTitleDisplay').innerText = currentBook.title;
+
+        let currentIndex = 0;
+        let userAnswers = {};
+
+        function loadQuestion() {
+            const q = questions[currentIndex];
+            const cardBox = document.getElementById('questionCardBox');
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, idx) => {
+                let statusClass = '';
+                if (userAnswers[currentIndex] !== undefined) {
+                    if (idx === q.correct) {
+                        statusClass = 'correct disabled';
+                    } else if (userAnswers[currentIndex] === idx) {
+                        statusClass = 'wrong disabled';
+                    } else {
+                        statusClass = 'disabled';
+                    }
+                }
+                
+                optionsHtml += `<div class="option-item ${statusClass}" onclick="selectOption(${idx})">
+                    <span>${opt}</span>
+                    <i class="fa-regular ${idx === q.correct && userAnswers[currentIndex] !== undefined ? 'fa-circle-check' : 'fa-circle'}"></i>
+                </div>`;
+            });
+
+            cardBox.innerHTML = `
+                <div class="q-number">Question ${currentIndex + 1} of ${questions.length}</div>
+                <div class="q-text">${q.q}</div>
+                <div class="options-list">${optionsHtml}</div>
+            `;
+
+            document.getElementById('progressIndicator').innerText = `Question ${currentIndex + 1} of ${questions.length}`;
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = userAnswers[currentIndex] === undefined;
+
+            if (currentIndex === questions.length - 1) {
+                nextBtn.innerHTML = 'Finish Test <i class="fa-solid fa-flag-checkered"></i>';
+            } else {
+                nextBtn.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
+            }
+        }
+
+        window.selectOption = function(optIdx) {
+            if (userAnswers[currentIndex] !== undefined) return;
+            
+            userAnswers[currentIndex] = optIdx;
+            document.getElementById('nextBtn').disabled = false;
+            loadQuestion();
+        }
+
+        window.nextQuestion = function() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        window.prevQuestion = function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizContainer').style.display = 'none';
+            let score = 0;
+            questions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    score++;
+                }
+            });
+
+            document.getElementById('finalScoreText').innerText = `${score} / ${questions.length}`;
+            document.getElementById('resultMessageText').innerText = `You answered ${score} questions correctly out of ${questions.length} total questions in ${currentBook.title}.`;
+            document.getElementById('resultBox').style.display = 'block';
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
