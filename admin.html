@@ -372,14 +372,13 @@
             }
         });
 
-        // Test Books & MCQs Management
+        // Test Books & MCQs Management (Fixed without orderBy index issue)
         async function loadAdminTestsList() {
             const container = document.getElementById('adminTestsList');
             if (!container) return;
             container.innerHTML = '<p style="font-size: 12px; color: #64748b;">Loading...</p>';
             try {
-                const q = query(collection(db, "testBooks"), orderBy("timestamp", "desc"));
-                const querySnapshot = await getDocs(q);
+                const querySnapshot = await getDocs(collection(db, "testBooks"));
                 container.innerHTML = "";
                 if (querySnapshot.empty) {
                     container.innerHTML = '<p style="font-size: 12px; color: #64748b;">No test books found.</p>';
@@ -402,6 +401,7 @@
                     container.appendChild(item);
                 });
             } catch (err) {
+                console.error(err);
                 container.innerHTML = '<p style="font-size: 12px; color: #f87171;">Failed to load test books list.</p>';
             }
         }
