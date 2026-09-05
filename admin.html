@@ -79,6 +79,7 @@
                 <button type="button" class="tab-btn" id="tabPrepBtn" onclick="switchAdminTab('prep')"><i class="fa-solid fa-book-open"></i> Add MCQs / Test Book</button>
             </div>
 
+            <!-- JOBS TAB -->
             <div id="jobAdminTab" class="admin-section-content active">
                 <h3 id="formHeading" style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-cloud-arrow-up"></i> Post New Job</h3>
                 <form id="jobForm">
@@ -140,6 +141,7 @@
                 </div>
             </div>
 
+            <!-- TEST PREP / MCQS TAB -->
             <div id="prepAdminTab" class="admin-section-content">
                 <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-book-medical"></i> Smart Auto-MCQs Extractor</h3>
                 <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px;">کوئی بھی فائل (CSV/Excel) یا کتاب/نوٹس کی تصویر (Picture/Screenshot) اپ لوڈ کریں؛ سسٹم خود بخود سوالات نکال کر ٹیسٹ بنا دے گا۔</p>
@@ -177,6 +179,13 @@
                         <button type="button" class="copy-btn" onclick="copyLink('prepShareableLink')"><i class="fa-solid fa-copy"></i> Click Here to Copy Test Link</button>
                     </div>
                 </form>
+
+                <div class="manage-section">
+                    <h3 style="font-size: 1rem; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-list-check"></i> Manage Uploaded Test Books</h3>
+                    <div id="adminTestsList" style="max-height: 250px; overflow-y: auto;">
+                        <p style="font-size: 12px; color: #64748b;">Loading test books...</p>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -206,6 +215,7 @@
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('jobFormSection').style.display = 'block';
                 loadAdminJobsList();
+                loadAdminTestsList();
             } else {
                 document.getElementById('loginError').innerText = "Incorrect Username or Password!";
             }
@@ -289,7 +299,7 @@
         }
 
         window.deleteJob = async function(jobId) {
-            if (confirm("کیا آپ واقعی اس جاب کو ڈیلیट کرنا چاہتے ہیں؟")) {
+            if (confirm("کیا آپ واقعی اس جاب کو ڈیلیٹ کرنا چاہتے ہیں؟")) {
                 await deleteDoc(doc(db, "jobs", jobId));
                 loadAdminJobsList();
             }
@@ -359,7 +369,47 @@
             }
         });
 
-        // Smart Universal MCQs & Picture Extractor Form Handler
+        // Test Books & MCQs Management
+        async function loadAdminTestsList() {
+            const container = document.getElementById('adminTestsList');
+            if (!container) return;
+            container.innerHTML = '<p style="font-size: 12px; color: #64748b;">Loading...</p>';
+            try {
+                const q = query(collection(db, "testBooks"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                container.innerHTML = "";
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p style="font-size: 12px; color: #64748b;">No test books found.</p>';
+                    return;
+                }
+                querySnapshot.forEach((documentSnap) => {
+                    const test = documentSnap.data();
+                    const testId = documentSnap.id;
+                    const item = document.createElement('div');
+                    item.className = 'admin-job-card';
+                    item.innerHTML = `
+                        <div class="admin-job-info" style="max-width: 65%;">
+                            <h4>${test.bookName || 'Unnamed Book'}</h4>
+                            <p>Category: <span style="color:#f97316;">${test.category}</span></p>
+                        </div>
+                        <div class="admin-job-btns">
+                            <button type="button" class="btn-delete" onclick="deleteTestBook('${testId}')">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            } catch (err) {
+                container.innerHTML = '<p style="font-size: 12px; color: #f87171;">Failed to load test books list.</p>';
+            }
+        }
+
+        window.deleteTestBook = async function(testId) {
+            if (confirm("کیا آپ واقعی اس ٹیسٹ بک کو ڈیلیٹ کرنا چاہتے ہیں؟")) {
+                await deleteDoc(doc(db, "testBooks", testId));
+                loadAdminTestsList();
+            }
+        }
+
         const prepForm = document.getElementById('prepForm');
         const prepStatusMsg = document.getElementById('prepStatusMsg');
         const submitPrepBtn = document.getElementById('submitPrepBtn');
@@ -393,7 +443,6 @@
 
                 if (fileInput.type.startsWith('image/')) {
                     prepStatusMsg.innerText = "Reading text from image using OCR...";
-                    // Fixed Tesseract Worker Initialization for v4.x
                     const worker = await Tesseract.createWorker('eng');
                     const ret = await worker.recognize(fileInput);
                     await worker.terminate();
@@ -443,6 +492,7 @@
                 }, 100);
 
                 prepForm.reset();
+                loadAdminTestsList();
             } catch (err) {
                 console.error(err);
                 prepStatusMsg.style.color = "#f87171";
@@ -464,3 +514,4 @@
     </script>
 </body>
 </html>
+
