@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAE Engineering Jobs Pakistan</title>
+    <title>DAE Engineering Jobs & Test Preparation Pakistan</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -23,6 +23,17 @@
         .hero h1 { font-family: 'Outfit', sans-serif; font-size: 1.35rem; color: #ffffff; margin-bottom: 8px; }
         .hero p { color: #94a3b8; font-size: 0.83rem; max-width: 600px; margin: 0 auto; }
 
+        /* Navigation Tab Bar for Jobs / Prep */
+        .main-nav-tabs { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+        .nav-tab-btn {
+            background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 18px;
+            border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 6px; text-decoration: none;
+        }
+        .nav-tab-btn.active, .nav-tab-btn:hover { background: #0284c7; border-color: #38bdf8; color: white; }
+        .nav-tab-btn i { color: #f97316; }
+        .nav-tab-btn.active i, .nav-tab-btn:hover i { color: white; }
+
         .container { max-width: 900px; margin: 0 auto; padding: 15px; }
 
         .section-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; color: #38bdf8; margin: 15px 0 10px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -37,6 +48,18 @@
         .cat-chip:hover, .cat-chip.active { background: #0284c7; border-color: #38bdf8; color: white; }
         .cat-chip i { color: #f97316; }
         .cat-chip:hover i, .cat-chip.active i { color: white; }
+
+        /* Prep Section Styling */
+        .prep-section { display: none; margin-top: 15px; }
+        .prep-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-top: 15px; }
+        .prep-card {
+            background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 20px; text-align: center;
+            transition: 0.2s; cursor: pointer; text-decoration: none; display: block;
+        }
+        .prep-card:hover { border-color: #38bdf8; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(56, 189, 248, 0.15); }
+        .prep-card i { font-size: 32px; color: #38bdf8; margin-bottom: 12px; }
+        .prep-card h3 { color: #ffffff; font-size: 16px; margin-bottom: 6px; }
+        .prep-card p { color: #94a3b8; font-size: 12px; }
 
         .jobs-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
         .job-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; }
@@ -75,31 +98,78 @@
     </header>
 
     <div class="hero">
-        <h1>DAE ENGINEERING JOBS PORTAL</h1>
-        <p>Verified government and private sector job opportunities across Pakistan for all technical and engineering fields.</p>
+        <h1>DAE ENGINEERING JOBS & TEST PREPARATION</h1>
+        <p>Verified government/private job opportunities and online MCQs test preparation across Pakistan.</p>
+        
+        <!-- Navigation Switcher Button Added Here -->
+        <div class="main-nav-tabs">
+            <button class="nav-tab-btn active" id="btnJobsTab" onclick="switchTab('jobs')"><i class="fa-solid fa-briefcase"></i> Latest Jobs</button>
+            <button class="nav-tab-btn" id="btnPrepTab" onclick="switchTab('prep')"><i class="fa-solid fa-book-open"></i> Test Preparation</button>
+        </div>
     </div>
 
     <div class="container">
         
-        <div class="section-title"><i class="fa-solid fa-filter"></i> Filter by Discipline</div>
-        <div class="cat-scroll">
-            <div class="cat-chip active" onclick="filterJobs('all', this)"><i class="fa-solid fa-layer-group"></i> All Jobs</div>
-            <div class="cat-chip" onclick="filterJobs('Mechanical', this)"><i class="fa-solid fa-cogs"></i> Mechanical</div>
-            <div class="cat-chip" onclick="filterJobs('Electrical', this)"><i class="fa-solid fa-bolt"></i> Electrical</div>
-            <div class="cat-chip" onclick="filterJobs('Civil', this)"><i class="fa-solid fa-hard-hat"></i> Civil</div>
-            <div class="cat-chip" onclick="filterJobs('Electronics', this)"><i class="fa-solid fa-microchip"></i> Electronics</div>
-            <div class="cat-chip" onclick="filterJobs('Chemical', this)"><i class="fa-solid fa-flask"></i> Chemical</div>
-            <div class="cat-chip" onclick="filterJobs('Auto', this)"><i class="fa-solid fa-car"></i> Auto & Diesel</div>
-            <div class="cat-chip" onclick="filterJobs('CAD', this)"><i class="fa-solid fa-drafting-compass"></i> Architecture/CAD</div>
-            <div class="cat-chip" onclick="filterJobs('IT', this)"><i class="fa-solid fa-laptop-code"></i> IT & Telecom</div>
-            <div class="cat-chip" onclick="filterJobs('Designing', this)"><i class="fa-solid fa-pen-nib"></i> Designing</div>
-            <div class="cat-chip" onclick="filterJobs('Nursing', this)"><i class="fa-solid fa-user-nurse"></i> Nursing/Medical</div>
+        <!-- JOBS SECTION (Original functionality untouched) -->
+        <div id="jobsSection">
+            <div class="section-title"><i class="fa-solid fa-filter"></i> Filter by Discipline</div>
+            <div class="cat-scroll">
+                <div class="cat-chip active" onclick="filterJobs('all', this)"><i class="fa-solid fa-layer-group"></i> All Jobs</div>
+                <div class="cat-chip" onclick="filterJobs('Mechanical', this)"><i class="fa-solid fa-cogs"></i> Mechanical</div>
+                <div class="cat-chip" onclick="filterJobs('Electrical', this)"><i class="fa-solid fa-bolt"></i> Electrical</div>
+                <div class="cat-chip" onclick="filterJobs('Civil', this)"><i class="fa-solid fa-hard-hat"></i> Civil</div>
+                <div class="cat-chip" onclick="filterJobs('Electronics', this)"><i class="fa-solid fa-microchip"></i> Electronics</div>
+                <div class="cat-chip" onclick="filterJobs('Chemical', this)"><i class="fa-solid fa-flask"></i> Chemical</div>
+                <div class="cat-chip" onclick="filterJobs('Auto', this)"><i class="fa-solid fa-car"></i> Auto & Diesel</div>
+                <div class="cat-chip" onclick="filterJobs('CAD', this)"><i class="fa-solid fa-drafting-compass"></i> Architecture/CAD</div>
+                <div class="cat-chip" onclick="filterJobs('IT', this)"><i class="fa-solid fa-laptop-code"></i> IT & Telecom</div>
+                <div class="cat-chip" onclick="filterJobs('Designing', this)"><i class="fa-solid fa-pen-nib"></i> Designing</div>
+                <div class="cat-chip" onclick="filterJobs('Nursing', this)"><i class="fa-solid fa-user-nurse"></i> Nursing/Medical</div>
+            </div>
+
+            <div class="section-title" style="margin-top: 25px;"><i class="fa-solid fa-briefcase"></i> Latest Openings</div>
+            
+            <div class="jobs-list" id="jobsContainer">
+                <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading live jobs...</div>
+            </div>
         </div>
 
-        <div class="section-title" style="margin-top: 25px;"><i class="fa-solid fa-briefcase"></i> Latest Openings</div>
-        
-        <div class="jobs-list" id="jobsContainer">
-            <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading live jobs...</div>
+        <!-- TEST PREPARATION SECTION (Newly Added Categories) -->
+        <div id="prepSection" class="prep-section">
+            <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> Select Technology for MCQs Preparation & Tests</div>
+            
+            <div class="prep-grid">
+                <a href="category-test.html?cat=Electrical" class="prep-card">
+                    <i class="fa-solid fa-bolt"></i>
+                    <h3>Electrical Technology</h3>
+                    <p>AC/DC Machines, Power Systems, Wiring & MCQs Books</p>
+                </a>
+                <a href="category-test.html?cat=Mechanical" class="prep-card">
+                    <i class="fa-solid fa-cogs"></i>
+                    <h3>Mechanical Technology</h3>
+                    <p>Thermodynamics, Machine Shop, Auto & Workshop MCQs</p>
+                </a>
+                <a href="category-test.html?cat=Civil" class="prep-card">
+                    <i class="fa-solid fa-hard-hat"></i>
+                    <h3>Civil Technology</h3>
+                    <p>Surveying, Concrete Technology, Quantities & MCQs</p>
+                </a>
+                <a href="category-test.html?cat=Electronics" class="prep-card">
+                    <i class="fa-solid fa-microchip"></i>
+                    <h3>Electronics Technology</h3>
+                    <p>Digital Electronics, Semiconductors & Communication</p>
+                </a>
+                <a href="category-test.html?cat=Chemical" class="prep-card">
+                    <i class="fa-solid fa-flask"></i>
+                    <h3>Chemical Technology</h3>
+                    <p>Industrial Chemistry, Process Control & Units</p>
+                </a>
+                <a href="category-test.html?cat=IT" class="prep-card">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <h3>IT & Computer Science</h3>
+                    <p>Networking, Programming Basics & Hardware MCQs</p>
+                </a>
+            </div>
         </div>
 
     </div>
@@ -129,6 +199,26 @@
         const db = getFirestore(app);
 
         let allJobsData = [];
+
+        // Tab Switching Functionality
+        window.switchTab = function(tabName) {
+            const jobsSec = document.getElementById('jobsSection');
+            const prepSec = document.getElementById('prepSection');
+            const btnJobs = document.getElementById('btnJobsTab');
+            const btnPrep = document.getElementById('btnPrepTab');
+
+            if (tabName === 'jobs') {
+                jobsSec.style.display = 'block';
+                prepSec.style.display = 'none';
+                btnJobs.classList.add('active');
+                btnPrep.classList.remove('active');
+            } else {
+                jobsSec.style.display = 'none';
+                prepSec.style.display = 'block';
+                btnPrep.classList.add('active');
+                btnJobs.classList.remove('active');
+            }
+        }
 
         async function fetchJobs() {
             const container = document.getElementById('jobsContainer');
