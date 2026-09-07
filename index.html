@@ -61,6 +61,27 @@
         .prep-card h3 { color: #ffffff; font-size: 16px; margin-bottom: 6px; }
         .prep-card p { color: #94a3b8; font-size: 12px; }
 
+        /* Electrical Books Sub-view styling */
+        .sub-view { display: none; margin-top: 15px; }
+        .back-cat-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
+        .back-cat-btn:hover { background: #334155; color: #fff; }
+        
+        .books-list { display: flex; flex-direction: column; gap: 12px; }
+        .book-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .book-card:hover { border-color: #38bdf8; }
+        .book-card.highlight { border: 2px solid #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+        .book-info h4 { color: #ffffff; font-size: 15px; margin-bottom: 4px; }
+        .book-info p { color: #94a3b8; font-size: 12px; }
+        .book-actions { display: flex; gap: 8px; align-items: center; }
+        
+        .action-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .btn-test { background: #0284c7; color: white; }
+        .btn-test:hover { background: #0369a1; }
+        .btn-download { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
+        .btn-download:hover { background: #15803d; color: white; }
+        .btn-share { background: #334155; color: #cbd5e1; }
+        .btn-share:hover { background: #475569; color: white; }
+
         .jobs-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
         .job-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; }
         .job-card:hover { border-color: #374151; }
@@ -134,42 +155,120 @@
             </div>
         </div>
 
-        <!-- TEST PREPARATION SECTION (Newly Added Categories) -->
+        <!-- TEST PREPARATION SECTION -->
         <div id="prepSection" class="prep-section">
-            <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> Select Technology for MCQs Preparation & Tests</div>
             
-            <div class="prep-grid">
-                <a href="category-test.html?cat=Electrical" class="prep-card">
-                    <i class="fa-solid fa-bolt"></i>
-                    <h3>Electrical Technology</h3>
-                    <p>AC/DC Machines, Power Systems, Wiring & MCQs Books</p>
-                </a>
-                <a href="category-test.html?cat=Mechanical" class="prep-card">
-                    <i class="fa-solid fa-cogs"></i>
-                    <h3>Mechanical Technology</h3>
-                    <p>Thermodynamics, Machine Shop, Auto & Workshop MCQs</p>
-                </a>
-                <a href="category-test.html?cat=Civil" class="prep-card">
-                    <i class="fa-solid fa-hard-hat"></i>
-                    <h3>Civil Technology</h3>
-                    <p>Surveying, Concrete Technology, Quantities & MCQs</p>
-                </a>
-                <a href="category-test.html?cat=Electronics" class="prep-card">
-                    <i class="fa-solid fa-microchip"></i>
-                    <h3>Electronics Technology</h3>
-                    <p>Digital Electronics, Semiconductors & Communication</p>
-                </a>
-                <a href="category-test.html?cat=Chemical" class="prep-card">
-                    <i class="fa-solid fa-flask"></i>
-                    <h3>Chemical Technology</h3>
-                    <p>Industrial Chemistry, Process Control & Units</p>
-                </a>
-                <a href="category-test.html?cat=IT" class="prep-card">
-                    <i class="fa-solid fa-laptop-code"></i>
-                    <h3>IT & Computer Science</h3>
-                    <p>Networking, Programming Basics & Hardware MCQs</p>
-                </a>
+            {/* Main Categories View */}
+            <div id="categoriesMainView">
+                <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> Select Technology for MCQs Preparation & Tests</div>
+                
+                <div class="prep-grid">
+                    <div class="prep-card" onclick="openElectricalCategory()">
+                        <i class="fa-solid fa-bolt"></i>
+                        <h3>Electrical Technology</h3>
+                        <p>AC/DC Machines, Power Systems, Wiring & MCQs Books</p>
+                    </div>
+                    <div class="prep-card" onclick="alert('Coming soon for Mechanical!')">
+                        <i class="fa-solid fa-cogs"></i>
+                        <h3>Mechanical Technology</h3>
+                        <p>Thermodynamics, Machine Shop, Auto & Workshop MCQs</p>
+                    </div>
+                    <div class="prep-card" onclick="alert('Coming soon for Civil!')">
+                        <i class="fa-solid fa-hard-hat"></i>
+                        <h3>Civil Technology</h3>
+                        <p>Surveying, Concrete Technology, Quantities & MCQs</p>
+                    </div>
+                    <div class="prep-card" onclick="alert('Coming soon for Electronics!')">
+                        <i class="fa-solid fa-microchip"></i>
+                        <h3>Electronics Technology</h3>
+                        <p>Digital Electronics, Semiconductors & Communication</p>
+                    </div>
+                    <div class="prep-card" onclick="alert('Coming soon for Chemical!')">
+                        <i class="fa-solid fa-flask"></i>
+                        <h3>Chemical Technology</h3>
+                        <p>Industrial Chemistry, Process Control & Units</p>
+                    </div>
+                    <div class="prep-card" onclick="alert('Coming soon for IT!')">
+                        <i class="fa-solid fa-laptop-code"></i>
+                        <h3>IT & Computer Science</h3>
+                        <p>Networking, Programming Basics & Hardware MCQs</p>
+                    </div>
+                </div>
             </div>
+
+            {/* Electrical Books Sub-View */}
+            <div id="electricalBooksView" class="sub-view">
+                <button class="back-cat-btn" onclick="backToCategories()"><i class="fa-solid fa-arrow-left"></i> Back to Categories</button>
+                <div class="section-title"><i class="fa-solid fa-bolt"></i> Electrical Technology - ET Books & Tests</div>
+                
+                <div class="books-list">
+                    <!-- Book 1: ET-326 -->
+                    <div class="book-card" id="book-et326">
+                        <div class="book-info">
+                            <h4>ET-326: AC Machines</h4>
+                            <p>Complete MCQs & Answers for Electrical 3rd Year</p>
+                        </div>
+                        <div class="book-actions">
+                            <a href="et326.html" class="action-btn btn-test"><i class="fa-solid fa-play"></i> Start Test</a>
+                            <button class="action-btn btn-download" onclick="downloadBookText('ET-326 AC Machines', 'et326.html')"><i class="fa-solid fa-download"></i> Download</button>
+                            <button class="action-btn btn-share" onclick="copyBookLink('et326')"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                        </div>
+                    </div>
+
+                    <!-- Book 2: ET-303 -->
+                    <div class="book-card" id="book-et-303">
+                        <div class="book-info">
+                            <h4>ET-303: Electrical Instruments & Measurements</h4>
+                            <p>Important MCQs and Answer Keys</p>
+                        </div>
+                        <div class="book-actions">
+                            <a href="et-303.html" class="action-btn btn-test"><i class="fa-solid fa-play"></i> Start Test</a>
+                            <button class="action-btn btn-download" onclick="downloadBookText('ET-303 Electrical Instruments', 'et-303.html')"><i class="fa-solid fa-download"></i> Download</button>
+                            <button class="action-btn btn-share" onclick="copyBookLink('et-303')"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                        </div>
+                    </div>
+
+                    <!-- Book 3: ET-332 -->
+                    <div class="book-card" id="book-et-332">
+                        <div class="book-info">
+                            <h4>ET-332: Utilization of Electrical Energy</h4>
+                            <p>Chapter-wise MCQs for Test Preparation</p>
+                        </div>
+                        <div class="book-actions">
+                            <a href="et-332.html" class="action-btn btn-test"><i class="fa-solid fa-play"></i> Start Test</a>
+                            <button class="action-btn btn-download" onclick="downloadBookText('ET-332 Utilization of Electrical Energy', 'et-332.html')"><i class="fa-solid fa-download"></i> Download</button>
+                            <button class="action-btn btn-share" onclick="copyBookLink('et-332')"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                        </div>
+                    </div>
+
+                    <!-- Book 4: ET-345 -->
+                    <div class="book-card" id="book-et-345">
+                        <div class="book-info">
+                            <h4>ET-345: DC Machines & Transformers</h4>
+                            <p>Core Electrical Engineering MCQs</p>
+                        </div>
+                        <div class="book-actions">
+                            <a href="et-345.html" class="action-btn btn-test"><i class="fa-solid fa-play"></i> Start Test</a>
+                            <button class="action-btn btn-download" onclick="downloadBookText('ET-345 DC Machines & Transformers', 'et-345.html')"><i class="fa-solid fa-download"></i> Download</button>
+                            <button class="action-btn btn-share" onclick="copyBookLink('et-345')"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                        </div>
+                    </div>
+
+                    <!-- Book 5: ET-363 -->
+                    <div class="book-card" id="book-et-363">
+                        <div class="book-info">
+                            <h4>ET-363: Power Generation & Transmission</h4>
+                            <p>Advanced Electrical Power MCQs with Answers</p>
+                        </div>
+                        <div class="book-actions">
+                            <a href="et-363.html" class="action-btn btn-test"><i class="fa-solid fa-play"></i> Start Test</a>
+                            <button class="action-btn btn-download" onclick="downloadBookText('ET-363 Power Generation', 'et-363.html')"><i class="fa-solid fa-download"></i> Download</button>
+                            <button class="action-btn btn-share" onclick="copyBookLink('et-363')"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -220,6 +319,90 @@
             }
         }
 
+        // Test Prep Views Switching
+        window.openElectricalCategory = function() {
+            document.getElementById('categoriesMainView').style.display = 'none';
+            document.getElementById('electricalBooksView').style.display = 'block';
+            window.history.pushState({}, '', '?view=prep&cat=electrical');
+        }
+
+        window.backToCategories = function() {
+            document.getElementById('electricalBooksView').style.display = 'none';
+            document.getElementById('categoriesMainView').style.display = 'block';
+            window.history.pushState({}, '', '?view=prep');
+        }
+
+        // Copy Direct Link to Book
+        window.copyBookLink = function(bookId) {
+            const currentUrl = window.location.href.split('?')[0] + `?view=prep&cat=electrical&book=${bookId}`;
+            navigator.clipboard.writeText(currentUrl).then(() => {
+                alert('Book link copied to clipboard! You can now share it.');
+            }).catch(err => {
+                console.error('Failed to copy link: ', err);
+            });
+        }
+
+        // Download Book MCQs text/file helper
+        window.downloadBookText = function(bookName, fileName) {
+            fetch(fileName)
+                .then(response => response.text())
+                .then(htmlText => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlText, 'text/html');
+                    // Extract text or body content for download
+                    const textContent = doc.body.innerText || "MCQs data for " + bookName;
+                    
+                    const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${bookName}-MCQs-Answers.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    alert('Downloading backup text file directly...');
+                    const blob = new Blob([`MCQs and Answers file for ${bookName}`], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${bookName}.txt`;
+                    a.click();
+                });
+        }
+
+        // On Page Load check URL params to open specific views/books directly
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const view = urlParams.get('view');
+            const cat = urlParams.get('cat');
+            const bookId = urlParams.get('book');
+
+            if (view === 'prep') {
+                switchTab('prep');
+                if (cat === 'electrical') {
+                    openElectricalCategory();
+                    if (bookId) {
+                        setTimeout(() => {
+                            const targetBook = document.getElementById(`book-${bookId}`);
+                            if (targetBook) {
+                                targetBook.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                targetBook.classList.add('highlight');
+                            }
+                        }, 300);
+                    }
+                }
+            }
+
+            // Check for job target
+            const targetJobId = urlParams.get('id');
+            if (targetJobId) {
+                switchTab('jobs');
+            }
+        });
+
         async function fetchJobs() {
             const container = document.getElementById('jobsContainer');
             try {
@@ -235,7 +418,8 @@
                 }
 
                 querySnapshot.forEach((doc) => {
-                    const jobData = doc.data();
+                    ThejobData = doc.data();
+                    jobData = doc.data();
                     jobData.id = doc.id;
                     allJobsData.push(jobData);
                 });
