@@ -584,9 +584,9 @@
             loadQuestion();
         }
 
-        // ڈاؤن لوڈ نوٹس کا فیچر (تمام سوالات، اردو/انگریزی اور درست جواب کے ساتھ)
+        // اب صرف سوالات اور آپشنز پر مشتمل نوٹس ڈاؤن لوڈ ہوں گے (کوڈنگ نہیں)
         function downloadMCQsAsText() {
-            let textContent = "ET-326 AC Machines - DAE Examination Prep Portal\n";
+            let textContent = "ET-326 AC Machines - DAE Examination Prep Notes\n";
             textContent += "==================================================\n\n";
 
             quizData.forEach((q, index) => {
@@ -603,7 +603,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'ET-326-MCQs-Readable.txt';
+            a.download = 'ET-326-MCQs-Notes.txt';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
