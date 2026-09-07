@@ -23,89 +23,13 @@
         .hero h1 { font-family: 'Outfit', sans-serif; font-size: 1.35rem; color: #ffffff; margin-bottom: 8px; }
         .hero p { color: #94a3b8; font-size: 0.83rem; max-width: 600px; margin: 0 auto; }
 
-        .main-nav-tabs { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
-        .nav-tab-btn {
-            background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 18px;
-            border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; gap: 6px; text-decoration: none;
-        }
-        .nav-tab-btn.active, .nav-tab-btn:hover { background: #0284c7; border-color: #38bdf8; color: white; }
-        .nav-tab-btn i { color: #f97316; }
-        .nav-tab-btn.active i, .nav-tab-btn:hover i { color: white; }
-
         .container { max-width: 900px; margin: 0 auto; padding: 15px; }
 
-        .section-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; color: #38bdf8; margin: 15px 0 10px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .cat-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
-        .cat-scroll::-webkit-scrollbar { display: none; }
-        
-        .cat-chip {
-            background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 6px 14px;
-            border-radius: 20px; font-size: 12px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .cat-chip:hover, .cat-chip.active { background: #0284c7; border-color: #38bdf8; color: white; }
-        .cat-chip i { color: #f97316; }
-        .cat-chip:hover i, .cat-chip.active i { color: white; }
-
-        .prep-section { display: none; margin-top: 15px; }
-        .prep-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-top: 15px; }
-        .prep-card {
-            background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 20px; text-align: center;
-            transition: 0.2s; cursor: pointer; text-decoration: none; display: block;
-        }
-        .prep-card:hover { border-color: #38bdf8; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(56, 189, 248, 0.15); }
-        .prep-card i { font-size: 32px; color: #38bdf8; margin-bottom: 12px; }
-        .prep-card h3 { color: #ffffff; font-size: 16px; margin-bottom: 6px; }
-        .prep-card p { color: #94a3b8; font-size: 12px; }
-
-        .sub-view { display: none; margin-top: 15px; }
-        .back-cat-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
-        .back-cat-btn:hover { background: #334155; color: #fff; }
-        
-        .books-list { display: flex; flex-direction: column; gap: 12px; }
-        .book-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .book-card:hover { border-color: #38bdf8; }
-        .book-card.highlight { border: 2px solid #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
-        .book-info h4 { color: #ffffff; font-size: 15px; margin-bottom: 4px; }
-        .book-info p { color: #94a3b8; font-size: 12px; }
-        .book-actions { display: flex; gap: 8px; align-items: center; }
-        
         .action-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
-        .btn-test { background: #0284c7; color: white; }
-        .btn-test:hover { background: #0369a1; }
         .btn-download { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
         .btn-download:hover { background: #15803d; color: white; }
-        .btn-share { background: #334155; color: #cbd5e1; }
-        .btn-share:hover { background: #475569; color: white; }
-
-        .jobs-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
-        .job-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; }
-        .job-card:hover { border-color: #374151; }
-        .job-card.highlight { border: 2px solid #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
-
-        .job-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-        .job-card h3 { color: #38bdf8; font-size: 15px; font-weight: 600; }
-        .tag-branch { font-size: 10px; background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-        
-        .company { color: #94a3b8; font-size: 12px; font-weight: 500; margin-bottom: 8px; }
-        .job-poster { width: 100%; max-height: 250px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; border: 1px solid #1f2937; }
-        .job-card p { color: #64748b; font-size: 12px; margin-bottom: 12px; line-height: 1.4; white-space: pre-line; }
-        
-        .job-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1f2937; padding-top: 10px; font-size: 11px; color: #64748b; }
-        .apply-btn { background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.2s; }
-        .apply-btn:hover { background: #0369a1; }
-
-        .whatsapp-float {
-            position: fixed; bottom: 20px; right: 20px; background-color: #22c55e; color: white;
-            width: 50px; height: 50px; border-radius: 50%; text-align: center; font-size: 26px;
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; text-decoration: none;
-            animation: upDown 2s infinite ease-in-out;
-        }
-        @keyframes upDown { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
 
         footer { text-align: center; padding: 20px; background: #06090f; color: #475569; margin-top: 30px; border-top: 1px solid #1e293b; font-size: 12px; }
-        .loading { text-align: center; color: #94a3b8; padding: 20px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -130,7 +54,6 @@
             <ul id="options-list" style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></ul>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <button id="next-btn" onclick="nextQuestion()" style="display: none; background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">Next Question</button>
-                <!-- ڈاؤن لوڈ بٹن یہاں بالکل محفوظ ہے -->
                 <button class="action-btn btn-download" onclick="downloadMCQsAsText()"><i class="fas fa-download"></i> ڈاؤن لوڈ نوٹس</button>
             </div>
         </div>
@@ -661,7 +584,6 @@
             loadQuestion();
         }
 
-        // ڈاؤن لوڈ والے مسئلے کا حل (صرف صاف ستھرے نوٹس ڈاؤن لوڈ ہوں گے)
         function downloadMCQsAsText() {
             let textContent = "ET-326 AC Machines - DAE Examination Prep Portal\n";
             textContent += "==================================================\n\n";
