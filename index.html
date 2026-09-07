@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,15 +15,50 @@
             background: #0f172a; border-bottom: 1px solid #1e293b; padding: 12px 20px;
             display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
         }
-        .logo { font-family: 'Outfit', sans-serif; font-size: 17px; color: #38bdf8; font-weight: 800; }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 17px; color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 8px; }
         .logo span { color: #f97316; }
         .badge { font-size: 11px; background: #1e293b; padding: 4px 10px; border-radius: 6px; color: #94a3b8; border: 1px solid #334155; }
 
         .hero { background: linear-gradient(180deg, #0f172a 0%, #090d16 100%); text-align: center; padding: 30px 15px 20px; border-bottom: 1px solid #1e293b; }
         .hero h1 { font-family: 'Outfit', sans-serif; font-size: 1.35rem; color: #ffffff; margin-bottom: 8px; }
-        .hero p { color: #94a3b8; font-size: 0.83rem; max-width: 600px; margin: 0 auto; }
+        .hero p { color: #94a3b8; font-size: 0.83rem; max-width: 600px; margin: 0 auto; line-height: 1.4; }
 
         .container { max-width: 900px; margin: 0 auto; padding: 15px; }
+
+        .section-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: #38bdf8; }
+
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        
+        .card {
+            background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px;
+            cursor: pointer; transition: 0.2s ease; display: flex; align-items: center; gap: 12px; text-decoration: none;
+        }
+        .card:hover { border-color: #38bdf8; background: #1f2937; transform: translateY(-2px); }
+        .card-icon { width: 40px; height: 40px; background: #1e293b; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-size: 16px; flex-shrink: 0; }
+        .card-content h3 { font-size: 14px; color: #ffffff; margin-bottom: 3px; font-weight: 600; }
+        .card-content p { font-size: 11.5px; color: #94a3b8; line-height: 1.3; }
+
+        .back-btn {
+            background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px;
+            border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 15px;
+        }
+        .back-btn:hover { background: #334155; color: #fff; }
+
+        .view-section { display: none; }
+        .active-view { display: block; }
+
+        /* Quiz styles */
+        .quiz-card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .quiz-header { display: flex; justify-content: between; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
+        .question-text { color: #ffffff; font-size: 15px; margin-bottom: 15px; line-height: 1.5; font-weight: 500; }
+        .options-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .option-item { background: #1e293b; padding: 10px 14px; border-radius: 8px; cursor: pointer; border: 1px solid #334155; color: #e2e8f0; font-size: 13.5px; transition: 0.15s; }
+        .option-item:hover { border-color: #38bdf8; }
+
+        .action-btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: #0284c7; color: white; }
+        .btn-primary:hover { background: #0369a1; }
 
         footer { text-align: center; padding: 20px; background: #06090f; color: #475569; margin-top: 30px; border-top: 1px solid #1e293b; font-size: 12px; }
     </style>
@@ -31,35 +66,126 @@
 <body>
 
     <header>
-        <div class="logo">DAE <span>PORTAL</span></div>
-        <div class="badge">Examination Prep</div>
+        <div class="logo"><i class="fas fa-bolt"></i> DAE <span>PORTAL</span></div>
+        <div class="badge">Pakistan</div>
     </header>
 
     <div class="hero">
-        <h1>ET-326 AC Machines Quiz Portal</h1>
-        <p>Prepare for your DAE examinations with structured quizzes and notes.</p>
+        <h1>DAE Engineering Jobs & Test Preparation</h1>
+        <p>Find latest DAE jobs, past papers, technical notes, and interactive online test preparation for all technologies.</p>
     </div>
 
     <div class="container">
-        <div id="quiz-card" style="background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px; color: #94a3b8;">
-                <span id="q-number">Question 1 of 60</span>
-                <span id="q-topic">Topic: Alternator</span>
+
+        <!-- VIEW 1: HOME PAGE -->
+        <div id="home-view" class="view-section active-view">
+            
+            <div class="section-title"><i class="fas fa-compass"></i> Explore Categories</div>
+            <div class="grid-cards">
+                <div class="card" onclick="switchView('test-prep-view')">
+                    <div class="card-icon"><i class="fas fa-laptop-code"></i></div>
+                    <div class="card-content">
+                        <h3>Test Preparation</h3>
+                        <p>Online MCQs quizzes, past papers and mock tests for DAE exams.</p>
+                    </div>
+                </div>
+                <div class="card" onclick="alert('DAE Jobs section will open soon!')">
+                    <div class="card-icon"><i class="fas fa-briefcase"></i></div>
+                    <div class="card-content">
+                        <h3>DAE Jobs Portal</h3>
+                        <p>Latest government and private job updates for associate engineers.</p>
+                    </div>
+                </div>
             </div>
-            <h3 id="question-text" style="color: #ffffff; font-size: 16px; margin-bottom: 15px; line-height: 1.5;">Loading question...</h3>
-            <ul id="options-list" style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></ul>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <button id="next-btn" onclick="nextQuestion()" style="display: none; background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">Next Question</button>
+
+            <div class="section-title" style="margin-top: 20px;"><i class="fas fa-bullhorn"></i> Quick Links & Updates</div>
+            <div class="grid-cards">
+                <div class="card" onclick="alert('Notes section is active inside Test Prep!')">
+                    <div class="card-icon"><i class="fas fa-book-open"></i></div>
+                    <div class="card-content">
+                        <h3>Study Notes & Books</h3>
+                        <p>Access subject-wise important questions and short summaries.</p>
+                    </div>
+                </div>
+                <div class="card" onclick="alert('Contact admin for queries.')">
+                    <div class="card-icon"><i class="fas fa-headset"></i></div>
+                    <div class="card-content">
+                        <h3>Support & Help</h3>
+                        <p>Get assistance regarding technical course materials.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- VIEW 2: TEST PREP CATEGORIES (Electrical, etc.) -->
+        <div id="test-prep-view" class="view-section">
+            <button class="back-btn" onclick="switchView('home-view')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+            <div class="section-title"><i class="fas fa-graduation-cap"></i> Select Technology / Branch</div>
+            
+            <div class="grid-cards">
+                <div class="card" onclick="switchView('electrical-books-view')">
+                    <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="card-content">
+                        <h3>Electrical Technology</h3>
+                        <p>AC Machines, Power Generation, Transmission, and Distribution subjects.</p>
+                    </div>
+                </div>
+                <div class="card" onclick="alert('Other technologies will be added soon!')">
+                    <div class="card-icon"><i class="fas fa-cogs"></i></div>
+                    <div class="card-content">
+                        <h3>Mechanical / Electronics</h3>
+                        <p>Preparation materials for other DAE branches.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div id="result-card" style="display: none; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 30px; text-align: center;">
-            <h2 style="color: #38bdf8; margin-bottom: 10px; font-size: 20px;">Quiz Completed!</h2>
-            <p id="score-text" style="font-size: 16px; color: #fff; margin-bottom: 20px;"></p>
-            <div style="display: flex; justify-content: center; gap: 10px;">
-                <button onclick="restartQuiz()" style="background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Restart Quiz</button>
+        <!-- VIEW 3: ELECTRICAL BOOKS / SUBJECTS -->
+        <div id="electrical-books-view" class="view-section">
+            <button class="back-btn" onclick="switchView('test-prep-view')"><i class="fas fa-arrow-left"></i> Back to Technologies</button>
+            <div class="section-title"><i class="fas fa-book"></i> Electrical Technology - Subjects</div>
+            
+            <div class="grid-cards">
+                <div class="card" onclick="startQuizPortal()">
+                    <div class="card-icon"><i class="fas fa-microchip"></i></div>
+                    <div class="card-content">
+                        <h3>ET-326 AC Machines</h3>
+                        <p>60+ Important MCQs, Alternators, Synchronous & Induction Motors.</p>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- VIEW 4: QUIZ PORTAL -->
+        <div id="quiz-view" class="view-section">
+            <button class="back-btn" onclick="switchView('electrical-books-view')"><i class="fas fa-arrow-left"></i> Back to Subjects</button>
+            
+            <div class="quiz-card">
+                <div class="quiz-header" style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span id="q-number">Question 1 of 60</span>
+                    <span id="q-topic">Topic: Alternator</span>
+                </div>
+                <h3 id="question-text" class="question-text">Loading question...</h3>
+                <ul id="options-list" class="options-list"></ul>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button id="next-btn" onclick="nextQuestion()" class="action-btn btn-primary" style="display: none;">Next Question</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 5: RESULT VIEW -->
+        <div id="result-view" class="view-section">
+            <div class="quiz-card" style="text-align: center; padding: 30px;">
+                <h2 style="color: #38bdf8; margin-bottom: 10px; font-size: 20px;">Quiz Completed!</h2>
+                <p id="score-text" style="font-size: 16px; color: #fff; margin-bottom: 20px;"></p>
+                <div style="display: flex; justify-content: center; gap: 10px;">
+                    <button onclick="restartQuiz()" class="action-btn btn-primary">Restart Quiz</button>
+                    <button onclick="switchView('electrical-books-view')" class="action-btn" style="background: #1e293b; color: #fff; border: 1px solid #334155;">Back to Subjects</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <footer>
@@ -67,6 +193,13 @@
     </footer>
 
     <script>
+        // Navigation Handler
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
+            document.getElementById(viewId).classList.add('active-view');
+            window.scrollTo(0, 0);
+        }
+
         const quizData = [
             {
                 "id": 1,
@@ -499,9 +632,14 @@
         const questionTextEl = document.getElementById('question-text');
         const optionsListEl = document.getElementById('options-list');
         const nextBtnEl = document.getElementById('next-btn');
-        const quizCardEl = document.getElementById('quiz-card');
-        const resultCardEl = document.getElementById('result-card');
         const scoreTextEl = document.getElementById('score-text');
+
+        function startQuizPortal() {
+            switchView('quiz-view');
+            currentQuestion = 0;
+            score = 0;
+            loadQuestion();
+        }
 
         function loadQuestion() {
             answered = false;
@@ -516,13 +654,6 @@
             q.options.forEach((option, index) => {
                 const li = document.createElement('li');
                 li.className = 'option-item';
-                li.style.background = '#1e293b';
-                li.style.padding = '10px 14px';
-                li.style.borderRadius = '8px';
-                li.style.cursor = 'pointer';
-                li.style.border = '1px solid #334155';
-                li.style.color = '#e2e8f0';
-                li.style.fontSize = '14px';
                 li.innerText = option;
                 li.onclick = () => selectOption(index, li);
                 optionsListEl.appendChild(li);
@@ -565,20 +696,16 @@
         }
 
         function showResults() {
-            quizCardEl.style.display = 'none';
-            resultCardEl.style.display = 'block';
+            switchView('result-view');
             scoreTextEl.innerText = `Your Score: ${score} / ${quizData.length}`;
         }
 
         function restartQuiz() {
             currentQuestion = 0;
             score = 0;
-            quizCardEl.style.display = 'block';
-            resultCardEl.style.display = 'none';
+            switchView('quiz-view');
             loadQuestion();
         }
-
-        loadQuestion();
     </script>
 </body>
 </html>
