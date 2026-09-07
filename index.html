@@ -25,10 +25,6 @@
 
         .container { max-width: 900px; margin: 0 auto; padding: 15px; }
 
-        .action-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
-        .btn-download { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
-        .btn-download:hover { background: #15803d; color: white; }
-
         footer { text-align: center; padding: 20px; background: #06090f; color: #475569; margin-top: 30px; border-top: 1px solid #1e293b; font-size: 12px; }
     </style>
 </head>
@@ -41,7 +37,7 @@
 
     <div class="hero">
         <h1>ET-326 AC Machines Quiz Portal</h1>
-        <p>Prepare for your DAE examinations with structured quizzes and downloadable study notes.</p>
+        <p>Prepare for your DAE examinations with structured quizzes and notes.</p>
     </div>
 
     <div class="container">
@@ -54,7 +50,6 @@
             <ul id="options-list" style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></ul>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <button id="next-btn" onclick="nextQuestion()" style="display: none; background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">Next Question</button>
-                <button class="action-btn btn-download" onclick="downloadMCQsAsText()"><i class="fas fa-download"></i> ڈاؤن لوڈ نوٹس</button>
             </div>
         </div>
 
@@ -63,7 +58,6 @@
             <p id="score-text" style="font-size: 16px; color: #fff; margin-bottom: 20px;"></p>
             <div style="display: flex; justify-content: center; gap: 10px;">
                 <button onclick="restartQuiz()" style="background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Restart Quiz</button>
-                <button class="action-btn btn-download" onclick="downloadMCQsAsText()"><i class="fas fa-download"></i> ڈاؤن لوڈ نوٹس</button>
             </div>
         </div>
     </div>
@@ -582,32 +576,6 @@
             quizCardEl.style.display = 'block';
             resultCardEl.style.display = 'none';
             loadQuestion();
-        }
-
-        // اب صرف سوالات اور آپشنز پر مشتمل نوٹس ڈاؤن لوڈ ہوں گے (کوڈنگ نہیں)
-        function downloadMCQsAsText() {
-            let textContent = "ET-326 AC Machines - DAE Examination Prep Notes\n";
-            textContent += "==================================================\n\n";
-
-            quizData.forEach((q, index) => {
-                textContent += `Question ${index + 1} [Topic: ${q.topic}]\n`;
-                textContent += `${q.question}\n`;
-                q.options.forEach((opt, optIndex) => {
-                    let marker = (optIndex === q.answer) ? " (Correct Answer ✓)" : "";
-                    textContent += `  - ${opt}${marker}\n`;
-                });
-                textContent += "\n--------------------------------------------------\n\n";
-            });
-
-            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'ET-326-MCQs-Notes.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
         }
 
         loadQuestion();
