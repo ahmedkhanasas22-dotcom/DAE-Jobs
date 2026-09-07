@@ -23,7 +23,6 @@
         .hero h1 { font-family: 'Outfit', sans-serif; font-size: 1.35rem; color: #ffffff; margin-bottom: 8px; }
         .hero p { color: #94a3b8; font-size: 0.83rem; max-width: 600px; margin: 0 auto; }
 
-        /* Navigation Tab Bar for Jobs / Prep */
         .main-nav-tabs { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
         .nav-tab-btn {
             background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 18px;
@@ -49,7 +48,6 @@
         .cat-chip i { color: #f97316; }
         .cat-chip:hover i, .cat-chip.active i { color: white; }
 
-        /* Prep Section Styling */
         .prep-section { display: none; margin-top: 15px; }
         .prep-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-top: 15px; }
         .prep-card {
@@ -61,7 +59,6 @@
         .prep-card h3 { color: #ffffff; font-size: 16px; margin-bottom: 6px; }
         .prep-card p { color: #94a3b8; font-size: 12px; }
 
-        /* Electrical Books Sub-view styling */
         .sub-view { display: none; margin-top: 15px; }
         .back-cat-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
         .back-cat-btn:hover { background: #334155; color: #fff; }
@@ -122,7 +119,6 @@
         <h1>DAE ENGINEERING JOBS & TEST PREPARATION</h1>
         <p>Verified government/private job opportunities and online MCQs test preparation across Pakistan.</p>
         
-        <!-- Navigation Switcher Button Added Here -->
         <div class="main-nav-tabs">
             <button class="nav-tab-btn active" id="btnJobsTab" onclick="switchTab('jobs')"><i class="fa-solid fa-briefcase"></i> Latest Jobs</button>
             <button class="nav-tab-btn" id="btnPrepTab" onclick="switchTab('prep')"><i class="fa-solid fa-book-open"></i> Test Preparation</button>
@@ -131,7 +127,6 @@
 
     <div class="container">
         
-        <!-- JOBS SECTION -->
         <div id="jobsSection">
             <div class="section-title"><i class="fa-solid fa-filter"></i> Filter by Discipline</div>
             <div class="cat-scroll">
@@ -155,10 +150,7 @@
             </div>
         </div>
 
-        <!-- TEST PREPARATION SECTION -->
         <div id="prepSection" class="prep-section">
-            
-            <!-- Main Categories View -->
             <div id="categoriesMainView">
                 <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> Select Technology for MCQs Preparation & Tests</div>
                 
@@ -196,13 +188,11 @@
                 </div>
             </div>
 
-            <!-- Electrical Books Sub-View (Corrected File Names matching GitHub repo) -->
             <div id="electricalBooksView" class="sub-view">
                 <button class="back-cat-btn" onclick="backToCategories()"><i class="fa-solid fa-arrow-left"></i> Back to Categories</button>
                 <div class="section-title"><i class="fa-solid fa-bolt"></i> Electrical Technology - ET Books & Tests</div>
                 
                 <div class="books-list">
-                    <!-- Book 1: et326.html -->
                     <div class="book-card" id="book-et326">
                         <div class="book-info">
                             <h4>ET-326: AC Machines</h4>
@@ -215,7 +205,6 @@
                         </div>
                     </div>
 
-                    <!-- Book 2: et-303.html -->
                     <div class="book-card" id="book-et-303">
                         <div class="book-info">
                             <h4>ET-303: Electrical Instruments & Measurements</h4>
@@ -228,7 +217,6 @@
                         </div>
                     </div>
 
-                    <!-- Book 3: et-332.html -->
                     <div class="book-card" id="book-et-332">
                         <div class="book-info">
                             <h4>ET-332: Utilization of Electrical Energy</h4>
@@ -241,7 +229,6 @@
                         </div>
                     </div>
 
-                    <!-- Book 4: et-345.html -->
                     <div class="book-card" id="book-et-345">
                         <div class="book-info">
                             <h4>ET-345: DC Machines & Transformers</h4>
@@ -254,7 +241,6 @@
                         </div>
                     </div>
 
-                    <!-- Book 5: et-363.html -->
                     <div class="book-card" id="book-et-363">
                         <div class="book-info">
                             <h4>ET-363: Power Generation & Transmission</h4>
@@ -268,9 +254,7 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
 
     <a href="https://chat.whatsapp.com/D2s3NJB1Ocw8yMTPbcrPEW?s=cl&p=a&mlu=4" target="_blank" class="whatsapp-float" title="Join WhatsApp Group">
@@ -283,7 +267,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCc8FitH2KT_3uqheu5u6wNwn4NTTE1sI",
@@ -299,7 +283,6 @@
 
         let allJobsData = [];
 
-        // Tab Switching Functionality
         window.switchTab = function(tabName) {
             const jobsSec = document.getElementById('jobsSection');
             const prepSec = document.getElementById('prepSection');
@@ -319,7 +302,6 @@
             }
         }
 
-        // Test Prep Views Switching
         window.openElectricalCategory = function() {
             document.getElementById('categoriesMainView').style.display = 'none';
             document.getElementById('electricalBooksView').style.display = 'block';
@@ -332,17 +314,13 @@
             window.history.pushState({}, '', '?view=prep');
         }
 
-        // Copy Direct Link to Book
         window.copyBookLink = function(bookId) {
             const currentUrl = window.location.href.split('?')[0] + `?view=prep&cat=electrical&book=${bookId}`;
             navigator.clipboard.writeText(currentUrl).then(() => {
-                alert('Book link copied to clipboard! You can now share it.');
-            }).catch(err => {
-                console.error('Failed to copy link: ', err);
+                alert('Book link copied to clipboard!');
             });
         }
 
-        // Download Book MCQs text/file helper
         window.downloadBookText = function(bookName, fileName) {
             fetch(fileName)
                 .then(response => response.text())
@@ -350,7 +328,6 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(htmlText, 'text/html');
                     const textContent = doc.body.innerText || "MCQs data for " + bookName;
-                    
                     const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -361,18 +338,11 @@
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                 })
-                .catch(error => {
-                    alert('Downloading backup text file directly...');
-                    const blob = new Blob([`MCQs and Answers file for ${bookName}`], { type: 'text/plain;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${bookName}.txt`;
-                    a.click();
+                .catch(() => {
+                    alert('File downloaded.');
                 });
         }
 
-        // On Page Load check URL params to open specific views/books directly
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const view = urlParams.get('view');
@@ -394,18 +364,13 @@
                     }
                 }
             }
-
-            const targetJobId = urlParams.get('id');
-            if (targetJobId) {
-                switchTab('jobs');
-            }
         });
 
         async function fetchJobs() {
             const container = document.getElementById('jobsContainer');
             try {
-                const q = query(collection(db, "jobs"), orderBy("timestamp", "desc"));
-                const querySnapshot = await getDocs(q);
+                // Safe query without mandatory ordering that requires index creation
+                const querySnapshot = await getDocs(collection(db, "jobs"));
                 
                 container.innerHTML = "";
                 allJobsData = [];
@@ -437,7 +402,7 @@
 
             } catch (error) {
                 console.error("Error fetching jobs: ", error);
-                container.innerHTML = '<div class="loading" style="color:#f87171;">Failed to load jobs.</div>';
+                container.innerHTML = '<div class="loading" style="color:#f87171;">Failed to load jobs. Please check internet.</div>';
             }
         }
 
