@@ -131,7 +131,7 @@
 
     <div class="container">
         
-        <!-- JOBS SECTION (Original functionality untouched) -->
+        <!-- JOBS SECTION -->
         <div id="jobsSection">
             <div class="section-title"><i class="fa-solid fa-filter"></i> Filter by Discipline</div>
             <div class="cat-scroll">
@@ -158,7 +158,7 @@
         <!-- TEST PREPARATION SECTION -->
         <div id="prepSection" class="prep-section">
             
-            {/* Main Categories View */}
+            <!-- Main Categories View -->
             <div id="categoriesMainView">
                 <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> Select Technology for MCQs Preparation & Tests</div>
                 
@@ -196,13 +196,13 @@
                 </div>
             </div>
 
-            {/* Electrical Books Sub-View */}
+            <!-- Electrical Books Sub-View (Corrected File Names matching GitHub repo) -->
             <div id="electricalBooksView" class="sub-view">
                 <button class="back-cat-btn" onclick="backToCategories()"><i class="fa-solid fa-arrow-left"></i> Back to Categories</button>
                 <div class="section-title"><i class="fa-solid fa-bolt"></i> Electrical Technology - ET Books & Tests</div>
                 
                 <div class="books-list">
-                    <!-- Book 1: ET-326 -->
+                    <!-- Book 1: et326.html -->
                     <div class="book-card" id="book-et326">
                         <div class="book-info">
                             <h4>ET-326: AC Machines</h4>
@@ -215,7 +215,7 @@
                         </div>
                     </div>
 
-                    <!-- Book 2: ET-303 -->
+                    <!-- Book 2: et-303.html -->
                     <div class="book-card" id="book-et-303">
                         <div class="book-info">
                             <h4>ET-303: Electrical Instruments & Measurements</h4>
@@ -228,7 +228,7 @@
                         </div>
                     </div>
 
-                    <!-- Book 3: ET-332 -->
+                    <!-- Book 3: et-332.html -->
                     <div class="book-card" id="book-et-332">
                         <div class="book-info">
                             <h4>ET-332: Utilization of Electrical Energy</h4>
@@ -241,7 +241,7 @@
                         </div>
                     </div>
 
-                    <!-- Book 4: ET-345 -->
+                    <!-- Book 4: et-345.html -->
                     <div class="book-card" id="book-et-345">
                         <div class="book-info">
                             <h4>ET-345: DC Machines & Transformers</h4>
@@ -254,7 +254,7 @@
                         </div>
                     </div>
 
-                    <!-- Book 5: ET-363 -->
+                    <!-- Book 5: et-363.html -->
                     <div class="book-card" id="book-et-363">
                         <div class="book-info">
                             <h4>ET-363: Power Generation & Transmission</h4>
@@ -349,7 +349,6 @@
                 .then(htmlText => {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(htmlText, 'text/html');
-                    // Extract text or body content for download
                     const textContent = doc.body.innerText || "MCQs data for " + bookName;
                     
                     const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
@@ -396,7 +395,6 @@
                 }
             }
 
-            // Check for job target
             const targetJobId = urlParams.get('id');
             if (targetJobId) {
                 switchTab('jobs');
@@ -418,8 +416,7 @@
                 }
 
                 querySnapshot.forEach((doc) => {
-                    ThejobData = doc.data();
-                    jobData = doc.data();
+                    const jobData = doc.data();
                     jobData.id = doc.id;
                     allJobsData.push(jobData);
                 });
