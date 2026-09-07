@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,177 +15,134 @@
             background: #0f172a; border-bottom: 1px solid #1e293b; padding: 12px 20px;
             display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
         }
-        .logo { font-family: 'Outfit', sans-serif; font-size: 17px; color: #38bdf8; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .logo { font-family: 'Outfit', sans-serif; font-size: 17px; color: #38bdf8; font-weight: 800; }
         .logo span { color: #f97316; }
         .badge { font-size: 11px; background: #1e293b; padding: 4px 10px; border-radius: 6px; color: #94a3b8; border: 1px solid #334155; }
 
         .hero { background: linear-gradient(180deg, #0f172a 0%, #090d16 100%); text-align: center; padding: 30px 15px 20px; border-bottom: 1px solid #1e293b; }
         .hero h1 { font-family: 'Outfit', sans-serif; font-size: 1.35rem; color: #ffffff; margin-bottom: 8px; }
-        .hero p { color: #94a3b8; font-size: 0.83rem; max-width: 600px; margin: 0 auto; line-height: 1.4; }
+        .hero p { color: #94a3b8; font-size: 0.83rem; max-width: 600px; margin: 0 auto; }
+
+        .main-nav-tabs { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+        .nav-tab-btn {
+            background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 18px;
+            border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 6px; text-decoration: none;
+        }
+        .nav-tab-btn.active, .nav-tab-btn:hover { background: #0284c7; border-color: #38bdf8; color: white; }
+        .nav-tab-btn i { color: #f97316; }
+        .nav-tab-btn.active i, .nav-tab-btn:hover i { color: white; }
 
         .container { max-width: 900px; margin: 0 auto; padding: 15px; }
 
-        .section-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-        .section-title i { color: #38bdf8; }
-
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .section-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; color: #38bdf8; margin: 15px 0 10px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .cat-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+        .cat-scroll::-webkit-scrollbar { display: none; }
         
-        .card {
-            background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px;
-            cursor: pointer; transition: 0.2s ease; display: flex; align-items: center; gap: 12px; text-decoration: none;
+        .cat-chip {
+            background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 6px 14px;
+            border-radius: 20px; font-size: 12px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 6px;
         }
-        .card:hover { border-color: #38bdf8; background: #1f2937; transform: translateY(-2px); }
-        .card-icon { width: 40px; height: 40px; background: #1e293b; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-size: 16px; flex-shrink: 0; }
-        .card-content h3 { font-size: 14px; color: #ffffff; margin-bottom: 3px; font-weight: 600; }
-        .card-content p { font-size: 11.5px; color: #94a3b8; line-height: 1.3; }
+        .cat-chip:hover, .cat-chip.active { background: #0284c7; border-color: #38bdf8; color: white; }
+        .cat-chip i { color: #f97316; }
+        .cat-chip:hover i, .cat-chip.active i { color: white; }
 
-        .back-btn {
-            background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px;
-            border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 15px;
+        .prep-section { display: none; margin-top: 15px; }
+        .prep-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-top: 15px; }
+        .prep-card {
+            background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 20px; text-align: center;
+            transition: 0.2s; cursor: pointer; text-decoration: none; display: block;
         }
-        .back-btn:hover { background: #334155; color: #fff; }
+        .prep-card:hover { border-color: #38bdf8; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(56, 189, 248, 0.15); }
+        .prep-card i { font-size: 32px; color: #38bdf8; margin-bottom: 12px; }
+        .prep-card h3 { color: #ffffff; font-size: 16px; margin-bottom: 6px; }
+        .prep-card p { color: #94a3b8; font-size: 12px; }
 
-        .view-section { display: none; }
-        .active-view { display: block; }
+        .sub-view { display: none; margin-top: 15px; }
+        .back-cat-btn { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
+        .back-cat-btn:hover { background: #334155; color: #fff; }
+        
+        .books-list { display: flex; flex-direction: column; gap: 12px; }
+        .book-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .book-card:hover { border-color: #38bdf8; }
+        .book-card.highlight { border: 2px solid #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+        .book-info h4 { color: #ffffff; font-size: 15px; margin-bottom: 4px; }
+        .book-info p { color: #94a3b8; font-size: 12px; }
+        .book-actions { display: flex; gap: 8px; align-items: center; }
+        
+        .action-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .btn-test { background: #0284c7; color: white; }
+        .btn-test:hover { background: #0369a1; }
+        .btn-download { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
+        .btn-download:hover { background: #15803d; color: white; }
+        .btn-share { background: #334155; color: #cbd5e1; }
+        .btn-share:hover { background: #475569; color: white; }
 
-        /* Quiz styles */
-        .quiz-card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .quiz-header { display: flex; justify-content: between; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
-        .question-text { color: #ffffff; font-size: 15px; margin-bottom: 15px; line-height: 1.5; font-weight: 500; }
-        .options-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .option-item { background: #1e293b; padding: 10px 14px; border-radius: 8px; cursor: pointer; border: 1px solid #334155; color: #e2e8f0; font-size: 13.5px; transition: 0.15s; }
-        .option-item:hover { border-color: #38bdf8; }
+        .jobs-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .job-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 15px; transition: 0.2s; }
+        .job-card:hover { border-color: #374151; }
+        .job-card.highlight { border: 2px solid #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
 
-        .action-btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-primary { background: #0284c7; color: white; }
-        .btn-primary:hover { background: #0369a1; }
+        .job-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+        .job-card h3 { color: #38bdf8; font-size: 15px; font-weight: 600; }
+        .tag-branch { font-size: 10px; background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        
+        .company { color: #94a3b8; font-size: 12px; font-weight: 500; margin-bottom: 8px; }
+        .job-poster { width: 100%; max-height: 250px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; border: 1px solid #1f2937; }
+        .job-card p { color: #64748b; font-size: 12px; margin-bottom: 12px; line-height: 1.4; white-space: pre-line; }
+        
+        .job-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1f2937; padding-top: 10px; font-size: 11px; color: #64748b; }
+        .apply-btn { background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 11px; text-decoration: none; transition: 0.2s; }
+        .apply-btn:hover { background: #0369a1; }
+
+        .whatsapp-float {
+            position: fixed; bottom: 20px; right: 20px; background-color: #22c55e; color: white;
+            width: 50px; height: 50px; border-radius: 50%; text-align: center; font-size: 26px;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; text-decoration: none;
+            animation: upDown 2s infinite ease-in-out;
+        }
+        @keyframes upDown { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
 
         footer { text-align: center; padding: 20px; background: #06090f; color: #475569; margin-top: 30px; border-top: 1px solid #1e293b; font-size: 12px; }
+        .loading { text-align: center; color: #94a3b8; padding: 20px; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo"><i class="fas fa-bolt"></i> DAE <span>PORTAL</span></div>
-        <div class="badge">Pakistan</div>
+        <div class="logo">DAE <span>PORTAL</span></div>
+        <div class="badge">Examination Prep</div>
     </header>
 
     <div class="hero">
-        <h1>DAE Engineering Jobs & Test Preparation</h1>
-        <p>Find latest DAE jobs, past papers, technical notes, and interactive online test preparation for all technologies.</p>
+        <h1>ET-326 AC Machines Quiz Portal</h1>
+        <p>Prepare for your DAE examinations with structured quizzes and downloadable study notes.</p>
     </div>
 
     <div class="container">
-
-        <!-- VIEW 1: HOME PAGE -->
-        <div id="home-view" class="view-section active-view">
-            
-            <div class="section-title"><i class="fas fa-compass"></i> Explore Categories</div>
-            <div class="grid-cards">
-                <div class="card" onclick="switchView('test-prep-view')">
-                    <div class="card-icon"><i class="fas fa-laptop-code"></i></div>
-                    <div class="card-content">
-                        <h3>Test Preparation</h3>
-                        <p>Online MCQs quizzes, past papers and mock tests for DAE exams.</p>
-                    </div>
-                </div>
-                <div class="card" onclick="alert('DAE Jobs section will open soon!')">
-                    <div class="card-icon"><i class="fas fa-briefcase"></i></div>
-                    <div class="card-content">
-                        <h3>DAE Jobs Portal</h3>
-                        <p>Latest government and private job updates for associate engineers.</p>
-                    </div>
-                </div>
+        <div id="quiz-card" style="background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px; color: #94a3b8;">
+                <span id="q-number">Question 1 of 60</span>
+                <span id="q-topic">Topic: Alternator</span>
             </div>
-
-            <div class="section-title" style="margin-top: 20px;"><i class="fas fa-bullhorn"></i> Quick Links & Updates</div>
-            <div class="grid-cards">
-                <div class="card" onclick="alert('Notes section is active inside Test Prep!')">
-                    <div class="card-icon"><i class="fas fa-book-open"></i></div>
-                    <div class="card-content">
-                        <h3>Study Notes & Books</h3>
-                        <p>Access subject-wise important questions and short summaries.</p>
-                    </div>
-                </div>
-                <div class="card" onclick="alert('Contact admin for queries.')">
-                    <div class="card-icon"><i class="fas fa-headset"></i></div>
-                    <div class="card-content">
-                        <h3>Support & Help</h3>
-                        <p>Get assistance regarding technical course materials.</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- VIEW 2: TEST PREP CATEGORIES (Electrical, etc.) -->
-        <div id="test-prep-view" class="view-section">
-            <button class="back-btn" onclick="switchView('home-view')"><i class="fas fa-arrow-left"></i> Back to Home</button>
-            <div class="section-title"><i class="fas fa-graduation-cap"></i> Select Technology / Branch</div>
-            
-            <div class="grid-cards">
-                <div class="card" onclick="switchView('electrical-books-view')">
-                    <div class="card-icon"><i class="fas fa-bolt"></i></div>
-                    <div class="card-content">
-                        <h3>Electrical Technology</h3>
-                        <p>AC Machines, Power Generation, Transmission, and Distribution subjects.</p>
-                    </div>
-                </div>
-                <div class="card" onclick="alert('Other technologies will be added soon!')">
-                    <div class="card-icon"><i class="fas fa-cogs"></i></div>
-                    <div class="card-content">
-                        <h3>Mechanical / Electronics</h3>
-                        <p>Preparation materials for other DAE branches.</p>
-                    </div>
-                </div>
+            <h3 id="question-text" style="color: #ffffff; font-size: 16px; margin-bottom: 15px; line-height: 1.5;">Loading question...</h3>
+            <ul id="options-list" style="list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></ul>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button id="next-btn" onclick="nextQuestion()" style="display: none; background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">Next Question</button>
+                <!-- ڈاؤن لوڈ بٹن یہاں بالکل محفوظ ہے -->
+                <button class="action-btn btn-download" onclick="downloadMCQsAsText()"><i class="fas fa-download"></i> ڈاؤن لوڈ نوٹس</button>
             </div>
         </div>
 
-        <!-- VIEW 3: ELECTRICAL BOOKS / SUBJECTS -->
-        <div id="electrical-books-view" class="view-section">
-            <button class="back-btn" onclick="switchView('test-prep-view')"><i class="fas fa-arrow-left"></i> Back to Technologies</button>
-            <div class="section-title"><i class="fas fa-book"></i> Electrical Technology - Subjects</div>
-            
-            <div class="grid-cards">
-                <div class="card" onclick="startQuizPortal()">
-                    <div class="card-icon"><i class="fas fa-microchip"></i></div>
-                    <div class="card-content">
-                        <h3>ET-326 AC Machines</h3>
-                        <p>60+ Important MCQs, Alternators, Synchronous & Induction Motors.</p>
-                    </div>
-                </div>
+        <div id="result-card" style="display: none; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 30px; text-align: center;">
+            <h2 style="color: #38bdf8; margin-bottom: 10px; font-size: 20px;">Quiz Completed!</h2>
+            <p id="score-text" style="font-size: 16px; color: #fff; margin-bottom: 20px;"></p>
+            <div style="display: flex; justify-content: center; gap: 10px;">
+                <button onclick="restartQuiz()" style="background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Restart Quiz</button>
+                <button class="action-btn btn-download" onclick="downloadMCQsAsText()"><i class="fas fa-download"></i> ڈاؤن لوڈ نوٹس</button>
             </div>
         </div>
-
-        <!-- VIEW 4: QUIZ PORTAL -->
-        <div id="quiz-view" class="view-section">
-            <button class="back-btn" onclick="switchView('electrical-books-view')"><i class="fas fa-arrow-left"></i> Back to Subjects</button>
-            
-            <div class="quiz-card">
-                <div class="quiz-header" style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                    <span id="q-number">Question 1 of 60</span>
-                    <span id="q-topic">Topic: Alternator</span>
-                </div>
-                <h3 id="question-text" class="question-text">Loading question...</h3>
-                <ul id="options-list" class="options-list"></ul>
-                <div style="display: flex; justify-content: flex-end;">
-                    <button id="next-btn" onclick="nextQuestion()" class="action-btn btn-primary" style="display: none;">Next Question</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW 5: RESULT VIEW -->
-        <div id="result-view" class="view-section">
-            <div class="quiz-card" style="text-align: center; padding: 30px;">
-                <h2 style="color: #38bdf8; margin-bottom: 10px; font-size: 20px;">Quiz Completed!</h2>
-                <p id="score-text" style="font-size: 16px; color: #fff; margin-bottom: 20px;"></p>
-                <div style="display: flex; justify-content: center; gap: 10px;">
-                    <button onclick="restartQuiz()" class="action-btn btn-primary">Restart Quiz</button>
-                    <button onclick="switchView('electrical-books-view')" class="action-btn" style="background: #1e293b; color: #fff; border: 1px solid #334155;">Back to Subjects</button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <footer>
@@ -193,144 +150,137 @@
     </footer>
 
     <script>
-        // Navigation Handler
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
-            document.getElementById(viewId).classList.add('active-view');
-            window.scrollTo(0, 0);
-        }
-
         const quizData = [
             {
                 "id": 1,
                 "topic": "Alternator",
                 "question": "The power factor of an alternator depends on\nآلٹرنیٹر کا پاور فیکٹر کس چیز پر منحصر ہوتا ہے",
-                "options": ["Load (لوڈ)", "Speed of rotor (روٹر کی سپیڈ)", "Core Losses (کور لاسسز)", "Armature Losses (آرمیچر لاسسز)"],
+                "options": ["Load لوڈ", "Speed of rotor روٹر کی سپیڈ", "Core Losses کور لاسسز", "Armature Losses آرمیچر لاسسز"],
                 "answer": 0
             },
             {
                 "id": 2,
                 "topic": "Alternator",
                 "question": "As the speed of an alternator increases\nجب آلٹرنیٹر کی رفتار بڑھتی ہے تو",
-                "options": ["The frequency increases (فریکوئینسی بڑھتی ہے)", "The frequency decreases (فریکوئینسی کم ہے)", "The frequency remains constant but power factor decreases (فریکوئنسی مستقل رہتی ہے مگر پاور فیکٹر کم ہو جاتا ہے)", "None of the above (کوئی بھی نہیں)"],
+                "options": ["The frequency increases \nفریکیوئینسی بڑھتی ہے", "The frequency decreases فریکیوئینسی کم ہے", "The frequency remains constant but power factor decreases فریکوئنسی مستقل رہتی ہے مگر پاور فیکٹر کم ہو جاتا ہے", "None of the above کوئی بھی نہیں"],
                 "answer": 0
             },
             {
                 "id": 3,
                 "topic": "Alternator",
                 "question": "An exciter for generator is a\nجنریٹر کے لیے ایکسائٹر کیا ہوتا ہے",
-                "options": ["Series Motor (سیریز موٹر)", "Shunt Motor (شنٹ موٹر)", "Series generator (سیریز جنریٹر)", "Shunt generator (شنٹ جنریٹر)"],
+                "options": ["Series Motor سیریز موٹر", "Shunt Motor شنٹ موٹر", "Series generator سیریز جنریٹر", "Shunt generator شنٹ جنریٹر"],
                 "answer": 3
             },
             {
                 "id": 4,
                 "topic": "Alternator",
                 "question": "In order that two alternators be put in parallel, which of the following factors should be identical for both\nدو آلٹرنیٹرز کو متوازی چلانے کے لیے کون سی چیزیں ایک جیسی ہونی چاہئیں",
-                "options": ["Voltage (وولٹیج)", "Frequency (فریکوئینسی)", "Phase Sequence (فیز سیکوئنس)", "All of the above (تمام)"],
+                "options": ["Voltage وولٹیج", "Frequency فریکیوئینسی", "Phase Sequence فیز سیکوئنس", "All of the above تمام"],
                 "answer": 3
             },
             {
                 "id": 5,
                 "topic": "Alternator",
                 "question": "What kind of rotor is most suitable for turbo alternators\nٹربو آلٹرنیٹر کے لیے کون سا روٹر زیادہ موزوں ہے",
-                "options": ["Salient pole type (سائینلٹ پول ٹائپ)", "Non salient pole type (نان سائینلٹ پول ٹائپ)", "Both A and B above", "None of the above (کوئی نہیں)"],
+                "options": ["Salient pole type سائینلٹ پول ٹائپ", "Non salient pole type نان سائینلٹ پول ٹائپ", "Both A and B above", "None of the above کوئی نہیں"],
                 "answer": 1
             },
             {
                 "id": 6,
                 "topic": "Alternator",
                 "question": "The maximum current that can be supplied by an alternator depends on\nآلٹرنیٹر کی زیادہ سے زیادہ کرنٹ دینے کی صلاحیت کس پر منحصر ہے",
-                "options": ["Speed of exciter (ایکسائیٹر کی سپیڈ)", "Number of Poles (پول کے نمبرز)", "Exciter current (ایکسائیٹر کرنٹ)", "Strength of the magnetic field (مقناطیسی میدان کی طاقت)"],
+                "options": ["Speed of exciter ایکسائیٹر کی سپیڈ", "Number of Poles پول کے نمبرز", "Exciter current ایکسائیٹر کرنٹ", "Strength of the magnetic flied مقناطیسی میدان کی طاقت"],
                 "answer": 3
             },
             {
                 "id": 7,
                 "topic": "Synchronous Motor",
                 "question": "The damping winding in a synchronous motor is generally used\nسنکرونس موٹر میں ڈیمپنگ وائنڈنگ کا استعمال ہوتا ہے",
-                "options": ["To providing starting torque only (صرف سٹارٹنگ ٹارق مہیا کرنا)", "To reduce noise level (شور کم کرنے کے لیے)", "To reduce eddy currents (ایڈی کرںٹ کم کر کے)", "To prevent hunting and provide starting torque (ہنٹنگ روکنے اور اسٹارٹنگ ٹارک دینے کے لیے)"],
+                "options": ["To providing starting torque only صرف سٹارٹنگ ٹارق مہیا کرنا", "To reduce noise level شور کم کرنے کے لیے", "To reduce eddy currents ایڈی کرںٹ کم کر کے", "To prevent hunting and provide starting torque ہنٹنگ روکنے اور اسٹارٹنگ ٹارک دینے کے لیے"],
                 "answer": 3
             },
             {
                 "id": 8,
                 "topic": "Synchronous Motor",
-                "question": "In case the field of a synchronous motor is under excited, the power factor will be\nاگر سنکرونس موٹر کی فیلڈ انڈر ایکسائٹ ہو تو پاور فیکٹر ہوگا",
-                "options": ["Leading (لیڈنگ)", "Lagging (لیگنگ)", "Zero", "Unity"],
+                "question": "In case the flied of a synchronous motor is under excited, the power factor will be\nاگر سنکرونس موٹر کی فیلڈ انڈر ایکسائٹ ہو تو پاور فیکٹر ہوگا",
+                "options": ["Leading لیڈنگ", "Lagging لیگنگ", "Zero", "Unity"],
                 "answer": 1
             },
             {
                 "id": 9,
                 "topic": "Synchronous Motor",
                 "question": "The Armature current of a synchronous motor has large values for\nسنکرونس موٹر کا آرمےچر کرنٹ زیادہ ہوتا ہے",
-                "options": ["Low excitation only (صرف لو ایکساٹیشن)", "High excitation only (صرف زیادہ ایکسائٹیشن پر)", "Both low and high excitation (کم اور زیادہ دونوں پر)", "Depends on other factors (دیگر عوامل پر منحصر ہے)"],
+                "options": ["Low excitation only صرف لو ایکساٹیشن", "High excitation only صرف زیادہ ایکسائٹیشن پر", "Both low and high excitation کم اور زیادہ دونوں پر", "Depends on other factors دیگر عوامل پر منحصر ہے"],
                 "answer": 2
             },
             {
                 "id": 10,
                 "topic": "Synchronous Motor",
-                "question": "The maximum value of torque that a synchronous motor can develop without losing its synchronism, is known as\nسنکرونس موٹر کا زیادہ سے زیادہ ٹارک جس پر سنکرونزم برقرار رہے",
-                "options": ["Breaking torque (بریکنگ ٹارق)", "Synchronous torque (سنکرونس ٹارق)", "Pull out torque (پل آوٹ ٹارق)", "Slip Torque (سلپ ٹارق)"],
+                "question": "The maximum value of torque that a synchronous motor can develop without losing it synchronism , is known as\nسنکرونس موٹر کا زیادہ سے زیادہ ٹارک جس پر سنکرونزم برقرار رہے",
+                "options": ["Breaking torque بریکنگ ٹارق", "Synchronous torque سنکرونس ٹارق", "Pull out torque پل آوٹ ٹارق", "Slip Torque slp سلپ ٹارق"],
                 "answer": 1
             },
             {
                 "id": 11,
                 "topic": "Synchronous Motor",
                 "question": "A synchronous motor working on leading power factor is called\nسنکرونس موٹر جو لیڈنگ پاور فیکٹر پر کام کرے کہلاتی ہے",
-                "options": ["Synchronous induction motor (سنکرونس انڈکشن موٹر)", "Spinning Motor (سپائنگ موٹر)", "Synchronous condenser (سنکرونس کنڈنسر)", "None of the above (کوئی نہیں)"],
+                "options": ["Synchronous induction motor سنکرونس انڈکشن موٹر", "Spinning Motor سپائنگ موٹر", "Synchronous condenser سنکرونس کنڈنسر", "None of the above کوئی نہیں"],
                 "answer": 2
             },
             {
                 "id": 12,
                 "topic": "Synchronous Motor",
                 "question": "V curves for a synchronous motor represent the relation between\nسنکرونس موٹر کے V curves کس کے درمیان تعلق ظاہر کرتے ہیں",
-                "options": ["Field current and speed (فیلڈ کرنٹ اور سپیڈ)", "Field current and power factor (فیلڈ کرنٹ اور پاور فیکٹر)", "Power factor and speed (پاور فیکٹر اور سپیڈ)", "Armature current and field current (آرمیچر کرنٹ اور فیلڈ کرنٹ)"],
+                "options": ["Field current and speed ٖفیلڈ کرنٹ اور سپیڈ", "Field current and power factor فیلڈ کرنٹ اور رفتار", "Power factor and speed پاور فیکٹر اور سپیڈ", "Armature current and field current آرمیچر کرنٹ اور فیلڈ کرنٹ"],
                 "answer": 3
             },
             {
                 "id": 13,
                 "topic": "Synchronous Motor",
                 "question": "Which of the following motors is non-self starting?\nمندرجہ ذیل میں سے کون سی موٹر نان سیلف اسٹارٹ ہے؟",
-                "options": ["Squirrel cage induction motor (سکیریل کیج انڈکشن موٹر)", "Wound rotor induction motor (وئونڈ روٹر انڈکشن موٹر)", "Synchronous motor (سنکرونس موٹر)", "DC Series motor (ڈی سی سیریز موٹر)"],
+                "options": ["Squirrel cage induction motor سکیریل کیج انڈکشن موٹر", "Wound rotor induction motor وئونڈ روٹر انڈکشن موٹر", "Synchronous motor سنکرونس موٹر", "DC Series motor ڈی سی سیریز موٹر"],
                 "answer": 2
             },
             {
                 "id": 14,
                 "topic": "Synchronous Motor",
                 "question": "The size of synchronous motor decreases with increase in\nسنکرونس موٹر کا سائز کس میں اضافے سے کم ہوتا ہے؟",
-                "options": ["Speed (سپیڈ)", "Horsepower Rating (ہارس پاور ریٹنگ)", "Flux density (فلکس ڈینسٹی)", "All of the above (تمام)"],
+                "options": ["Speed سپیڈ", "Horsepower Rating ہارس پاور ریٹنگ", "Flux density فلکس ڈینسٹی", "All of the above تمام"],
                 "answer": 2
             },
             {
                 "id": 15,
                 "topic": "Synchronous Motor",
                 "question": "If a synchronous motor fails to pull into synchronism, the cause is\nاگر سنکرونس موٹر سنکرونزم برقرار نہ رکھ سکے تو اس کی وجہ ہے",
-                "options": ["High core losses (ہائی کور لاسسز)", "Low field current (کم فیلڈ کرنٹ)", "High Field current (ہائی فیلڈ کرنٹ)", "Low short circuit ratio (لو شارٹ سرکٹ ریشو)"],
+                "options": ["High core losses ہائی کور لاسسز", "Low field current کم فیلڈ کرنٹ", "High Field current ہائی فیلڈ کرنٹ", "Low short circuit ratio لو شارٹ سرکٹ ریشو"],
                 "answer": 1
             },
             {
                 "id": 16,
                 "topic": "Synchronous Motor",
                 "question": "In a synchronous motor, the angle between the rotating stator magnetic field and rotor magnetic field is called\nسنکرونس موٹر میں روٹیٹنگ اسٹیٹر اور روٹر فیلڈ کے درمیان زاویہ کہلاتا ہے",
-                "options": ["Synchronizing angle (سنکرنائزنگ اینگل)", "Torque angle (ٹارق اینگل)", "Angle of the retardation (ریٹارڈیشن اینگل)", "Power Factor angle (پاور فیکٹر اینگل)"],
+                "options": ["Synchronizing angle سنکرنائزنگ اینگل", "Torque angle ٹارق اینگل", "Angle of the retardation ریٹارڈیشن اینگل", "Power Factor angle پاور فیکٹر اینگل"],
                 "answer": 1
             },
             {
                 "id": 17,
                 "topic": "Synchronous Motor",
                 "question": "Damper windings are provided on\nڈیمپر وائنڈنگ کہاں لگائی جاتی ہے؟",
-                "options": ["Poles faces (پول فیسز)", "Separate Armature (الگ آرمےچر پر)", "Rotor Shaft (روٹر شافٹ)", "Stator Frame (اسٹارٹر فریم)"],
+                "options": ["Poles faces پول فیسز", "Separate Armature الگ آرمےچر پر", "Rotor Shaft روٹر شافٹ", "Stator Frame سٹارٹر فریم"],
                 "answer": 0
             },
             {
                 "id": 18,
                 "topic": "Synchronous Motor",
                 "question": "In a three phase motor, three windings are placed at an electrical angle of\nتھری فیز موٹر میں تینوں وائنڈنگز کتنے برقی زاویے پر رکھی جاتی ہیں؟",
-                "options": ["0 Degree (زیرو ڈگری)", "90 Degree", "120 Degree", "240 Degree"],
+                "options": ["0 Degree زیرو ڈگری", "90 Degree", "120 Degree", "240 Degree"],
                 "answer": 2
             },
             {
                 "id": 19,
                 "topic": "Synchronous Motor",
-                "question": "Synchronous speed=\nسنکرونس رفتار =",
+                "question": "Synchronous speed=\n=سنکرونس رفتار",
                 "options": ["120f/P", "120P/f", "P/120f", "Pf/120"],
                 "answer": 0
             },
@@ -338,112 +288,112 @@
                 "id": 20,
                 "topic": "Synchronous Motor",
                 "question": "The direction of rotation of induction motor depends upon\nانڈکشن موٹر کے گھومنے کی سمت کس پر منحصر ہے؟",
-                "options": ["Phase sequence (فیز سیکیونس)", "Mutual Flux (میوچل فلکس)", "Rotor EMF", "Slip Speed (سلپ سپیڈ)"],
+                "options": ["Phase sequence فیز سیکیونس", "Mutual Flux میوچل فلکس", "Rotor EMF", "Slip Speed سلپ سپیڈ"],
                 "answer": 0
             },
             {
                 "id": 21,
                 "topic": "Transformer",
-                "question": "The formula of slip is\nسلپ کا فارمولا ہے",
-                "options": ["(Ns-N)/Ns", "fr/f", "(Rotor Cu.loss)/P2", "All of these (تمام)"],
+                "question": "The formula of slip is\n  فارمولا ہےslip",
+                "options": ["(Ns-N)/Ns", "fr/f", "(Rotor Cu.loss)/P2", "All of these تمام"],
                 "answer": 3
             },
             {
                 "id": 22,
                 "topic": "Transformer",
-                "question": "The Speed of induction motor can be controlled by changing\nانڈکشن موٹر کی رفتار کس کو بدل کر کنٹرول کی جا سکتی ہے؟",
-                "options": ["Synchronous speed (سنکرونس سپیڈ)", "Slip (سلپ)", "Supply Voltage (سپلائی وولٹیج)", "All of these (تمام)"],
+                "question": "The Speed of induction motor cab be controlled by changing\nانڈکشن موٹر کی رفتار کس کو بدل کر کنٹرول کی جا سکتی ہے؟",
+                "options": ["Synchronous speed سنکرونس سپیڈ", "Slip سلپ", "Supply Voltage سپلائی وولٹیج", "All of these تمام"],
                 "answer": 3
             },
             {
                 "id": 23,
                 "topic": "Transformer",
                 "question": "If the air gap between the stator and the rotor of an induction motor is increased, it will affect\nاگر انڈکشن موٹر کے اسٹیٹر اور روٹر کے درمیان ایئر گپ بڑھا دیا جائے تو کس پر اثر پڑے گا؟",
-                "options": ["Motor efficiency (موٹر ایفیشنسی)", "Starting torque (سٹارٹنگ ٹارق)", "Power factor (پاور فیکٹر)", "Pull out torque (پل آوٹ ٹارق)"],
+                "options": ["Motor efficiency موٹر ایفیشنسی", "Starting torque سٹارٹنگ ٹارق", "Power factor پاور فیکٹر", "Pull out torque پل آوٹ ٹارق"],
                 "answer": 2
             },
             {
                 "id": 24,
                 "topic": "Transformer",
                 "question": "The frequency of rotor current at standstill condition is\nاسٹینڈ اسٹل حالت میں روٹر کرنٹ کی فریکوئنسی ہوتی ہے",
-                "options": ["Zero (زیرو)", "2f", "f", "sf"],
+                "options": ["Zero زیرو", "2f", "f", "sf"],
                 "answer": 2
             },
             {
                 "id": 25,
                 "topic": "Transformer",
                 "question": "Starting torque of squirrel cage induction motor is\nاسکوائرل کیج انڈکشن موٹر کا اسٹارٹنگ ٹارق ہوتا ہے",
-                "options": ["Very high (بہت زیادہ)", "Very low (بہت کم)", "Slightly higher than full load torque (فل لوڈ ٹارک سے تھوڑا زیادہ)", "Zero"],
+                "options": ["Very high بہت زیادہ", "Very low بہت کم", "Slightly higher than f.I torque  ٹارک سے تھوڑا زیادہ f.i", "Zero"],
                 "answer": 2
             },
             {
                 "id": 26,
                 "topic": "Transformer",
                 "question": "An induction motor always operate lagging power factor due to\nانڈکشن موٹر ہمیشہ لیگنگ پاور فیکٹر پر کیوں چلتی ہے؟",
-                "options": ["Stator reactance (اسٹیٹر ریکٹنس)", "Rotor leakage reactance (روٹر لییکیج ریکٹنس)", "Large reactive lagging magnetizing current (بڑا میگنیٹائزنگ کرنٹ)", "All of these (تمام)"],
+                "options": ["Stator reactance سٹارٹر ریکٹنس", "Rotor leakage reactance اسٹیٹر ریاکٹینس", "Large reactive lagging magnetizing current میگنیٹائزنگ کرنٹ", "All of these تمام"],
                 "answer": 3
             },
             {
                 "id": 27,
                 "topic": "Transformer",
                 "question": "If there is an open circuit in the rotor of slip ring induction motor, then\nاگر سلپ رنگ انڈکشن موٹر کے روٹر میں اوپن سرکٹ ہو جائے تو",
-                "options": ["Motor will not start (موٹر سٹارٹ نہیں ہوگی)", "Motor will be noisy (موٹر شور کرے گی)", "Motor will over heat (موٹر اورہیٹ ہوگی)", "Motor will start hunting (موٹر ہنٹنگ کرے گی)"],
+                "options": ["Motor will not start موتر سٹارت نہیں ہو گی", "Motor will noisy موٹر شور کرے گی", "Motor will over heat موٹر اور ہیٹ ہو گی", "Motor will start hunting موٹر سٹارٹ ہنٹنگ کرے گی"],
                 "answer": 0
             },
             {
                 "id": 28,
                 "topic": "Transformer",
                 "question": "When supply frequency of an induction motor is changed, it affects\nجب انڈکشن موٹر کی سپلائی فریکوئنسی تبدیل کی جائے تو کیا متاثر ہوتا ہے؟",
-                "options": ["Starting current (اسٹارٹنگ کرنٹ)", "Full load current (فل لوڈ کرنٹ)", "Maximum running torque (زیادہ سے زیادہ ٹارک)", "All of the above (تمام)"],
+                "options": ["Starting current سٹارتنگ کرنٹ", "Full load current فل لوڈ کرنٹ", "Maximum running torque زیادہ سے زیادہ ٹارک", "All of the above تمام"],
                 "answer": 3
             },
             {
                 "id": 29,
                 "topic": "Transformer",
                 "question": "The frequency of the induced e.m.f in the rotor is equal to supply frequency\nروٹر میں انڈیوس ہونے والی e.m.f کی فریکوئنسی سپلائی فریکوئنسی کے برابر ہوتی ہے",
-                "options": ["At stand still (ساکن حالت میں)", "At full load (فل لوڈ پر)", "At no load (نو لوڈ پر)", "At full torque (فل ٹارق پر)"],
+                "options": ["At stand still  ساکن", "At full load فل کوڈ پر", "At no load نو لوڈ پر", "At full torque فل ٹارق"],
                 "answer": 0
             },
             {
                 "id": 30,
                 "topic": "Transformer",
-                "question": "Which of the following is minimized by laminating the core of transformer?\nٹرانسفارمر کے کور کو لیمینیٹ کرنے سے کیا کم ہوتا ہے؟",
-                "options": ["Hysteresis loss (ہسٹیرسز لاس)", "Eddy current loss (ایڈی کرنٹ لاس)", "Heat loss (ہیٹ لاس)", "All of the above (تمام)"],
+                "question": "Which of the minimized by laminating the core of transformer?\nٹرانسفارمر کے کور کو لیمینیٹ کرنے سے کیا کم ہوتا ہے؟",
+                "options": ["Hysteresis loss ہسٹیرسز لاس", "Eddy current loss ایڈی کرنٹ لاس", "Heat loss ہیٹ لاس", "All of the above تمام"],
                 "answer": 1
             },
             {
                 "id": 31,
                 "topic": "DC Machine",
-                "question": "Open circuit test of transformer gives\nٹرانسفارمر کا اوپن سرکٹ ٹیسٹ دیتا ہے",
-                "options": ["Hysteresis loss (ہسٹیرسز لاس)", "Eddy current loss (ایڈی کرنٹ لاس)", "Sum of Hysteresis loss and Eddy current loss (ہسٹریسس اور ایڈی کرنٹ لاس کا مجموعہ)", "Copper Loss (کاپر لاس)"],
+                "question": "Open circuit test of transformer gives\n....ٹرانسفارمر کا اوپن سرکٹ ٹیسٹ دیتا ہے",
+                "options": ["Hysteresis loss ہسٹیرسز لاس", "Eddy current loss ایڈی کرنٹ لاس", "Sum of Hysteresis loss and Eddy current loss ہسٹریسس لاس اور ایڈی کرنٹ لاس کا مجموعہ", "Copper Loss کاپر لاس"],
                 "answer": 2
             },
             {
                 "id": 32,
                 "topic": "DC Machine",
-                "question": "Copper loss in a transformer occurs in\nٹرانسفارمر میں کاپر لاس کہاں ہوتا ہے؟",
-                "options": ["Core (کور)", "Winding (وائنڈنگ)", "Main body (مین باڈی)", "Bushings (بشنگ)"],
+                "question": "Copper loss in a transformer occurs in \n...",
+                "options": ["Core کور", "Winding وائنڈنگ", "Main body مین باڈی", "Bushings بشنگ"],
                 "answer": 1
             },
             {
                 "id": 33,
                 "topic": "DC Machine",
                 "question": "For transformer the condition for maximum efficiency is\nٹرانسفارمر کی زیادہ سے زیادہ کارکردگی کی شرط کیا ہے؟",
-                "options": ["Hysteresis loss = Eddy current loss", "Core loss = Hysteresis loss", "Copper loss = iron loss (کاپر لاس = آئرن لاس)", "Total loss = copper loss"],
+                "options": ["Hysteresis loss = Eddy current loss", "Core loss = Hysteresis loss", "Copper loss = iron loss", "Total loss = copper loss"],
                 "answer": 2
             },
             {
                 "id": 34,
                 "topic": "DC Machine",
                 "question": "Which loss in transformer varies significantly with load?\nٹرانسفارمر کا کون سا لاس لوڈ کے ساتھ تبدیل ہوتا ہے؟",
-                "options": ["Hysteresis loss (ہسٹیرسز لاس)", "Eddy current loss (ایڈی کرنٹ لاس)", "Copper loss (کاپر لاس)", "Core Loss (کور لاس)"],
+                "options": ["Hysteresis loss ہسٹیرسز لاس", "Eddy current loss ایڈی کرنٹ لاس", "Copper loss کاپر لاس", "Core Loss کور لاس"],
                 "answer": 2
             },
             {
                 "id": 35,
                 "topic": "DC Machine",
                 "question": "The efficiency of transformer does not depend upon\nٹرانسفارمر کی کارکردگی کس پر منحصر نہیں ہوتی؟",
-                "options": ["Current (کرنٹ)", "Load (لوڈ)", "Power factor (پاور فیکٹر)", "All of the above (تمام)"],
+                "options": ["Current کرنٹ", "Load لوڈ", "Power factor پاور فیکٹر", "All of the above تمام"],
                 "answer": 2
             },
             {
@@ -451,118 +401,118 @@
                 "topic": "DC Machine",
                 "question": "Which of the following transformer will be smaller in size?\nمندرجہ ذیل میں سے کون سا ٹرانسفارمر سائز میں چھوٹا ہوگا؟",
                 "options": ["10KVA, 50Hz", "10KVA, 60Hz", "10KVA, 100Hz", "10KVA, 200Hz"],
-                "answer": 3
+                "answer": 0
             },
             {
                 "id": 37,
                 "topic": "DC Machine",
                 "question": "The path of the magnetic flux in transformer should have\nٹرانسفارمر میں مقناطیسی فلوکس کا راستہ ہونا چاہیے",
-                "options": ["Low reluctance (کم ریلکٹنس)", "Low resistance (کم ریزسٹنس)", "High reluctance (ہائی ریلکٹنس)", "High resistance (ہائی ریزسٹنس)"],
+                "options": ["Low reluctance کم ریلکٹنس", "Low resistance کم ریزسزٹنس", "High reluctance ہائی ریلکٹنس", "High resistance ہائی رزسسٹنس"],
                 "answer": 0
             },
             {
                 "id": 38,
                 "topic": "DC Machine",
                 "question": "A transformer can have zero voltage regulation at\nکس پاور فیکٹر پر ٹرانسفارمر کا وولٹیج ریگولیشن زیرو ہو سکتا ہے؟",
-                "options": ["Zero power factor (زیرو پاور فیکٹر)", "Lagging power factor (لیگنگ پاور فیکٹر)", "Leading power factor (لیڈنگ پاور فیکٹر)", "Unity power factor (یونٹی پاور فیکٹر)"],
+                "options": ["Zero power factor زیرو پاور فیکٹر", "Lagging power factor لیگنگ پاور فیکٹر", "Leading power factor لیڈنگ پاور فیکٹر", "Unity power factor یونٹی پاور فیکٹر"],
                 "answer": 2
             },
             {
                 "id": 39,
                 "topic": "DC Machine",
                 "question": "In a transformer the resistance between primary and secondary is\nٹرانسفارمر میں پرائمری اور سیکنڈری کے درمیان مزاحمت ہوتی ہے",
-                "options": ["Zero (زیرو)", "1 kΩ", "100 kΩ", "Infinite (لاعہمدود)"],
+                "options": ["Zero زیرو", "1 kΩ", "100 kΩ", "Infinite لا محدود"],
                 "answer": 3
             },
             {
                 "id": 40,
                 "topic": "DC Machine",
                 "question": "Maximum regulation of transformer occurs at\nٹرانسفارمر کا زیادہ سے زیادہ ریگولیشن کس پر ہوتا ہے؟",
-                "options": ["Rated KVA of transformer (ریٹیڈ KVA)", "Unity power factor (یونٹی پاور فیکٹر)", "Lagging power factor (لیگنگ پاور فیکٹر)", "Leading power factor (لیڈنگ پاور فیکٹر)"],
+                "options": ["Rated KVA of transformer ٹرانسفارمر کی ریٹیڈ KVA", "Unity power factor یونٹی پاور فیکٹر", "Lagging power factor لیگنگ پاور فیکٹر", "Leading power factor لیڈنگ پاور فیکٹر"],
                 "answer": 2
             },
             {
                 "id": 41,
                 "topic": "Induction Motor",
                 "question": "In transformer the voltage induced in the secondary winding\nٹرانسفارمر میں سیکنڈری وائنڈنگ میں انڈیوس ہونے والی وولٹیج",
-                "options": ["Leads the flux by 90 Degree (فلوکس سے 90 ڈگری آگے)", "Leads the current by less than 45 Degree", "Lags the flux by 90 Degree (فلوکس سے 90 ڈگری پیچھے)", "Lags the current by less than 45 Degree"],
+                "options": ["Leads the flux by 90 Degree فلوکس سے آگے ہوتی ہے", "Leads the current by less than 45 Degree کرنٹ سے آگے ہوتی ہے", "Lags the flux by 90 Degree فلوکس سے پیچھے ہوتی ہے", "Lags the current by less than 45 Degree کرنٹ سے پیچھے ہوتی ہے"],
                 "answer": 2
             },
             {
                 "id": 42,
                 "topic": "Induction Motor",
                 "question": "Which of the following tests can be used to determine the efficiency of large transformer?\nبڑے ٹرانسفارمر کی کارکردگی معلوم کرنے کے لیے کون سا ٹیسٹ استعمال ہوتا ہے؟",
-                "options": ["Open circuit test (اوپن سرکٹ ٹیسٹ)", "Short circuit test (شارٹ سرکٹ ٹیسٹ)", "Type test (ٹائپ ٹیسٹ)", "Back to Back test (بیک ٹو بیک ٹیسٹ)"],
+                "options": ["Open circuit testاوپن سرکٹ ٹیست", "Short circuit testشارٹ سرکٹ ٹیسٹ", "Type test ٹائپ ٹیسٹ", "Back to Back test بیک ٹو بیک ٹیسٹ"],
                 "answer": 3
             },
             {
                 "id": 43,
                 "topic": "Induction Motor",
                 "question": "The starting capacitor of a single phase induction motor is\nسنگل فیز انڈکشن موٹر کا اسٹارٹنگ کیپیسیٹر ہوتا ہے",
-                "options": ["Electrolytic capacitor (الیکٹرولائٹ کیپیسیٹر)", "Ceramic capacitor (سیرامک کیپیسیٹر)", "Paper capacitor (پیپر کیپیسیٹر)", "None of the above (کوئی نہیں)"],
+                "options": ["Electrolytic capacitor الیکٹرولائیٹ کیپسیٹر", "Ceramic capacitor سیرامک کیپیسیٹر", "Paper capacitor  پیپر کپیسٹر", "None of the above کوئی نہیں"],
                 "answer": 0
             },
             {
                 "id": 44,
                 "topic": "Induction Motor",
                 "question": "The direction of rotation of universal motor can be reversed by\nیونیورسل موٹر کے گھومنے کی سمت کو کیسے الٹا جا سکتا ہے؟",
-                "options": ["Reversing the supply terminal (سپلائی ٹرمینل ریورس کرکے)", "Switching over from ac to dc", "Interchanging the brush leads (برش لیڈز تبدیل کرکے)", "Any of the above (تمام)"],
+                "options": ["Reversing the supply terminal  سپلائی ٹرمینل ریورس کر کے", "Switching over from ac to dc اے سی سے ڈی سی پر سوئچ کرنا", "Interchanging the brush leads برش لیڈز تبدیل کر کے", "Any of the above تمام"],
                 "answer": 2
             },
             {
                 "id": 45,
                 "topic": "Induction Motor",
                 "question": "The starting torque of single phase induction motor is\nسنگل فیز انڈکشن موٹر کا اسٹارٹنگ ٹارق ہوتا ہے",
-                "options": ["Uniform (مستقل)", "High (زیادہ)", "Low (کم)", "Zero (زیرو)"],
+                "options": ["Uniform مستقل", "High زیادہ", "Low کم", "Zero"],
                 "answer": 3
             },
             {
                 "id": 46,
                 "topic": "Induction Motor",
                 "question": "Which of the following motors will operate at high power factor?\nمندرجہ ذیل میں سے کون سا موٹر ہائی پاور فیکٹر پر کام کرے گا؟",
-                "options": ["Universal motor (یونیورسل موٹر)", "Capacitor start motor (کیپیسیٹر سٹارٹ موٹر)", "Capacitor Run Motor (کیپیسیٹر رن موٹر)", "Split Phase Motor (سپلٹ فیز موٹر)"],
+                "options": ["Universal motor", "Capacitor start motor کیپسٹر سٹارٹ موٹر", "Capacitor Run Motor کیپیسیٹر رن موٹر", "Split Phase Motor سپلائٹ فیز موٹر"],
                 "answer": 2
             },
             {
                 "id": 47,
                 "topic": "Induction Motor",
                 "question": "For the same rating which motor has the highest speed?\nایک ہی ریٹنگ کے لیے کس موٹر کی اسپیڈ سب سے زیادہ ہوتی ہے؟",
-                "options": ["Universal motor (یونیورسل موٹر)", "Split Phase motor (سپلٹ فیز موٹر)", "Synchronous motor (سنکرونس موٹر)", "All have identical torque"],
+                "options": ["Universal motor یونیورسل موٹر", "Split Phase motor سپلائٹ فیز موٹر", "Synchronous motor سنکرونس موٹر", "All have identical having torque تمام اڈینٹکل ٹارق"],
                 "answer": 0
             },
             {
                 "id": 48,
                 "topic": "Induction Motor",
                 "question": "Which single phase motor has relatively constant speed under load?\nکس سنگل فیز موٹر کی اسپیڈ لوڈ کے تحت نسبتاً مستقل رہتی ہے؟",
-                "options": ["Universal motor (یونیورسل موٹر)", "Split Phase motor (سپلٹ فیز موٹر)", "Synchronous motor (سنکرونس موٹر)", "Repulsion motor (رپلشن موٹر)"],
+                "options": ["Universal motor یونیورسل موٹر", "Split Phase motor سپلائٹ فیز موٹر", "Synchronous motor سنکرونس موٹر", "Repulsion motor رپلشن موٹر"],
                 "answer": 0
             },
             {
                 "id": 49,
                 "topic": "Induction Motor",
                 "question": "The speed of split phase induction motor can be reversed by reversing leads of\nاسپلٹ فیز انڈکشن موٹر کی رفتار کس کے لیڈز بدل کر الٹی جا سکتی ہے؟",
-                "options": ["Auxiliary winding (آکسیلری وائنڈنگ)", "Main winding (مین وائنڈنگ)", "Either A and B Above", "Speed cannot be reversed"],
+                "options": ["Auxiliary winding کزیلری وائنڈنگ کے لیڈز بدل کر", "Main winding مین وائنڈنگ", "Either A and B Above", "Speed cannot be reversed سپیڈ ریورس نہیں ہو سکتی"],
                 "answer": 2
             },
             {
                 "id": 50,
                 "topic": "Induction Motor",
                 "question": "Working principle of induction motor is based on\nانڈکشن موٹر کا کام کرنے کا اصول کس پر ہے؟",
-                "options": ["Magnetic locking (میگنیٹک لاکنگ)", "Electromagnetic induction (الیکٹرو میگنیٹک انڈکشن)", "Self-Induction (سیلف انڈکشن)", "Electromagnetic repulsion (الیکٹرومگنیٹک ریپلشن)"],
+                "options": ["Magnetic locking میگنیٹک لاکنگ", "Electromagnetic inductionا لیکٹرو میگنیٹک انڈکشن", "Self-Induction  سیلف انڈکشن", "Electromagnetic repulsion الیکٹرومگنیٹک ریپلشن موٹر"],
                 "answer": 1
             },
             {
                 "id": 51,
                 "topic": "Induction Motor",
                 "question": "Slip rings are used in\nسلپ رنگز کہاں استعمال ہوتے ہیں؟",
-                "options": ["Wound Rotor Induction Motor (واؤنڈ انڈکشن موٹر)", "Repulsion motor (رپلشن موٹر)", "Surge Motor (سرج موٹر)", "All of these (تمام)"],
+                "options": ["Wound Motor Induction واؤنڈ انڈکشن موٹر", "Repulsion motor ریپلشن موٹر", "Surge Motor سرج موٹر", "All of these تمام"],
                 "answer": 3
             },
             {
                 "id": 52,
                 "topic": "Induction Motor",
                 "question": "If the speed of induction motor become equal to synchronous speed, then slip is\nاگر انڈکشن موٹر کی اسپیڈ سنکرونس اسپیڈ کے برابر ہو جائے تو سلپ ہوگا",
-                "options": ["Zero (زیرو)", "1", "Low", "10% to 5%"],
+                "options": ["Zero", "1", "Low", "10% to 5%"],
                 "answer": 0
             },
             {
@@ -583,14 +533,14 @@
                 "id": 55,
                 "topic": "Induction Motor",
                 "question": "Carbon brushes and slip rings are in alternator\nآلٹرنیٹر میں کاربن برش اور سلپ رنگز کا مقصد ہے",
-                "options": ["To get AC output from stator", "To get AC output from rotor", "To provide DC input to stator", "To provide DC input to rotor (روٹر کو ڈی سی ان پٹ دینا)"],
+                "options": ["To get AC output from stator \nAC اے سی سٹارٹ سے اے سی اآوت پٹ حاصل کرنا", "To get AC output from rotor روٹر سے اے سی آوٹ پٹ حاصل کرنا", "To provide DC input to stator سٹارٹر کو دی سی ان پٹ دینا", "To provide DC input to rotor روٹر کو دی سی ان پٹ مہیا کرنا"],
                 "answer": 3
             },
             {
                 "id": 56,
                 "topic": "Induction Motor",
                 "question": "By adjusting the DC excitation of alternator operating in parallel\nمتوازی چلنے والے آلٹرنیٹر کی ڈی سی ایکسائٹیشن کو ایڈجسٹ کرنے سے",
-                "options": ["Load is shared", "KW output can be changed", "Value of induced e.m.f can be controlled (انڈیوسڈ ای ایم ایف کنٹرول ہوتی ہے)", "All of these (تمام)"],
+                "options": ["Load is shared لوڈ شیئر کیا جا سکتا ہے", "KW output can be changedکلو واٹ آوٹ پٹ تبدیل ہو سکتی ہے", "Value of induced e.m.f can controlled انڈیوسڈ ای ایم ایف کی ویلیو کو کنٹرول کیا جا سکتا ہے", "All of these تمام"],
                 "answer": 2
             },
             {
@@ -604,21 +554,21 @@
                 "id": 58,
                 "topic": "Induction Motor",
                 "question": "In an alternator, the effect of armature reaction at 0.8 power factor lagging is\nآلٹرنیٹر میں 0.8 لیگنگ پاور فیکٹر پر آرمیچر ری ایکشن کا اثر ہوتا ہے",
-                "options": ["Cross magnetizing (کراس میگنیٹائزنگ)", "De-magnetizing (ڈی میگنیٹائزنگ)", "Magnetizing (میگنیٹائزنگ)", "Either a or c"],
+                "options": ["Cross magnetizing کراس میگنیٹائزنگ", "De-magnetizing ) ڈی میگنیٹائزنگ (", "Magnetizing میگنیٹائزنگ", "Either a or c"],
                 "answer": 2
             },
             {
                 "id": 59,
                 "topic": "Induction Motor",
                 "question": "Voltage regulation of an alternator is positive for\nآلٹرنیٹر کا وولٹیج ریگولیشن مثبت ہوتا ہے",
-                "options": ["Unity pf load", "Lagging pf load", "Leading pf load", "Either a or b (یونٹی یا لیگنگ دونوں پر)"],
+                "options": ["Unity to pf load یونٹی پاور فیکٹر لوڈ", "Lagging pf load لیگنگ پاور فیکٹر لوڈ", "Leading pf load لیڈنگ پاور فیکٹر", "Either a or b"],
                 "answer": 3
             },
             {
                 "id": 60,
                 "topic": "Induction Motor",
                 "question": "The purpose of short circuit test of an alternator is to determine\nآلٹرنیٹر کے شارٹ سرکٹ ٹیسٹ کا مقصد کیا معلوم کرنا ہے؟",
-                "options": ["Iron loss", "Copper loss", "Voltage regulation (وولٹیج ریگولیشن)", "Mechanical Loss"],
+                "options": ["Iron loss آئرن لاس معلوم کرنا", "Copper lossاپر لاس معلوم کرنا", "Voltage regulation وولٹیج ریگولیشن", "Mechanical Loss مکینیکل لاس"],
                 "answer": 2
             }
         ];
@@ -632,14 +582,9 @@
         const questionTextEl = document.getElementById('question-text');
         const optionsListEl = document.getElementById('options-list');
         const nextBtnEl = document.getElementById('next-btn');
+        const quizCardEl = document.getElementById('quiz-card');
+        const resultCardEl = document.getElementById('result-card');
         const scoreTextEl = document.getElementById('score-text');
-
-        function startQuizPortal() {
-            switchView('quiz-view');
-            currentQuestion = 0;
-            score = 0;
-            loadQuestion();
-        }
 
         function loadQuestion() {
             answered = false;
@@ -654,6 +599,13 @@
             q.options.forEach((option, index) => {
                 const li = document.createElement('li');
                 li.className = 'option-item';
+                li.style.background = '#1e293b';
+                li.style.padding = '10px 14px';
+                li.style.borderRadius = '8px';
+                li.style.cursor = 'pointer';
+                li.style.border = '1px solid #334155';
+                li.style.color = '#e2e8f0';
+                li.style.fontSize = '14px';
                 li.innerText = option;
                 li.onclick = () => selectOption(index, li);
                 optionsListEl.appendChild(li);
@@ -696,16 +648,46 @@
         }
 
         function showResults() {
-            switchView('result-view');
+            quizCardEl.style.display = 'none';
+            resultCardEl.style.display = 'block';
             scoreTextEl.innerText = `Your Score: ${score} / ${quizData.length}`;
         }
 
         function restartQuiz() {
             currentQuestion = 0;
             score = 0;
-            switchView('quiz-view');
+            quizCardEl.style.display = 'block';
+            resultCardEl.style.display = 'none';
             loadQuestion();
         }
+
+        // ڈاؤن لوڈ والے مسئلے کا حل (صرف صاف ستھرے نوٹس ڈاؤن لوڈ ہوں گے)
+        function downloadMCQsAsText() {
+            let textContent = "ET-326 AC Machines - DAE Examination Prep Portal\n";
+            textContent += "==================================================\n\n";
+
+            quizData.forEach((q, index) => {
+                textContent += `Question ${index + 1} [Topic: ${q.topic}]\n`;
+                textContent += `${q.question}\n`;
+                q.options.forEach((opt, optIndex) => {
+                    let marker = (optIndex === q.answer) ? " (Correct Answer ✓)" : "";
+                    textContent += `  - ${opt}${marker}\n`;
+                });
+                textContent += "\n--------------------------------------------------\n\n";
+            });
+
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ET-326-MCQs-Readable.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        loadQuestion();
     </script>
 </body>
 </html>
