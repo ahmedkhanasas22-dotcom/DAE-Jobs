@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ET-345 Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .quiz-container {
+            background-color: #1e293b;
+            width: 100%;
+            max-width: 650px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        .option-item {
+            background-color: #334155;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            border: 2px solid transparent;
+        }
+        .option-item:hover {
+            background-color: #475569;
+        }
+        .option-item.correct {
+            border-color: #22c55e;
+            background-color: #14532d !important;
+            color: #f0fdf4;
+        }
+        .option-item.incorrect {
+            border-color: #ef4444;
+            background-color: #7f1d1d !important;
+            color: #fef2f2;
+        }
+        .option-item.disabled {
+            cursor: not-allowed;
+        }
+        .next-btn, .action-btn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: none; /* Initially hidden */
+        }
+        .next-btn:hover, .action-btn:hover {
+            background-color: #2563eb;
+        }
+        .score-container {
+            text-align: center;
+        }
+        .score-container h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #38bdf8;
+        }
+        .score-container p {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: #cbd5e1;
+        }
+        .end-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-restart {
+            background-color: #10b981;
+        }
+        .btn-restart:hover {
+            background-color: #059669;
+        }
+        .btn-dashboard {
+            background-color: #64748b;
+        }
+        .btn-dashboard:hover {
+            background-color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quizApp">
+    <div class="quiz-header" id="quizHeader">
+        <span id="subjectTitle">ET-345 Quiz</span>
+        <span id="questionCount">Question 1 of 60</span>
+    </div>
+    <div id="questionBox">
+        <div class="question-text" id="questionText">Loading question...</div>
+        <ul class="options-list" id="optionsList"></ul>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">اگلا سوال (Next Question)</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+      {
+        question: "Q1. Low voltage system is:\nکم وولٹیج سسٹم کیا ہوتا ہے؟",
+        options: [
+          "A) Below 1kV — 1kV سے کم",
+          "B) Above 11kV — 11kV سے زیادہ",
+          "C) 33kV — 33kV",
+          "D) 132kV — 132kV"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q2. A circuit breaker is used as:\nسرکٹ بریکر کس کے طور پر استعمال ہوتا ہے؟",
+        options: [
+          "A) Isolator — آئسولیٹر",
+          "B) Relay — ریلے",
+          "C) Protection device — حفاظتی آلہ",
+          "D) Transformer — ٹرانسفارمر"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q3. Fuse works on:\nفیوز کس اصول پر کام کرتا ہے؟",
+        options: [
+          "A) Ohm’s law — قانون اوہم",
+          "B) Heating effect — حرارتی اثر",
+          "C) Magnetic effect — مقناطیسی اثر",
+          "D) Chemical effect — کیمیائی اثر"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q4. Lightning arrester protects:\nلائٹننگ اریسٹر کس سے حفاظت کرتا ہے؟",
+        options: [
+          "A) Overcurrent — زائد کرنٹ",
+          "B) Overvoltage — زائد وولٹیج",
+          "C) Undervoltage — کم وولٹیج",
+          "D) Short circuit — شارٹ سرکٹ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q5. Relay is used for:\nریلے کس کے لیے استعمال ہوتا ہے؟",
+        options: [
+          "A) Measurement — پیمائش",
+          "B) Protection — حفاظت",
+          "C) Generation — پیداوار",
+          "D) Transmission — ترسیل"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q6. Busbar is:\nبس بار کیا ہے؟",
+        options: [
+          "A) Insulator — انسولیٹر",
+          "B) Conductor — موصل",
+          "C) Transformer — ٹرانسفارمر",
+          "D) Relay — ریلے"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q7. Transmission line carries:\nٹرانسمیشن لائن کیا لے جاتی ہے؟",
+        options: [
+          "A) Low voltage — کم وولٹیج",
+          "B) Medium voltage — درمیانہ وولٹیج",
+          "C) High voltage — زیادہ وولٹیج",
+          "D) Zero voltage — صفر وولٹیج"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q8. Frequency in Pakistan is:\nپاکستان میں فریکوئنسی کیا ہے؟",
+        options: [
+          "A) 25 Hz — 25 ہرٹز",
+          "B) 50 Hz — 50 ہرٹز",
+          "C) 60 Hz — 60 ہرٹز",
+          "D) 100 Hz — 100 ہرٹز"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q9. Unit of resistance:\nمزاحمت کی اکائی؟",
+        options: [
+          "A) Volt — وولٹ",
+          "B) Ampere — ایمپیئر",
+          "C) Ohm — اوہم",
+          "D) Watt — واٹ"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q10. Overcurrent relay works when:\nاوور کرنٹ ریلے کب کام کرتا ہے؟",
+        options: [
+          "A) Voltage increases — وولٹیج بڑھ جائے",
+          "B) Current increases — کرنٹ بڑھ جائے",
+          "C) Frequency decreases — فریکوئنسی کم ہو",
+          "D) Power decreases — پاور کم ہو"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q11. Isolator is used for:\nآئیسولیٹر کس لیے استعمال ہوتا ہے؟",
+        options: [
+          "A) Switching under load — لوڈ کے ساتھ سوئچنگ",
+          "B) Isolation without load — لوڈ بغیر علیحدگی",
+          "C) Voltage control — وولٹیج کنٹرول",
+          "D) Current control — کرنٹ کنٹرول"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q12. Short circuit means:\nشارٹ سرکٹ کا مطلب؟",
+        options: [
+          "A) High resistance — زیادہ مزاحمت",
+          "B) Low resistance path — کم مزاحمت کا راستہ",
+          "C) Open circuit — اوپن سرکٹ",
+          "D) No current — کرنٹ نہیں"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q13. Transformer works on:\nٹرانسفارمر کس اصول پر کام کرتا ہے؟",
+        options: [
+          "A) Electrostatic — الیکٹروسٹیٹک",
+          "B) Electromagnetic induction — برقی مقناطیسی القاء",
+          "C) Chemical — کیمیائی",
+          "D) Thermal — حرارتی"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q14. Unit of power:\nطاقت کی اکائی؟",
+        options: [
+          "A) Volt — وولٹ",
+          "B) Watt — واٹ",
+          "C) Ampere — ایمپیئر",
+          "D) Ohm — اوہم"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q15. Power factor is:\nپاور فیکٹر کیا ہے؟",
+        options: [
+          "A) V/I — وولٹیج / کرنٹ",
+          "B) P/V — پاور / وولٹیج",
+          "C) Cosθ — کوس تھیٹا",
+          "D) Sinθ — سائن تھیٹا"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q16. Transmission efficiency depends on:\nٹرانسمیشن ایفیشنسی کس پر منحصر ہے؟",
+        options: [
+          "A) Voltage — وولٹیج",
+          "B) Current — کرنٹ",
+          "C) Resistance — مزاحمت",
+          "D) All of these — یہ سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q17. Circuit breaker opens:\nسرکٹ بریکر کب کھلتا ہے؟",
+        options: [
+          "A) Normal condition — نارمل حالت",
+          "B) Fault condition — خرابی کی حالت",
+          "C) No load — لوڈ بغیر",
+          "D) Idle condition — غیر فعال حالت"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q18. Distribution system delivers:\nڈسٹری بیوشن سسٹم کیا فراہم کرتا ہے؟",
+        options: [
+          "A) Generation — پیداوار",
+          "B) Power to consumers — صارفین کو بجلی",
+          "C) Transmission — ترسیل",
+          "D) Storage — ذخیرہ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q19. Earth wire is used for:\nارتھ وائر کس کے لیے؟",
+        options: [
+          "A) Voltage increase — وولٹیج بڑھانا",
+          "B) Protection — حفاظت",
+          "C) Current increase — کرنٹ بڑھانا",
+          "D) Power factor — پاور فیکٹر"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q20. Unit of frequency:\nفریکوئنسی کی اکائی؟",
+        options: [
+          "A) Hertz — ہرٹز",
+          "B) Ohm — اوہم",
+          "C) Volt — وولٹ",
+          "D) Watt — واٹ"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q21. Insulator is used to:\nانسولیٹر کا کام؟",
+        options: [
+          "A) Conduct electricity — بجلی چلانا",
+          "B) Prevent leakage — لیکیج روکنا",
+          "C) Increase current — کرنٹ بڑھانا",
+          "D) Store energy — توانائی ذخیرہ کرنا"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q22. Corona effect occurs in:\nکورونا ایفیکٹ کہاں ہوتا ہے؟",
+        options: [
+          "A) Low voltage — کم وولٹیج",
+          "B) High voltage lines — ہائی وولٹیج لائنز",
+          "C) DC circuits — ڈی سی سرکٹس",
+          "D) Batteries — بیٹری"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q23. Main function of relay:\nریلے کا بنیادی کام؟",
+        options: [
+          "A) Control — کنٹرول",
+          "B) Protection — حفاظت",
+          "C) Measurement — پیمائش",
+          "D) Generation — پیداوار"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q24. Fuse is:\nفیوز کیا ہے؟",
+        options: [
+          "A) Reusable — دوبارہ استعمال",
+          "B) One-time device — ایک بار استعمال",
+          "C) Motor — موٹر",
+          "D) Generator — جنریٹر"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q25. Circuit breaker can be reset:\nسرکٹ بریکر کو دوبارہ استعمال کیا جا سکتا ہے؟",
+        options: [
+          "A) Yes — ہاں",
+          "B) No — نہیں",
+          "C) Sometimes — کبھی کبھار",
+          "D) Never — کبھی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q26. Transmission voltage is increased to:\nٹرانسمیشن وولٹیج کیوں بڑھایا جاتا ہے؟",
+        options: [
+          "A) Reduce losses — نقصانات کم کرنے",
+          "B) Increase losses — نقصانات بڑھانے",
+          "C) Stop current — کرنٹ روکنے",
+          "D) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q27. Unit of current:\nکرنٹ کی اکائی؟",
+        options: [
+          "A) Volt — وولٹ",
+          "B) Ampere — ایمپیئر",
+          "C) Ohm — اوہم",
+          "D) Watt — واٹ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q28. Protective devices include:\nحفاظتی آلات میں شامل ہیں:",
+        options: [
+          "A) Relay — ریلے",
+          "B) Fuse — فیوز",
+          "C) Circuit breaker — سرکٹ بریکر",
+          "D) All of these — یہ سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q29. Overvoltage protection is done by:\nاوور وولٹیج سے حفاظت کیسے ہوتی ہے؟",
+        options: [
+          "A) Relay — ریلے",
+          "B) Arrester — اریسٹر",
+          "C) Fuse — فیوز",
+          "D) Transformer — ٹرانسفارمر"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q30. Distribution voltage level:\nڈسٹری بیوشن وولٹیج کی سطح؟",
+        options: [
+          "A) Low — کم",
+          "B) Medium — درمیانی",
+          "C) High — زیادہ",
+          "D) Very high — بہت زیادہ"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q31. Which device is used to step up voltage?\nوولٹیج بڑھانے کے لیے کون سا آلہ استعمال ہوتا ہے؟",
+        options: [
+          "A) Step-down transformer — اسٹیپ ڈاؤن ٹرانسفارمر",
+          "B) Step-up transformer — اسٹیپ اپ ٹرانسفارمر",
+          "C) Motor — موٹر",
+          "D) Generator — جنریٹر"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q32. Unit of energy is:\nتوانائی کی اکائی؟",
+        options: [
+          "A) Joule — جول",
+          "B) Watt — واٹ",
+          "C) Volt — وولٹ",
+          "D) Ampere — ایمپیئر"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q33. What is the function of a capacitor?\nکیپیسٹر کا کام کیا ہے؟",
+        options: [
+          "A) Store energy — توانائی ذخیرہ کرنا",
+          "B) Increase resistance — مزاحمت بڑھانا",
+          "C) Reduce voltage — وولٹیج کم کرنا",
+          "D) Generate current — کرنٹ پیدا کرنا"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q34. Which device converts AC to DC?\nکون سا آلہ AC کو DC میں تبدیل کرتا ہے؟",
+        options: [
+          "A) Transformer — ٹرانسفارمر",
+          "B) Rectifier — ریکٹیفائر",
+          "C) Inverter — انورٹر",
+          "D) Motor — موٹر"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q35. Ohm’s law is:\nاوہم کا قانون کیا ہے؟",
+        options: [
+          "A) V = IR — وولٹیج = کرنٹ × مزاحمت",
+          "B) P = VI — پاور = وولٹیج × کرنٹ",
+          "C) I = V/R — کرنٹ = وولٹیج ÷ مزاحمت",
+          "D) Both A and C — دونوں A اور C"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q36. Which material is a conductor?\nکون سا مادہ موصل ہے؟",
+        options: [
+          "A) Wood — لکڑی",
+          "B) Plastic — پلاسٹک",
+          "C) Copper — تانبا",
+          "D) Rubber — ربڑ"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q37. Which device measures current?\nکرنٹ ناپنے کا آلہ کون سا ہے؟",
+        options: [
+          "A) Ammeter — ایمیٹر",
+          "B) Voltmeter — وولٹ میٹر",
+          "C) Wattmeter — واٹ میٹر",
+          "D) Ohmmeter — اوہم میٹر"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q38. Which device measures voltage?\nوولٹیج ناپنے کا آلہ کون سا ہے؟",
+        options: [
+          "A) Ammeter — ایمیٹر",
+          "B) Voltmeter — وولٹ میٹر",
+          "C) Wattmeter — واٹ میٹر",
+          "D) Ohmmeter — اوہم میٹر"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q39. Which device measures resistance?\nمزاحمت ناپنے کا آلہ کون سا ہے؟",
+        options: [
+          "A) Ammeter — ایمیٹر",
+          "B) Voltmeter — وولٹ میٹر",
+          "C) Ohmmeter — اوہم میٹر",
+          "D) Wattmeter — واٹ میٹر"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q40. Which device measures power?\nپاور ناپنے کا آلہ کون سا ہے؟",
+        options: [
+          "A) Ammeter — ایمیٹر",
+          "B) Voltmeter — وولٹ میٹر",
+          "C) Wattmeter — واٹ میٹر",
+          "D) Ohmmeter — اوہم میٹر"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q41. Which type of current changes direction?\nکون سا کرنٹ اپنی سمت بدلتا ہے؟",
+        options: [
+          "A) AC — اے سی",
+          "B) DC — ڈی سی",
+          "C) Both — دونوں",
+          "D) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q42. Which type of current flows in one direction?\nکون سا کرنٹ ایک ہی سمت میں بہتا ہے؟",
+        options: [
+          "A) AC — اے سی",
+          "B) DC — ڈی سی",
+          "C) Both — دونوں",
+          "D) None — کوئی نہیں"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q43. What is the unit of capacitance?\nکیپیسٹینس کی اکائی؟",
+        options: [
+          "A) Ohm — اوہم",
+          "B) Farad — فیراڈ",
+          "C) Henry — ہنری",
+          "D) Volt — وولٹ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q44. What is the unit of inductance?\nانڈکٹینس کی اکائی؟",
+        options: [
+          "A) Ohm — اوہم",
+          "B) Farad — فیراڈ",
+          "C) Henry — ہنری",
+          "D) Watt — واٹ"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q45. Transformer changes:\nٹرانسفارمر کیا تبدیل کرتا ہے؟",
+        options: [
+          "A) Voltage — وولٹیج",
+          "B) Frequency — فریکوئنسی",
+          "C) Power — پاور",
+          "D) Resistance — مزاحمت"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q46. Power is equal to:\nپاور برابر ہوتی ہے:",
+        options: [
+          "A) V × I — وولٹیج × کرنٹ",
+          "B) I × R — کرنٹ × مزاحمت",
+          "C) V ÷ I — وولٹیج ÷ کرنٹ",
+          "D) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q47. Efficiency is always:\nایفیشنسی ہمیشہ ہوتی ہے:",
+        options: [
+          "A) Greater than 100% — 100% سے زیادہ",
+          "B) Equal to 100% — 100% کے برابر",
+          "C) Less than or equal to 100% — 100% سے کم یا اس کے برابر",
+          "D) Zero — صفر"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q48. Which loss occurs in transformer core?\nٹرانسفارمر کور میں کون سا نقصان ہوتا ہے؟",
+        options: [
+          "A) Copper loss — کاپر لاس",
+          "B) Iron loss — آئرن لاس",
+          "C) Mechanical loss — مکینیکل لاس",
+          "D) Load loss — لوڈ لاس"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q49. Which loss occurs in winding?\nوائنڈنگ میں کون سا نقصان ہوتا ہے؟",
+        options: [
+          "A) Copper loss — کاپر لاس",
+          "B) Iron loss — آئرن لاس",
+          "C) Core loss — کور لاس",
+          "D) Flux loss — فلکس لاس"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q50. Which device is used for switching?\nسوئچنگ کے لیے کون سا آلہ استعمال ہوتا ہے؟",
+        options: [
+          "A) Switch — سوئچ",
+          "B) Relay — ریلے",
+          "C) Fuse — فیوز",
+          "D) Transformer — ٹرانسفارمر"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q51. Which device stores charge?\nچارج ذخیرہ کرنے والا آلہ کون سا ہے؟",
+        options: [
+          "A) Capacitor — کیپیسٹر",
+          "B) Resistor — ریزسٹر",
+          "C) Inductor — انڈکٹر",
+          "D) Transformer — ٹرانسفارمر"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q52. Which device opposes current?\nکرنٹ کی مخالفت کون کرتا ہے؟",
+        options: [
+          "A) Capacitor — کیپیسٹر",
+          "B) Inductor — انڈکٹر",
+          "C) Resistor — ریزسٹر",
+          "D) Battery — بیٹری"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q53. Which device produces magnetic field?\nکون سا آلہ مقناطیسی میدان پیدا کرتا ہے؟",
+        options: [
+          "A) Inductor — انڈکٹر",
+          "B) Capacitor — کیپیسٹر",
+          "C) Resistor — ریزسٹر",
+          "D) Fuse — فیوز"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q54. Which device converts DC to AC?\nکون سا آلہ DC کو AC میں تبدیل کرتا ہے؟",
+        options: [
+          "A) Rectifier — ریکٹیفائر",
+          "B) Inverter — انورٹر",
+          "C) Transformer — ٹرانسفارمر",
+          "D) Relay — ریلے"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q55. Which parameter is measured in Hertz?\nہرٹز میں کیا ناپا جاتا ہے؟",
+        options: [
+          "A) Voltage — وولٹیج",
+          "B) Current — کرنٹ",
+          "C) Frequency — فریکوئنسی",
+          "D) Resistance — مزاحمت"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q56. Which device is used for protection against short circuit?\nشارٹ سرکٹ سے حفاظت کے لیے کون سا آلہ ہے؟",
+        options: [
+          "A) Fuse — فیوز",
+          "B) Capacitor — کیپیسٹر",
+          "C) Inductor — انڈکٹر",
+          "D) Transformer — ٹرانسفارمر"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q57. Which system supplies electricity to homes?\nگھروں کو بجلی کون سا نظام فراہم کرتا ہے؟",
+        options: [
+          "A) Generation — پیداوار",
+          "B) Transmission — ترسیل",
+          "C) Distribution — تقسیم",
+          "D) Protection — حفاظت"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q58. Which device isolates circuit?\nسرکٹ کو علیحدہ کرنے والا آلہ کون سا ہے؟",
+        options: [
+          "A) Isolator — آئسولیٹر",
+          "B) Relay — ریلے",
+          "C) Fuse — فیوز",
+          "D) Motor — موٹر"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q59. Which factor reduces transmission losses?\nٹرانسمیشن نقصانات کم کرنے والا عنصر؟",
+        options: [
+          "A) High current — زیادہ کرنٹ",
+          "B) Low voltage — کم وولٹیج",
+          "C) High voltage — زیادہ وولٹیج",
+          "D) High resistance — زیادہ مزاحمت"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q60. Efficiency is:\nایفیشنسی کیا ہے؟",
+        options: [
+          "A) Input/Output — ان پٹ / آؤٹ پٹ",
+          "B) Output/Input — آؤٹ پٹ / ان پٹ",
+          "C) Power loss — پاور نقصان",
+          "D) Voltage drop — وولٹیج ڈراپ"
+        ],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let isAnswered = false;
+
+    const questionText = document.getElementById("questionText");
+    const optionsList = document.getElementById("optionsList");
+    const questionCount = document.getElementById("questionCount");
+    const nextBtn = document.getElementById("nextBtn");
+    const quizHeader = document.getElementById("quizHeader");
+
+    function loadQuestion() {
+        isAnswered = false;
+        nextBtn.style.display = "none";
+        quizHeader.style.display = "flex";
+        
+        const q = quizData[currentQuestion];
+        questionText.innerText = q.question;
+        questionCount.innerText = `Question ${currentQuestion + 1} of ${quizData.length}`;
+        
+        optionsList.innerHTML = "";
+        q.options.forEach((opt, index) => {
+            const li = document.createElement("li");
+            li.className = "option-item";
+            li.innerText = opt;
+            li.onclick = () => selectOption(index, li);
+            optionsList.appendChild(li);
+        });
+    }
+
+    function selectOption(index, element) {
+        if (isAnswered) return; 
+        isAnswered = true;
+
+        const q = quizData[currentQuestion];
+        const optionsNodes = document.querySelectorAll(".option-item");
+
+        optionsNodes.forEach(el => el.classList.add("disabled"));
+
+        if (index === q.answer) {
+            element.classList.add("correct");
+            score++;
+        } else {
+            element.classList.add("incorrect");
+            optionsNodes[q.answer].classList.add("correct"); 
+        }
+
+        nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        quizHeader.style.display = "none";
+        document.getElementById("questionBox").innerHTML = `
+            <div class="score-container">
+                <h2>ٹیسٹ مکمل ہو گیا ہے! 🎉</h2>
+                <p>آپ کا اسکور: ${score} / ${quizData.length}</p>
+                <div class="end-buttons">
+                    <button class="action-btn btn-restart" onclick="restartQuiz()">دوبارہ ٹیسٹ شروع کریں</button>
+                    <button class="action-btn btn-dashboard" onclick="goToDashboard()">مین ڈیش بورڈ پر جائیں</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        isAnswered = false;
+        
+        document.getElementById("questionBox").innerHTML = `
+            <div class="question-text" id="questionText">Loading question...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">اگلا سوال (Next Question)</button>
+        `;
+        
+        loadQuestion();
+    }
+
+    function goToDashboard() {
+        alert("مین ڈیش بورڈ پر جانے کا لنک یہاں لگایا جا سکتا ہے!");
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>

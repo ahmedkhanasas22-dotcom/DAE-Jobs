@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ET-332 Electrical Motors & Drives | DAE Exam Prep</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            width: 100%;
+            max-width: 650px;
+            background: #1e293b;
+            padding: 25px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 12px;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+            line-height: 1.6;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+        .options-list li {
+            background: #0f172a;
+            border: 2px solid #334155;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: #e2e8f0;
+        }
+        .options-list li:hover:not(.disabled) {
+            border-color: #3b82f6;
+            background: #1e293b;
+        }
+        .options-list li.correct {
+            background-color: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+        .options-list li.incorrect {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+        .options-list li.disabled {
+            cursor: not-allowed;
+        }
+        .next-btn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            display: none;
+        }
+        .next-btn:hover {
+            background-color: #2563eb;
+        }
+        .score-container {
+            text-align: center;
+            display: none;
+        }
+        .score-container h2 {
+            color: #10b981;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        .restart-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .restart-btn:hover {
+            background-color: #059669;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-box">
+        <div class="quiz-header">
+            <span id="question-number">Question 1 of 60</span>
+            <span id="quiz-topic">Electrical Motors & Drives</span>
+        </div>
+        <div class="question-text" id="question-title">سوال لوڈ ہو رہا ہے...</div>
+        <ul class="options-list" id="options-container">
+            <!-- Options will load dynamically -->
+        </ul>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">اگلا سوال (Next Question)</button>
+    </div>
+
+    <div class="score-container" id="score-box">
+        <h2>کوئز مکمل ہو گیا!</h2>
+        <p id="final-score" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
+        <button class="restart-btn" onclick="restartQuiz()">دوبارہ شروع کریں (Restart)</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "1. DOL starter is generally used for starting which type of motor? (ڈی او ایل اسٹارٹر عموماً کس موٹر کو اسٹارٹ کرنے کے لیے استعمال ہوتا ہے؟)",
+            options: [
+                "A) Single phase induction motor (سنگل فیز انڈکشن موٹر)",
+                "B) Three phase squirrel cage induction motor (تھری فیز اسکوائرل کیج انڈکشن موٹر)",
+                "C) DC shunt motor (ڈی سی شنٹ موٹر)",
+                "D) Universal motor (یونیورسل موٹر)"
+            ],
+            correct: 1
+        },
+        {
+            question: "2. In an automatic star delta starter, how many magnetic contactors are normally used? (آٹو میٹک اسٹار ڈیلٹا اسٹارٹر میں عموماً کتنے میگنیٹک کونٹیکٹر استعمال ہوتے ہیں؟)",
+            options: [
+                "A) 1 (۱)",
+                "B) 2 (۲)",
+                "C) 3 (۳)",
+                "D) 4 (۴)"
+            ],
+            correct: 2
+        },
+        {
+            question: "3. In star connection during starting, the line voltage applied to each phase of the motor is: (اسٹار کنکشن میں اسٹارٹنگ کے وقت ہر فیز پر لگنے والی وولٹیج:)",
+            options: [
+                "A) Equal to line voltage (لائن وولٹیج کے برابر)",
+                "B) 3 times line voltage (لائن وولٹیج سے 3 گنا)",
+                "C) 1/√3 of line voltage (لائن وولٹیج کا 1/√3 حصہ)",
+                "D) Zero (صفر)"
+            ],
+            correct: 2
+        },
+        {
+            question: "4. The main function of the timer in an automatic star delta starter is to: (آٹو میٹک اسٹار ڈیلٹا اسٹارٹر میں ٹائمر کا بنیادی کام ہے:)",
+            options: [
+                "A) Protect against overload (اوورلوڈ سے حفاظت)",
+                "B) Limit starting current permanently (اسٹارٹنگ کرنٹ کو مستقل طور پر محدود کرنا)",
+                "C) Switch from star to delta after a preset time (مقررہ وقت کے بعد اسٹار سے ڈیلٹا میں شفٹ کرنا)",
+                "D) Reverse the direction of rotation (موٹر کی گھماؤ کی سمت تبدیل کرنا)"
+            ],
+            correct: 2
+        },
+        {
+            question: "5. A DC drive mainly converts: (ڈی سی ڈرائیو بنیادی طور پر کیا کنورٹ کرتی ہے؟)",
+            options: [
+                "A) AC to AC with variable frequency (اے سی سے اے سی (فریکوئنسی کنٹرول کے ساتھ))",
+                "B) DC to AC (ڈی سی سے اے سی)",
+                "C) AC to DC to control speed of DC motor (اے سی سے ڈی سی تاکہ ڈی سی موٹر کی اسپیڈ کنٹرول ہو سکے)",
+                "D) DC to DC (ڈی سی سے ڈی سی)"
+            ],
+            correct: 2
+        },
+        {
+            question: "6. The main power component of a controlled DC drive is usually a: (کنٹرولڈ ڈی سی ڈرائیو کا بنیادی پاور کمپوننٹ عموماً کیا ہوتا ہے؟)",
+            options: [
+                "A) Triac (ٹرائیک)",
+                "B) Full wave thyristor bridge rectifier (فل ویو تھائرسٹر برج ریکٹیفائر)",
+                "C) Step down transformer only (صرف اسٹپ ڈاؤن ٹرانسفارمر)",
+                "D) Single diode (ایک ڈایوڈ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "7. A soft starter for an AC motor primarily: (اے سی موٹر کے لیے سافٹ اسٹارٹر بنیادی طور پر:)",
+            options: [
+                "A) Changes frequency (فریکوئنسی تبدیل کرتا ہے)",
+                "B) Limits initial voltage/current during starting (اسٹارٹنگ کے وقت وولٹیج/کرنٹ کو محدود کرتا ہے)",
+                "C) Converts AC to DC (اے سی کو ڈی سی میں تبدیل کرتا ہے)",
+                "D) Works as a speed sensor (اسپیڈ سینسر کے طور پر کام کرتا ہے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "8. The main power semiconductor often used inside a soft starter is: (سافٹ اسٹارٹر کے اندر عام طور پر استعمال ہونے والا پاور سیمی کنڈکٹر ہے:)",
+            options: [
+                "A) BJT (بی جے ٹی)",
+                "B) FET (ایف ای ٹی)",
+                "C) Triac (two back to back SCRs) (ٹرائیک (دو بیک ٹو بیک ایس سی آر))",
+                "D) Zener diode (زینر ڈایوڈ)"
+            ],
+            correct: 2
+        },
+        {
+            question: "9. VFD (Variable Frequency Drive) is mainly used to: (وی ایف ڈی کا بنیادی مقصد یہ ہے کہ وہ:)",
+            options: [
+                "A) Control DC motor voltage only (صرف ڈی سی موٹر کی وولٹیج کنٹرول کرے)",
+                "B) Control speed and torque of AC motors by varying frequency (اے سی موٹر کی رفتار اور ٹارک کو فریکوئنسی تبدیل کر کے کنٹرول کرے)",
+                "C) Measure power factor (پاور فیکٹر ناپے)",
+                "D) Rectify AC to DC only (صرف اے سی کو ڈی سی کرے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "10. In a typical three phase VFD, the rectifier section: (عام تھری فیز وی ایف ڈی میں ریکٹیفائر سیکشن:)",
+            options: [
+                "A) Converts DC to AC (ڈی سی کو اے سی میں تبدیل کرتا ہے)",
+                "B) Converts AC to pulsating DC (اے سی کو پلسیٹنگ ڈی سی میں تبدیل کرتا ہے)",
+                "C) Filters DC (ڈی سی کو فلٹر کرتا ہے)",
+                "D) Measures motor speed (موٹر کی اسپیڈ ناپتا ہے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "11. The DC bus and filter in a VFD mainly uses: (وی ایف ڈی میں ڈی سی بس اور فلٹر میں عموماً کیا استعمال ہوتا ہے؟)",
+            options: [
+                "A) Capacitors (and sometimes inductors) to smooth DC (کیپیسیٹر (اور کبھی کبھار انڈکٹر) تاکہ ڈی سی کو ہموار کریں)",
+                "B) Only resistors (صرف رزسٹر)",
+                "C) Only diodes (صرف ڈایوڈ)",
+                "D) Only transformers (صرف ٹرانسفارمر)"
+            ],
+            correct: 0
+        },
+        {
+            question: "12. The inverter section of a VFD typically uses which device to synthesize AC? (وی ایف ڈی کے انورٹر سیکشن میں عموماً کون سا ڈیوائس اے سی بنانے کے لیے استعمال ہوتا ہے؟)",
+            options: [
+                "A) Diodes (ڈایوڈز)",
+                "B) IGBTs (آئی جی بی ٹی)",
+                "C) Varistors (ویریسٹر)",
+                "D) Zener diodes (زینر ڈایوڈ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "13. \"DC drive suddenly trips after starting.\" One common cause is: (\"ڈی سی ڈرائیو اسٹارٹ ہونے کے فوراً بعد ٹرپ ہو جاتی ہے\" اس کی ایک عام وجہ ہے:)",
+            options: [
+                "A) Very low ambient temperature only (صرف بہت کم درجہ حرارت)",
+                "B) Input voltage too high or power surges (ان پٹ وولٹیج بہت زیادہ یا پاور سرج)",
+                "C) Wrong shaft alignment only (صرف غلط الائنمنٹ)",
+                "D) Lack of lubrication (لبریکیشن کی کمی)"
+            ],
+            correct: 1
+        },
+        {
+            question: "14. If a DC drive does not run the motor, one probable cause is: (اگر ڈی سی ڈرائیو موٹر کو نہیں چلاتی تو ممکنہ وجہ ہے:)",
+            options: [
+                "A) Excess bearing grease (بیئرنگ میں اضافی گریس)",
+                "B) No control command signal (کنٹرول سگنل کا نہ ہونا)",
+                "C) High power factor (پاور فیکٹر زیادہ ہونا)",
+                "D) Over excited field (فیلڈ کا اوور ایکسائیٹ ہونا)"
+            ],
+            correct: 1
+        },
+        {
+            question: "15. \"Drive keeps blowing fuses / tripping breakers.\" One cause is: (\"ڈرائیو کا فیوز بار بار جل جانا\" کی ایک وجہ ہے:)",
+            options: [
+                "A) Correctly sized cable (صحیح سائز کی کیبل)",
+                "B) Overloaded circuit or short circuit (اوور لوڈ یا شارٹ سرکٹ)",
+                "C) Low humidity (کم نمی)",
+                "D) Balanced voltage (متوازن وولٹیج)"
+            ],
+            correct: 1
+        },
+        {
+            question: "16. For a three phase squirrel cage induction motor, \"motor does not start on load\" may be due to: (تھری فیز اسکوائرل کیج انڈکشن موٹر \"لوڈ پر اسٹارٹ نہیں ہو رہی\" کی ممکنہ وجہ:)",
+            options: [
+                "A) Very high power factor (پاور فیکٹر بہت زیادہ)",
+                "B) No supply voltage or jammed shaft (سپلائی وولٹیج کا نہ ہونا یا شافٹ جام ہونا)",
+                "C) Excess lubrication (لبریکیشن زیادہ)",
+                "D) Wrong bearing grade (غلط بیئرنگ گریڈ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "17. Squirrel cage motor \"does not pick up full speed.\" One cause is: (اسکوائرل کیج موٹر \"فل اسپیڈ نہیں پکڑتی\" کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Very high voltage (وولٹیج بہت زیادہ)",
+                "B) Motor overloaded or loose connections (موٹر پر اوورلوڈ یا ڈھیلا کنکشن)",
+                "C) Over excited synchronous condenser (اوور ایکسائیٹ سنکرونس کنڈینسر)",
+                "D) Too much capacitor (کیپیسیٹر بہت زیادہ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "18. Single phasing in a three phase motor often results from: (تھری فیز موٹر میں سنگل فیزنگ عام طور پر کس وجہ سے ہوتی ہے؟)",
+            options: [
+                "A) Overgreased bearings only (صرف بیئرنگ میں زیادہ گریس)",
+                "B) One fuse blown or cable discontinuity (ایک فیوز کا جل جانا یا کیبل میں اوپن سرکٹ)",
+                "C) Balanced line voltage (متوازن لائن وولٹیج)",
+                "D) Correct earthing (درست اَررتھنگ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "19. Wrong rotation of a three phase induction motor can be corrected by: (تھری فیز انڈکشن موٹر کی غلط سمت کو کیسے درست کیا جاتا ہے؟)",
+            options: [
+                "A) Changing frequency (فریکوئنسی تبدیل کر کے)",
+                "B) Reversing any two phase leads (کسی بھی دو فیز کو آپس میں تبدیل کر کے)",
+                "C) Changing motor frame (موٹر کا فریم بدل کر)",
+                "D) Increasing cable size (کیبل سائز بڑھا کر)"
+            ],
+            correct: 1
+        },
+        {
+            question: "20. Abnormal unbalanced currents in a wound rotor induction motor are often due to: (واؤنڈ روٹر انڈکشن موٹر میں کرنٹ کا غیر معمولی عدم توازن عموماً کس وجہ سے ہوتا ہے؟)",
+            options: [
+                "A) Perfect balance of supply (سپلائی کا مکمل توازن)",
+                "B) Unbalanced line voltage (لائن وولٹیج کا غیر متوازن ہونا)",
+                "C) High power factor (پاور فیکٹر زیادہ)",
+                "D) Overgreasing (زیادہ گریس)"
+            ],
+            correct: 1
+        },
+        {
+            question: "21. \"Electric shock observed from motor\" usually indicates: (\"موٹر کو ہاتھ لگانے پر جھٹکا لگنا\" عام طور پر کس بات کی نشانی ہے؟)",
+            options: [
+                "A) Very low humidity (بہت کم نمی)",
+                "B) Leakage current / insulation failure and poor earthing (لیکیج کرنٹ / انسولیشن خراب اور ناقص اَررتھنگ)",
+                "C) Correct insulation (مکمل درست انسولیشن)",
+                "D) Balanced loading (متوازن لوڈنگ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "22. A synchronous motor is characterized by: (سنکرونس موٹر کی خصوصیت ہے کہ اس کا روٹر:)",
+            options: [
+                "A) Rotor speed always less than synchronous speed (ہمیشہ سنکرونس اسپیڈ سے کم چلتا ہے)",
+                "B) Rotor speed equal to synchronous speed (سنکرونس اسپیڈ کے برابر چلتا ہے)",
+                "C) Rotor speed more than synchronous speed (سنکرونس اسپیڈ سے زیادہ چلتا ہے)",
+                "D) Random rotor speed (بے قاعدہ اسپیڈ سے چلتا ہے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "23. In a 3 phase synchronous motor, failure to synchronize may be caused by: (تھری فیز سنکرونس موٹر کے سنکرونائز نہ ہونے کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Open exciter field circuit (ایکسائیٹر فیلڈ میں اوپن سرکٹ)",
+                "B) High bearing temperature only (صرف بیئرنگ کی زیادہ حرارت)",
+                "C) Overgreasing (زیادہ گریس)",
+                "D) High power factor (پاور فیکٹر زیادہ)"
+            ],
+            correct: 0
+        },
+        {
+            question: "24. Hunting in a single phase hysteresis synchronous motor is related to: (سنگل فیز ہیسٹریسس سنکرونس موٹر میں ہنٹنگ کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Stable rotor hysteresis ring (ہیسٹریسس رنگ کا مکمل درست ہونا)",
+                "B) Affected/damaged hysteresis ring or unstable frequency (ہیسٹریسس رنگ کا متاثر ہونا یا فریکوئنسی میں عدم استحکام)",
+                "C) Only low load (صرف کم لوڈ)",
+                "D) Perfect lubrication (مکمل لبریکیشن)"
+            ],
+            correct: 1
+        },
+        {
+            question: "25. A universal motor is designed to run on: (یونیورسل موٹر اس طرح بنائی جاتی ہے کہ وہ چل سکے:)",
+            options: [
+                "A) DC only (صرف ڈی سی پر)",
+                "B) Single phase AC only (صرف سنگل فیز اے سی پر)",
+                "C) Either DC or single phase AC (ڈی سی اور سنگل فیز اے سی دونوں پر)",
+                "D) Three phase AC only (صرف تھری فیز اے سی پر)"
+            ],
+            correct: 2
+        },
+        {
+            question: "26. Universal motors are usually: (یونیورسل موٹر عموماً:)",
+            options: [
+                "A) Shunt wound (شنٹ وائنڈ ہوتی ہے)",
+                "B) Series wound with armature and field in series (سیریز وائنڈ ہوتی ہے، یعنی آرمچر اور فیلڈ سیریز میں)",
+                "C) Separately excited (علیحدہ ایکسائیٹڈ ہوتی ہے)",
+                "D) Compound wound (کمپاؤنڈ وائنڈ ہوتی ہے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "27. Excessive sparking at the commutator of a universal motor may be caused by: (یونیورسل موٹر کے کومیوٹیٹر پر زیادہ اسپارکنگ کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Brushes set exactly at neutral (برشز کا بالکل نیوٹرل پر ہونا)",
+                "B) Carbon brushes not set in neutral position (کاربن برشز کا نیوٹرل پوزیشن پر نہ ہونا)",
+                "C) Good insulation (اچھی انسولیشن)",
+                "D) Clean commutator (صاف کومیوٹیٹر)"
+            ],
+            correct: 1
+        },
+        {
+            question: "28. Low starting torque of a universal motor can be due to: (یونیورسل موٹر کا اسٹارٹنگ ٹارک کم ہونے کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Open or shorted field coils (فیلڈ کوائل میں اوپن یا شارٹ سرکٹ)",
+                "B) Perfect field current (فیلڈ کرنٹ کا مکمل درست ہونا)",
+                "C) Clean commutator (کومیوٹیٹر کا صاف ہونا)",
+                "D) Balanced load (متوازن لوڈ)"
+            ],
+            correct: 0
+        },
+        {
+            question: "29. A single phase capacitor run motor fails to start. A possible reason is: (سنگل فیز کیپیسیٹر رن موٹر اسٹارٹ نہیں ہوتی، وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Healthy running capacitor (رننگ کیپیسیٹر ٹھیک ہونا)",
+                "B) Burnt or weak running capacitor (رننگ کیپیسیٹر کا جل جانا یا کمزور ہونا)",
+                "C) Oversized shaft (شافٹ بہت موٹا ہونا)",
+                "D) Too much lubrication (بہت زیادہ لبریکیشن)"
+            ],
+            correct: 1
+        },
+        {
+            question: "30. Single phase capacitor run motor running hot can be due to: (سنگل فیز کیپیسیٹر رن موٹر کے گرم ہونے کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Correct capacitor and light load (درست کیپیسیٹر اور ہلکا لوڈ)",
+                "B) Faulty run capacitor or overload (خراب رننگ کیپیسیٹر یا اوورلوڈ)",
+                "C) High power factor (پاور فیکٹر زیادہ)",
+                "D) Perfect ventilation (بہترین وینٹی لیشن)"
+            ],
+            correct: 1
+        },
+        {
+            question: "31. In DC machine armatures, short circuit between conductors can be detected by: (ڈی سی مشین کے آرمچر میں شارٹ سرکٹ معلوم کرنے کے لیے عموماً کیا استعمال ہوتا ہے؟)",
+            options: [
+                "A) Ammeter only (صرف ایمیٹر)",
+                "B) Bench growler and hacksaw blade test (بینچ گراولر اور ہیکسا بلیڈ ٹیسٹ)",
+                "C) Tachometer (ٹیکومیٹر)",
+                "D) Power factor meter (پاور فیکٹر میٹر)"
+            ],
+            correct: 1
+        },
+        {
+            question: "32. In the growler test for short circuit, if a coil is shorted: (گراولر ٹیسٹ میں اگر کوائل شارٹ ہو تو:)",
+            options: [
+                "A) The hacksaw blade feels no pull (ہیکسا بلیڈ پر کوئی کھنچاؤ محسوس نہیں ہوتا)",
+                "B) The hacksaw blade sticks and vibrates (ہیکسا بلیڈ چپک جاتا ہے اور وائبریٹ کرتا ہے)",
+                "C) Voltage disappears (وولٹیج ختم ہو جاتا ہے)",
+                "D) Frequency changes (فریکوئنسی بدل جاتی ہے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "33. Bar to bar resistance test on a DC armature is mainly used to find: (ڈی سی آرمچر کے بار ٹو بار ریزسٹنس ٹیسٹ سے عموماً کیا معلوم کیا جاتا ہے؟)",
+            options: [
+                "A) Shaft misalignment (شافٹ کا misalignment)",
+                "B) Shorted or open coils between commutator bars (کومیوٹیٹر بارز کے درمیان کوائل کا شارٹ یا اوپن ہونا)",
+                "C) Bearing wear (بیئرنگ کا گھس جانا)",
+                "D) Field winding polarity (فیلڈ وائنڈنگ کی پولیریٹی)"
+            ],
+            correct: 1
+        },
+        {
+            question: "34. Earth (ground) fault in a DC armature can be checked using: (ڈی سی آرمچر میں ارتھ فالٹ چیک کرنے کے لیے استعمال کیا جاتا ہے:)",
+            options: [
+                "A) Growler with ground test function (گراولر (گراؤنڈ ٹیسٹ کے ساتھ))",
+                "B) Tachometer (ٹیکومیٹر)",
+                "C) Frequency meter (فریکوئنسی میٹر)",
+                "D) Wattmeter only (صرف واٹ میٹر)"
+            ],
+            correct: 0
+        },
+        {
+            question: "35. In a DC series motor, very high speed (runaway) can occur if: (ڈی سی سیریز موٹر میں بہت زیادہ رفتار (رن اوے) کب ہو سکتی ہے؟)",
+            options: [
+                "A) Load is suddenly removed (جب لوڈ اچانک ہٹا دیا جائے)",
+                "B) Field current is increased (جب فیلڈ کرنٹ بڑھا دیا جائے)",
+                "C) Voltage is reduced to zero (جب وولٹیج صفر ہو)",
+                "D) Bearings are jammed (جب بیئرنگ جام ہوں)"
+            ],
+            correct: 0
+        },
+        {
+            question: "36. A DC shunt motor runs too fast mainly because: (ڈی سی شنٹ موٹر کے بہت تیز چلنے کی وجہ عموماً:)",
+            options: [
+                "A) Field too weak (low field current) (فیلڈ کمزور (فیلڈ کرنٹ کم))",
+                "B) Armature circuit resistance too low (آرمچر سرکٹ کی ریزسٹنس بہت کم)",
+                "C) Voltage too low (وولٹیج بہت کم)",
+                "D) Excessive load (لوڈ بہت زیادہ)"
+            ],
+            correct: 0
+        },
+        {
+            question: "37. A DC motor fails to start. One likely cause is: (ڈی سی موٹر اسٹارٹ نہیں ہوتی، ممکنہ وجہ:)",
+            options: [
+                "A) Correct field resistance (فیلڈ ریزسٹنس درست ہونا)",
+                "B) Open circuit in armature or field (آرمچر یا فیلڈ میں اوپن سرکٹ)",
+                "C) Perfect brushes (برشز کا مکمل درست ہونا)",
+                "D) Correct supply (سپلائی کا درست ہونا)"
+            ],
+            correct: 1
+        },
+        {
+            question: "38. Excessive sparking at brushes of a DC motor may be due to: (ڈی سی موٹر کے برشز پر زیادہ اسپارکنگ کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Brushes correctly set on neutral (برشز کا نیوٹرل پر درست ہونا)",
+                "B) Wrong brush position or poor contact (برشز کی غلط پوزیشن یا ناقص کونٹیکٹ)",
+                "C) Clean commutator (صاف کومیوٹیٹر)",
+                "D) Balanced load (متوازن لوڈ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "39. High mica between commutator segments causes: (کومیوٹیٹر سیگمنٹس کے درمیان مائیکا زیادہ اونچا ہونے سے:)",
+            options: [
+                "A) Smooth brush running (برشز نرم چلتے ہیں)",
+                "B) Brush chatter and rapid wear (برشز چَٹر کرتے اور جلد گھِس جاتے ہیں)",
+                "C) Reduced sparking (اسپارکنگ کم ہو جاتی ہے)",
+                "D) Lower temperature (درجہ حرارت کم ہو جاتا ہے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "40. In ceiling fans, a common fault is \"fan not starting.\" One possible cause is: (سیلنگ فین کے \"سٹارٹ نہ ہونے\" کی ایک ممکنہ وجہ:)",
+            options: [
+                "A) Perfect capacitor (کیپیسیٹر کا مکمل درست ہونا)",
+                "B) Open or weak capacitor / open winding (کیپیسیٹر کا خراب یا کمزور ہونا / وائنڈنگ اوپن ہونا)",
+                "C) Correct wiring (وائرنگ کا درست ہونا)",
+                "D) Proper bearing (بیئرنگ کا ٹھیک ہونا)"
+            ],
+            correct: 1
+        },
+        {
+            question: "41. In a refrigerator, the component responsible for compressing refrigerant is: (ریفریجریٹر میں ریفریجرنٹ کو کمپریس کرنے والا حصہ ہے:)",
+            options: [
+                "A) Evaporator (ایواپوریٹر)",
+                "B) Compressor (کمپریسر)",
+                "C) Capillary tube (کیپیلیری ٹیوب)",
+                "D) Thermostat (تھرموسٹاٹ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "42. In an air conditioner, the device used for starting and running the single phase compressor motor is: (ایئر کنڈیشنر میں سنگل فیز کمپریسر موٹر کو اسٹارٹ اور رن کرنے کے لیے عموماً کیا استعمال ہوتا ہے؟)",
+            options: [
+                "A) Only resistor (صرف رزسٹر)",
+                "B) Starting and running capacitors (اسٹارٹنگ اور رننگ کیپیسیٹر)",
+                "C) MCB (ایم سی بی)",
+                "D) Timer only (صرف ٹائمر)"
+            ],
+            correct: 1
+        },
+        {
+            question: "43. UPS converts: (یو پی ایس کنورٹ کرتا ہے:)",
+            options: [
+                "A) Only AC to AC (صرف اے سی سے اے سی)",
+                "B) Only DC to DC (صرف ڈی سی سے ڈی سی)",
+                "C) AC to DC during charging and DC to AC during backup (چارجنگ کے وقت اے سی سے ڈی سی، بیک اپ کے وقت ڈی سی سے اے سی)",
+                "D) Only AC to DC (صرف اے سی سے ڈی سی)"
+            ],
+            correct: 2
+        },
+        {
+            question: "44. \"UPS is not charging the battery.\" One possible cause is: (\"یو پی ایس بیٹری کو چارج نہیں کر رہا\" کی ممکنہ وجہ:)",
+            options: [
+                "A) Output fuse blown only (صرف آؤٹ پٹ فیوز کا جلنا)",
+                "B) Charging switch OFF or rectifier circuit faulty (چارجنگ سوئچ کا آف ہونا یا ریکٹیفائر سرکٹ خراب ہونا)",
+                "C) Low load (لو لوڈ)",
+                "D) High battery level (بیٹری کا فل ہونا)"
+            ],
+            correct: 1
+        },
+        {
+            question: "45. In a typical lead acid battery, the electrolyte is approximately: (عام لیڈ ایسڈ بیٹری میں الیکٹرولائٹ تقریباً ہوتا ہے:)",
+            options: [
+                "A) 35% sulphuric acid and 65% water (35٪ سلفیورک ایسڈ اور 65٪ پانی)",
+                "B) 100% sulphuric acid (100٪ سلفیورک ایسڈ)",
+                "C) Pure water only (صرف خالص پانی)",
+                "D) Only potassium hydroxide (صرف پوٹاشیم ہائیڈرو آکسائیڈ)"
+            ],
+            correct: 0
+        },
+        {
+            question: "46. Sulphation in a lead acid battery is mainly caused by: (لیڈ ایسڈ بیٹری میں سلفیشن کی بنیادی وجہ:)",
+            options: [
+                "A) Continuous full charging (مسلسل فل چارجنگ)",
+                "B) Prolonged under charging or deep discharge and not recharging properly (لمبے عرصے تک کم چارج رہنا یا گہرا ڈسچارج اور دوبارہ صحیح چارج نہ کرنا)",
+                "C) Clean terminals (صاف ٹرمینل)",
+                "D) Correct electrolyte level (درست الیکٹرولائٹ لیول)"
+            ],
+            correct: 1
+        },
+        {
+            question: "47. Corrosion on battery terminals leads to: (بیٹری ٹرمینلز پر زنگ اور کورژن ہونے سے:)",
+            options: [
+                "A) Reduced resistance and higher current (ریزسٹنس کم اور کرنٹ زیادہ ہو جاتا ہے)",
+                "B) Increased resistance and reduced current flow (ریزسٹنس بڑھ جاتا ہے اور کرنٹ کم ہو جاتا ہے)",
+                "C) No change in performance (کارکردگی پر کوئی فرق نہیں پڑتا)",
+                "D) Higher specific gravity (مخصوص کشش ثقل بڑھ جاتی ہے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "48. Over heating of a lead acid battery may be due to: (لیڈ ایسڈ بیٹری کے زیادہ گرم ہونے کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Correct charging (درست چارجنگ)",
+                "B) Over charging or short circuit (اوور چارجنگ یا شارٹ سرکٹ)",
+                "C) Low temperature (کم درجہ حرارت)",
+                "D) Distilled water (کشیدہ پانی)"
+            ],
+            correct: 1
+        },
+        {
+            question: "49. An alkaline battery typically uses which electrolyte? (الکلائن بیٹری میں عموماً کون سا الیکٹرولائٹ استعمال ہوتا ہے؟)",
+            options: [
+                "A) Sulphuric acid (سلفیورک ایسڈ)",
+                "B) Potassium hydroxide (پوٹاشیم ہائیڈرو آکسائیڈ)",
+                "C) Hydrochloric acid (ہائیڈروکلورک ایسڈ)",
+                "D) Sodium chloride (سوڈیم کلورائیڈ)"
+            ],
+            correct: 1
+        },
+        {
+            question: "50. A lithium ion battery management system (BMS) mainly: (لیتھیم آئن بیٹری کا بی ایم ایس بنیادی طور پر:)",
+            options: [
+                "A) Only measures current (صرف کرنٹ ناپتا ہے)",
+                "B) Monitors and controls voltage, temperature, current etc. for safety (وولٹیج، درجہ حرارت، کرنٹ وغیرہ مانیٹر اور کنٹرول کرتا ہے تاکہ سیفٹی رہے)",
+                "C) Only stores energy (صرف توانائی ذخیرہ کرتا ہے)",
+                "D) Works as a simple fuse (ایک سادہ فیوز کا کام کرتا ہے)"
+            ],
+            correct: 1
+        },
+        {
+            question: "51. In DC generators, loss of excitation (failure to build up voltage) may be due to: (ڈی سی جنریٹر میں وولٹیج پیدا نہ ہونے (ایکسیٹیشن ختم ہونے) کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Correct field resistance (فیلڈ ریزسٹنس کا درست ہونا)",
+                "B) Open field circuit or loss of residual magnetism (فیلڈ سرکٹ میں اوپن سرکٹ یا ریزیڈیول میگنیٹزم کا ختم ہونا)",
+                "C) Proper brush setting (برشز کا درست سیٹنگ)",
+                "D) Correct speed (رفتار کا درست ہونا)"
+            ],
+            correct: 1
+        },
+        {
+            question: "52. Armature reaction in a DC motor is mainly: (ڈی سی موٹر میں آرمچر ری ایکشن بنیادی طور پر:)",
+            options: [
+                "A) Purely demagnetizing only (صرف ڈی میگنیٹائزنگ)",
+                "B) Cross magnetizing effect of armature mmf (آرمچر ایم ایم ایف کا کراس میگنیٹائزنگ اثر)",
+                "C) Only magnetizing (صرف میگنیٹائزنگ)",
+                "D) None (کوئی نہیں)"
+            ],
+            correct: 1
+        },
+        {
+            question: "53. Back EMF in a DC motor: (ڈی سی موٹر کی بیک ای ایم ایف:)",
+            options: [
+                "A) Aids the supply voltage (سپلائی وولٹیج کو مدد دیتی ہے)",
+                "B) Opposes the applied voltage (لگائی گئی وولٹیج کی مخالفت کرتی ہے)",
+                "C) Is zero at rated speed (ریٹڈ اسپیڈ پر صفر ہوتی ہے)",
+                "D) Has no effect on current (کرنٹ پر کوئی اثر نہیں ڈالتی)"
+            ],
+            correct: 1
+        },
+        {
+            question: "54. Speed of a DC motor can be controlled by varying: (ڈی سی موٹر کی رفتار کن چیزوں کو تبدیل کر کے کنٹرول کی جا سکتی ہے؟)",
+            options: [
+                "A) Field current (فیلڈ کرنٹ)",
+                "B) Applied voltage (لگائی گئی وولٹیج)",
+                "C) Resistance in series with armature (آرمچر کے سیریز ریزسٹر)",
+                "D) All of these (اوپر کی سب باتیں)"
+            ],
+            correct: 3
+        },
+        {
+            question: "55. In a shunt DC motor, running too slowly can be due to: (شنٹ ڈی سی موٹر کا بہت آہستہ چلنا کن وجوہات سے ہو سکتا ہے؟)",
+            options: [
+                "A) Overload or high armature circuit resistance (اوورلوڈ یا آرمچر سرکٹ میں زیادہ ریزسٹنس)",
+                "B) Very strong field (فیلڈ بہت زیادہ مضبوط)",
+                "C) No load (بغیر لوڈ)",
+                "D) High voltage (وولٹیج زیادہ)"
+            ],
+            correct: 0
+        },
+        {
+            question: "56. DC motor running backward is often due to: (ڈی سی موٹر کا الٹی سمت میں چلنا عموماً کس وجہ سے ہے؟)",
+            options: [
+                "A) Same polarity connections (تمام کنکشن درست پولیریٹی پر)",
+                "B) Reversed connections of field or armature (فیلڈ یا آرمچر کے کنکشن الٹ جانے سے)",
+                "C) Correct brush setting (برشز کی درست سیٹنگ)",
+                "D) Correct supply (سپلائی کا صحیح ہونا)"
+            ],
+            correct: 1
+        },
+        {
+            question: "57. In single phase motors used for home appliances, they are preferred mainly because: (سنگل فیز موٹرز گھریلو آلات میں اس لیے ترجیح دی جاتی ہیں کہ:)",
+            options: [
+                "A) Very high efficiency only (صرف بہت زیادہ ایفیشنسی)",
+                "B) Low price and suitability for single phase supply (قیمت کم ہوتی ہے اور سنگل فیز سپلائی پر آسانی سے چلتی ہیں)",
+                "C) Need three phase supply (ہمیشہ تھری فیز سپلائی چاہیے)",
+                "D) Are always synchronous (ہمیشہ سنکرونس ہوتی ہیں)"
+            ],
+            correct: 1
+        },
+        {
+            question: "58. Reluctance motor is a type of: (ریلیکٹنس موٹر کس قسم کی موٹر ہے؟)",
+            options: [
+                "A) Single phase synchronous motor (سنگل فیز سنکرونس موٹر)",
+                "B) DC motor (ڈی سی موٹر)",
+                "C) Universal motor (یونیورسل موٹر)",
+                "D) Three phase induction motor (تھری فیز انڈکشن موٹر)"
+            ],
+            correct: 0
+        },
+        {
+            question: "59. Universal motor is sometimes also called: (یونیورسل موٹر کو بعض اوقات کیا بھی کہا جاتا ہے؟)",
+            options: [
+                "A) Induction motor (انڈکشن موٹر)",
+                "B) Commutator motor (کومیوٹیٹر موٹر)",
+                "C) Synchronous motor (سنکرونس موٹر)",
+                "D) Reluctance motor (ریلیکٹنس موٹر)"
+            ],
+            correct: 1
+        },
+        {
+            question: "60. In UPS troubleshooting, \"battery not giving backup\" may be due to: (یو پی ایس میں \"بیٹری بیک اپ نہیں دے رہی\" کی وجہ ہو سکتی ہے:)",
+            options: [
+                "A) Strong electrolyte and light load (الیکٹرولائٹ مضبوط اور لوڈ کم)",
+                "B) Weak electrolyte or high load (الیکٹرولائٹ کمزور یا لوڈ بہت زیادہ)",
+                "C) Perfect charging (چارجنگ مکمل درست)",
+                "D) Correct battery size (بیٹری کا سائز بالکل ٹھیک)"
+            ],
+            correct: 1
+        }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let answered = false;
+
+    function loadQuestion() {
+        answered = false;
+        const q = quizData[currentIdx];
+        document.getElementById('question-number').innerText = `Question ${currentIdx + 1} of ${quizData.length}`;
+        document.getElementById('question-title').innerText = q.question;
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        q.options.forEach((opt, index) => {
+            const li = document.createElement('li');
+            li.innerText = opt;
+            li.onclick = () => selectOption(index, li);
+            optionsContainer.appendChild(li);
+        });
+
+        document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function selectOption(selectedIndex, element) {
+        if (answered) return;
+        answered = true;
+
+        const q = quizData[currentIdx];
+        const optionsList = document.getElementById('options-container').children;
+
+        if (selectedIndex === q.correct) {
+            element.classList.add('correct');
+            score++;
+        } else {
+            element.classList.add('incorrect');
+            optionsList[q.correct].classList.add('correct');
+        }
+
+        for (let li of optionsList) {
+            li.classList.add('disabled');
+        }
+
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < quizData.length) {
+            loadQuestion();
+        } else {
+            document.getElementById('quiz-box').style.display = 'none';
+            document.getElementById('score-box').style.display = 'block';
+            document.getElementById('final-score').innerText = `آپ کا سکور: ${score} / ${quizData.length}`;
+        }
+    }
+
+    function restartQuiz() {
+        currentIdx = 0;
+        score = 0;
+        document.getElementById('quiz-box').style.display = 'block';
+        document.getElementById('score-box').style.display = 'none';
+        loadQuestion();
+    }
+
+    // Initialize quiz
+    loadQuestion();
+</script>
+
+</body>
+</html>

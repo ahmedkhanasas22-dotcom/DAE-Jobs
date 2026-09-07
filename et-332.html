@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ET-332 Electrical Power Generation | DAE Examination Prep Portal</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #238636;
+            --accent-red: #da3633;
+            --option-bg: #21262d;
+            --option-hover: #30363d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .main-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .main-title h1 {
+            font-size: 1.4rem;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+
+        .main-title p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .quiz-card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .question-box {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--option-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .option-item:hover:not(.disabled) {
+            background: var(--option-hover);
+            border-color: var(--accent-blue);
+        }
+
+        .option-item.correct {
+            background: rgba(35, 134, 54, 0.2);
+            border-color: var(--accent-green);
+            color: #3fb950;
+        }
+
+        .option-item.incorrect {
+            background: rgba(218, 54, 51, 0.2);
+            border-color: var(--accent-red);
+            color: #f85149;
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .quiz-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            background-color: var(--accent-blue);
+            color: #0d1117;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: none;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #79c0ff;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .score-display {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-title">
+        <h1>ET-332 Electrical Power Generation</h1>
+        <p>DAE Examination Prep Portal</p>
+    </div>
+
+    <div class="quiz-card">
+        <!-- Quiz Screen -->
+        <div id="quizScreen">
+            <div class="quiz-info">
+                <span id="questionCount">Question 1 of 45</span>
+                <span id="topicName" style="color: var(--accent-blue);">Topic: Thermal Power</span>
+            </div>
+            <div class="question-box" id="questionText"></div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="quiz-footer">
+                <button id="nextBtn" class="btn" onclick="nextQuestion()">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen" class="result-screen">
+            <h2>ٹیسٹ مکمل ہو گیا!</h2>
+            <div class="score-display" id="finalScore">0 / 45</div>
+            <p id="resultMessage" style="color: var(--text-muted); margin-bottom: 20px;"></p>
+            <button class="btn" style="display: inline-block;" onclick="restartQuiz()">دوبارہ شروع کریں</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                "topic": "Thermal Power Station",
+                "question": "What is the primary process in a coal-fired thermal power plant? (کوئلے سے چلنے والے تھرمل پاور پلانٹ میں بنیادی عمل کیا ہے؟)",
+                "options": [
+                    { "text": "A) Burning oil to produce steam (تیل جلانا بھاپ پیدا کرنے کے لیے)", "correct": 0 },
+                    { "text": "B) Burning coal to produce heat for steam generation (کوئلہ جلانا گرمی پیدا کرنے کے لیے بھاپ بنانے کے لیے)", "correct": 1 },
+                    { "text": "C) Using nuclear fission (نیوکلیئر فیشن کا استعمال)", "correct": 0 },
+                    { "text": "D) Wind energy conversion (ونڈ انرجی کنورژن)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Thermal Power Station",
+                "question": "Which component pulverizes coal before feeding it to the boiler? (بوائلر میں کول کو فیڈ کرنے سے پہلے کون سا جزو اسے پلسرائز کرتا ہے؟)",
+                "options": [
+                    { "text": "A) Superheater (سوپر ہیٹر)", "correct": 0 },
+                    { "text": "B) Coal handling plant (کول ہینڈلنگ پلانٹ)", "correct": 1 },
+                    { "text": "C) Condenser (کنڈنسر)", "correct": 0 },
+                    { "text": "D) Economizer (اکنامائزر)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Thermal Power Station",
+                "question": "What is the function of a superheater in a steam generating plant? (سٹیم جنریٹنگ پلانٹ میں سوپر ہیٹر کا کام کیا ہے؟)",
+                "options": [
+                    { "text": "A) To cool the steam (سٹیم کو ٹھنڈا کرنا)", "correct": 0 },
+                    { "text": "B) To dry and superheat the steam (سٹیم کو خشک اور سوپر ہیٹ کرنا)", "correct": 1 },
+                    { "text": "C) To preheat air (ایئر کو پری ہیٹ کرنا)", "correct": 0 },
+                    { "text": "D) To condense steam (سٹیم کو کنڈینس کرنا)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Thermal Power Station",
+                "question": "In a thermal power station, ash produced is about what percentage of coal burnt? (تھرمل پاور سٹیشن میں، جلنے والے کوئلے کا راکھ تقریباً کتنا فیصد ہوتی ہے؟)",
+                "options": [
+                    { "text": "A) 10-20% (10-20%)", "correct": 1 },
+                    { "text": "B) 50-60% (50-60%)", "correct": 0 },
+                    { "text": "C) 2-3% (2-3%)", "correct": 0 },
+                    { "text": "D) 80-90% (80-90%)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Boilers and Turbines",
+                "question": "Which boiler type has water inside tubes and fire outside? (کس بوائلر کیپ میں پانی ٹیوبز کے اندر ہوتا ہے اور آگ باہر؟)",
+                "options": [
+                    { "text": "A) Fire tube boiler (فائر ٹیوب بوائلر)", "correct": 0 },
+                    { "text": "B) Water tube boiler (واٹر ٹیوب بوائلر)", "correct": 1 },
+                    { "text": "C) Both (دونوں)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Boilers and Turbines",
+                "question": "The main difference between impulse and reaction turbines is: (امپلس اور ری ایکشن ٹربائنز میں بنیادی فرق کیا ہے؟)",
+                "options": [
+                    { "text": "A) Pressure drop in nozzles only (impulse) (صرف نوزلز میں پریشر ڈراپ (امپلس))", "correct": 1 },
+                    { "text": "B) Pressure drop across both fixed and moving blades (reaction) (فکسڈ اور موونگ بلڈز دونوں میں پریشر ڈراپ (ری ایکشن))", "correct": 0 },
+                    { "text": "C) Speed (سپیڈ)", "correct": 0 },
+                    { "text": "D) Size (سائز)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Boilers and Turbines",
+                "question": "Economizer in a boiler uses flue gases to heat: (بوائلر میں اکنامائزر فلیو گیسز کا استعمال کس کو ہیٹ کرنے کے لیے کرتا ہے؟)",
+                "options": [
+                    { "text": "A) Steam (سٹیم)", "correct": 0 },
+                    { "text": "B) Feed water (فیڈ واٹر)", "correct": 1 },
+                    { "text": "C) Air (ایئر)", "correct": 0 },
+                    { "text": "D) Coal (کوئلہ)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Boilers and Turbines",
+                "question": "Air preheater heats air using: (ایئر پری ہیٹر ایئر کو ہیٹ کرنے کے لیے کیا استعمال کرتا ہے؟)",
+                "options": [
+                    { "text": "A) Boiler water (بوائلر واٹر)", "correct": 0 },
+                    { "text": "B) Flue gases (فلیو گیسز)", "correct": 1 },
+                    { "text": "C) Steam (سٹیم)", "correct": 0 },
+                    { "text": "D) Coal ash (کوئلہ راکھ)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Condensers and Cooling",
+                "question": "Surface condenser uses: (سرفیس کنڈنسر استعمال کرتا ہے:)",
+                "options": [
+                    { "text": "A) Direct mixing of steam and water (سٹیم اور واٹر کا براہ راست مکسنگ)", "correct": 0 },
+                    { "text": "B) Tubes for heat exchange (ہیٹ ایکسچینج کے لیے ٹیوبز)", "correct": 1 },
+                    { "text": "C) Jet of water (واٹر کا جیٹ)", "correct": 0 },
+                    { "text": "D) Air cooling (ایئر کولنگ)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Condensers and Cooling",
+                "question": "Cooling towers are used when: (جب واٹر کی کمی ہو تو کولنگ ٹاورز استعمال ہوتے ہیں:)",
+                "options": [
+                    { "text": "A) Water is scarce (واٹر کی کمی ہو)", "correct": 1 },
+                    { "text": "B) Coal is abundant (کوئلہ وافر مقدار میں ہو)", "correct": 0 },
+                    { "text": "C) Steam pressure is low (سٹیم پریشر کم ہو)", "correct": 0 },
+                    { "text": "D) Turbine speed is high (ٹربائن سپیڈ زیادہ ہو)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Diesel Power Station",
+                "question": "In diesel power station, governor regulates: (ڈیزل پاور سٹیشن میں گورنر کیا ریگولیٹ کرتا ہے؟)",
+                "options": [
+                    { "text": "A) Fuel supply according to load (لوڈ کے مطابق فیول سپلائی)", "correct": 1 },
+                    { "text": "B) Water flow (پانی کا بہاؤ)", "correct": 0 },
+                    { "text": "C) Air pressure (ایئر پریشر)", "correct": 0 },
+                    { "text": "D) Steam temp (سٹیم ٹمپریچر)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Diesel Power Station",
+                "question": "Two-stroke diesel engine completes cycle in: (ٹو سٹروک ڈیزل انجن سائیکل مکمل کرتا ہے:)",
+                "options": [
+                    { "text": "A) One revolution of crankshaft (کرینک شافٹ کے ایک چکر میں)", "correct": 1 },
+                    { "text": "B) Two revolutions (دو چکر)", "correct": 0 },
+                    { "text": "C) Three revolutions (تین چکر)", "correct": 0 },
+                    { "text": "D) Four revolutions (چار چکر)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Combined Cycle",
+                "question": "Combined cycle power plant uses: (کمبائنڈ سائیکل پاور پلانٹ استعمال کرتا ہے:)",
+                "options": [
+                    { "text": "A) Gas and steam turbines together (گیس اور سٹیم ٹربائنز دونوں)", "correct": 1 },
+                    { "text": "B) Only hydro (صرف ہائڈرو)", "correct": 0 },
+                    { "text": "C) Only diesel (صرف ڈیزل)", "correct": 0 },
+                    { "text": "D) Only solar (صرف سولر)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Diesel Power Station",
+                "question": "Site for diesel plant prefers: (ڈیزل پلانٹ کے لیے سائٹ کا انتخاب:)",
+                "options": [
+                    { "text": "A) Near fuel supply and load center (فیول سپلائی اور لوڈ سینٹر کے قریب)", "correct": 1 },
+                    { "text": "B) Remote mountains (دور دراز پہاڑ)", "correct": 0 },
+                    { "text": "C) Mid ocean (سمندر کے بیچ)", "correct": 0 },
+                    { "text": "D) Desert (صحرا)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Nuclear Power Station",
+                "question": "Nuclear reactor uses uranium for: (نیوکلیئر ری ایکٹر یورینیم استعمال کرتا ہے:)",
+                "options": [
+                    { "text": "A) Fission reaction to produce heat (فیشن ری ایکشن سے حرارت پیدا کرنے کے لیے)", "correct": 1 },
+                    { "text": "B) Cooling (کولنگ)", "correct": 0 },
+                    { "text": "C) Lubrication (لبریکیشن)", "correct": 0 },
+                    { "text": "D) Insulation (انسولیشن)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Nuclear Power Station",
+                "question": "Pressurized Water Reactor (PWR) keeps coolant: (پریشرائزڈ واٹر ری ایکٹر (PWR) کولنٹ کو رکھتا ہے:)",
+                "options": [
+                    { "text": "A) Under high pressure to prevent boiling (ہائی پریشر پر تاکہ بوائل نہ ہو)", "correct": 1 },
+                    { "text": "B) Boiling (بوائلنگ)", "correct": 0 },
+                    { "text": "C) Frozen (فروزن)", "correct": 0 },
+                    { "text": "D) Open (اوپن)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Hydro Power Station",
+                "question": "Pelton wheel turbine is an: (پلٹن وہیل ٹربائن ہے:)",
+                    "options": [
+                    { "text": "A) Impulse turbine (امپلس ٹربائن)", "correct": 1 },
+                    { "text": "B) Reaction turbine (ری ایکشن ٹربائن)", "correct": 0 },
+                    { "text": "C) Mixed flow (مکسڈ فلو)", "correct": 0 },
+                    { "text": "D) Axial flow (ایگزیل فلو)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Hydro Power Station",
+                "question": "Hydel power plant classification by head: High head > ? (ہائیڈل پاور پلانٹ ہیڈ کے لحاظ سے: ہائی ہیڈ > ؟)",
+                "options": [
+                    { "text": "A) 250 meters (250 میٹر سے زیادہ)", "correct": 1 },
+                    { "text": "B) 10 meters (10 میٹر)", "correct": 0 },
+                    { "text": "C) 50 meters (50 میٹر)", "correct": 0 },
+                    { "text": "D) 100 meters (100 میٹر)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Energy Conservation",
+                "question": "Energy conservation means: (انرجی کنزرویشن کا مطلب ہے:)",
+                "options": [
+                    { "text": "A) Using energy efficiently and avoiding waste (توانائی کا موثر استعمال اور ضیاع سے بچنا)", "correct": 1 },
+                    { "text": "B) Stopping all use (سب استعمال بند کرنا)", "correct": 0 },
+                    { "text": "C) Increasing bills (بل بڑھانا)", "correct": 0 },
+                    { "text": "D) Wasting resources (وسائل ضائع کرنا)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Power Factor",
+                "question": "Low power factor causes: (کم پاور فیکٹر کا سبب بنتا ہے:)",
+                "options": [
+                    { "text": "A) Higher current and increased losses (زیادہ کرنٹ اور زیادہ نقصانات)", "correct": 1 },
+                    { "text": "B) Low current (کم کرنٹ)", "correct": 0 },
+                    { "text": "C) High efficiency (زیادہ ایفیشینسی)", "correct": 0 },
+                    { "text": "D) Low losses (کم نقصانات)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Economics of Power Generation",
+                "question": "Load factor is defined as: (لوڈ فیکٹر کی تعریف ہے:)",
+                "options": [
+                    { "text": "A) Average load divided by maximum demand (اوسط لوڈ تقسیم زیادہ سے زیادہ ڈیمانڈ)", "correct": 1 },
+                    { "text": "B) Peak to average (پیک سے اوسط)", "correct": 0 },
+                    { "text": "C) Capacity to load (کیپیسٹی سے لوڈ)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Economics of Power Generation",
+                "question": "High load factor reduces cost per unit because: (ہائی لوڈ فیکٹر یونٹ کی لاگت کم کرتا ہے کیونکہ:)",
+                "options": [
+                    { "text": "A) Fixed cost is distributed over more kWh (فکسڈ کاسٹ زیادہ یونٹس پر تقسیم ہوتی ہے)", "correct": 1 },
+                    { "text": "B) Fuel becomes free (فیول مفت ہوتا ہے)", "correct": 0 },
+                    { "text": "C) Plant size decreases (پلانٹ سائز کم ہوتا ہے)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Economics of Power Generation",
+                "question": "Depreciation method where equal amount charged yearly: (ہر سال برابر رقم چارج کرنے والا ڈپریسی ایشن میتھڈ:)",
+                "options": [
+                    { "text": "A) Straight line method (سٹ্রেট لائن میتھڈ)", "correct": 1 },
+                    { "text": "B) Diminishing value method (ڈیمنشنگ ویلیو)", "correct": 0 },
+                    { "text": "C) Sinking fund (سنکنگ فنڈ)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Tariff Systems",
+                "question": "Two-part tariff includes: (ٹو پارٹ ٹیرف میں شامل ہے:)",
+                "options": [
+                    { "text": "A) Fixed charge per kW and energy charge per kWh (فی کلوواٹ فکسڈ اور فی یونٹ انرجی چارج)", "correct": 1 },
+                    { "text": "B) Only monthly fixed (صرف ماہانہ فکسڈ)", "correct": 0 },
+                    { "text": "C) Only per unit (صرف فی یونٹ)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Load Management",
+                "question": "Peak clipping in load management: (لوڈ مینجمنٹ میں پیک کلپنگ:)",
+                "options": [
+                    { "text": "A) Reducing peak demand during high load hours (زیادہ لوڈ کے اوقات میں پیک ڈیمانڈ کم کرنا)", "correct": 1 },
+                    { "text": "B) Increasing peak (پیک بڑھانا)", "correct": 0 },
+                    { "text": "C) Stopping supply (سپلائی روکنا)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Power Factor",
+                "question": "Power factor improvement uses: (پاور فیکٹر بہتر کرنے کے لیے:)",
+                "options": [
+                    { "text": "A) Static capacitors (سٹ্যাটিক کیپیسٹرز)", "correct": 1 },
+                    { "text": "B) Inductors (انڈکٹرز)", "correct": 0 },
+                    { "text": "C) Resistors (ریزسٹرز)", "correct": 0 },
+                    { "text": "D) Transformers (ٹرانسفارمرز)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Power Factor",
+                "question": "Cause of low power factor: (کم پاور فیکٹر کا سبب:)",
+                "options": [
+                    { "text": "A) Inductive loads like induction motors (انڈکٹیو لوڈز جیسے انڈکشن موٹرز)", "correct": 1 },
+                    { "text": "B) Resistive loads (ریزسٹو لوڈز)", "correct": 0 },
+                    { "text": "C) Capacitive loads (کیپیسٹیو لوڈز)", "correct": 0 },
+                    { "text": "D) Lamps (لیمپس)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Power Plant Losses",
+                "question": "Major source of energy loss in plants: (پلانٹس میں انرجی نقصان کا بڑا ذریعہ:)",
+                "options": [
+                    { "text": "A) Condenser cooling water heat loss (کنڈنسر کولنگ واٹر ہیٹ لاس)", "correct": 1 },
+                    { "text": "B) Friction in bearings (بیئرنگ فریکشن)", "correct": 0 },
+                    { "text": "C) Generator copper loss (جنرٹر کاپر لاس)", "correct": 0 },
+                    { "text": "D) Lighting (لائٹنگ)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Load Management",
+                "question": "Valley filling increases load during: (ویلی فلنگ لوڈ بڑھاتی ہے:)",
+                "options": [
+                    { "text": "A) Off-peak hours (آف پیک آورز میں)", "correct": 1 },
+                    { "text": "B) Peak hours (پیک آورز میں)", "correct": 0 },
+                    { "text": "C) Midday (دوپہر)", "correct": 0 },
+                    { "text": "D) Evening (شام)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Economics of Power Generation",
+                "question": "Demand factor is: (ڈیمانڈ فیکٹر ہے:)",
+                "options": [
+                    { "text": "A) Maximum demand divided by connected load (زیادہ سے زیادہ ڈیمانڈ تقسیم کنیکتد لوڈ)", "correct": 1 },
+                    { "text": "B) Average to max (اوسط سے زیادہ)", "correct": 0 },
+                    { "text": "C) Peak to capacity (پیک سے کیپیسٹی)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Nuclear Power Station",
+                "question": "Nuclear fission involves splitting of: (نیوکلیئر فیشن میں پھٹنا ہے:)",
+                "options": [
+                    { "text": "A) Heavy nucleus into smaller fragments (بھاری نیوکلیس کا چھوٹے حصوں میں ٹوٹنا)", "correct": 1 },
+                    { "text": "B) Light nucleus joining (ہلکے نیوکلیائی کا ملنا)", "correct": 0 },
+                    { "text": "C) Electron emission (الیکٹران اخراج)", "correct": 0 },
+                    { "text": "D) Proton decay (پروٹان زوال)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Nuclear Power Station",
+                "question": "Heavy water is used as: (ہیوی واٹر استعمال ہوتا ہے:)",
+                "options": [
+                    { "text": "A) Moderator and coolant (ماڈریٹر اور کولنٹ کے طور پر)", "correct": 1 },
+                    { "text": "B) Fuel (فیول)", "correct": 0 },
+                    { "text": "C) Control rod (کنٹرول راڈ)", "correct": 0 },
+                    { "text": "D) Lubricant (لبریکنٹ)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Nuclear Power Station",
+                "question": "Boiling Water Reactor (BWR) has: (بوائلنگ واٹر ری ایکٹر (BWR) میں ہے:)",
+                "options": [
+                    { "text": "A) Water boiled directly in reactor core (پانی براہ راست ری ایکٹر کور میں ابلتا ہے)", "correct": 1 },
+                    { "text": "B) Separate steam generator (علیحدہ سٹیم جنریটার)", "correct": 0 },
+                    { "text": "C) Gas coolant (گیس کولنٹ)", "correct": 0 },
+                    { "text": "D) No water (پانی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Hydro Power Station",
+                "question": "Francis turbine is: (فرانسس ٹربائن ہے:)",
+                "options": [
+                    { "text": "A) Inward flow reaction turbine (انورڈ فلو ری ایکشن ٹربائن)", "correct": 1 },
+                    { "text": "B) Impulse turbine (امپلس ٹربائن)", "correct": 0 },
+                    { "text": "C) Axial flow turbine (ایگزیل فلو ٹربائن)", "correct": 0 },
+                    { "text": "D) Tangential flow (ٹینجنشل فلو)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Hydro Power Station",
+                "question": "Governing in hydel turbines controls: (ہائیڈل ٹربائنز میں گورننگ کنٹرول کرتی ہے:)",
+                "options": [
+                    { "text": "A) Water flow to maintain constant speed (مستقل سپیڈ کے لیے پانی کا بہاؤ)", "correct": 1 },
+                    { "text": "B) Voltage (وولٹیج)", "correct": 0 },
+                    { "text": "C) Frequency drop (فریکوئেন্সি ڈراپ)", "correct": 0 },
+                    { "text": "D) Dam level (ڈیم لیवल)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Gas Turbine Power",
+                "question": "Gas turbine cycle: Brayton cycle uses: (گیس ٹربائن سائیکل: بریٹن سائیکل استعمال کرتا ہے:)",
+                "options": [
+                    { "text": "A) Compression, combustion and expansion (کمپریشن، کمشن اور ایکسپینشن)", "correct": 1 },
+                    { "text": "B) Only cooling (صرف کولنگ)", "correct": 0 },
+                    { "text": "C) Condensation (کنڈنسیشن)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Thermal Power Station",
+                "question": "Thermal power merit: (تھرمل پاور کا میرٹ:)",
+                "options": [
+                    { "text": "A) Requires less space than hydro (ہائیڈل کے مقابلے میں کم جگہ درکار)", "correct": 1 },
+                    { "text": "B) Zero pollution (زیرو آلودگی)", "correct": 0 },
+                    { "text": "C) Free fuel (مفت فیول)", "correct": 0 },
+                    { "text": "D) High efficiency (زیادہ ایفیشینسی)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Hydro Power Station",
+                "question": "Hydel demerit: (ہائیڈل کا ڈیمرٹ:)",
+                "options": [
+                    { "text": "A) High initial capital cost and long construction time (زیادہ ابتدائی لاگت اور لمبا تعمیراتی وقت)", "correct": 1 },
+                    { "text": "B) Low life (کم زندگی)", "correct": 0 },
+                    { "text": "C) High running cost (زیادہ رننگ کاسٹ)", "correct": 0 },
+                    { "text": "D) Small size (چھوٹا سائز)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Nuclear Power Station",
+                "question": "Nuclear power low: (نیوکلیئر پاور کم:)",
+                "options": [
+                    { "text": "A) Fuel transportation cost due to high energy density (زیادہ انرجی ڈینسٹی کی وجہ سے فیول ٹرانسپورٹیشن کاسٹ کم)", "correct": 1 },
+                    { "text": "B) Safety (سیفٹی)", "correct": 0 },
+                    { "text": "C) Waste disposal (ویسٹ ڈسپوزل)", "correct": 0 },
+                    { "text": "D) Cost (لاگت)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Plant Equipment",
+                "question": "Turbo generator rotor speed: (ٹربو جنریٹر روٹر سپیڈ:)",
+                "options": [
+                    { "text": "A) High speed (e.g. 1500 or 3000 rpm) (تیز رفتار)", "correct": 1 },
+                    { "text": "B) Very low speed (بہت کم رفتار)", "correct": 0 },
+                    { "text": "C) Zero speed (زیرو سپیڈ)", "correct": 0 },
+                    { "text": "D) Variable (متغیر)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Thermal Power Station",
+                "question": "Feed water heater type: Open or closed: (فیڈ واٹر ہیٹر کی قسم: اوپن یا کلوزڈ:)",
+                "options": [
+                    { "text": "A) Both types are used to improve efficiency (ایفیشینسی بہتر کرنے کے لیے دونوں استعمال ہوتے ہیں)", "correct": 1 },
+                    { "text": "B) Only open (صرف اوپن)", "correct": 0 },
+                    { "text": "C) Only closed (صرف کلوزڈ)", "correct": 0 },
+                    { "text": "D) None (کوئی نہیں)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Thermal Power Station",
+                "question": "Site selection for thermal plant considers: (تھرمل پلانٹ سائٹ سلیکشن میں غور:)",
+                "options": [
+                    { "text": "A) Availability of water, coal and transport (پانی، کوئلہ اور نقل و حمل کی دستیابی)", "correct": 1 },
+                    { "text": "B) Only mountains (صرف پہاڑ)", "correct": 0 },
+                    { "text": "C) Center of desert (صحرا کا مرکز)", "correct": 0 },
+                    { "text": "D) Deep sea (گہرا سمندر)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Diesel Power Station",
+                "question": "Four-stroke diesel has more efficiency than two-stroke due to: (فور سٹروک ڈیزل ٹو سٹروک سے زیادہ ایفیشنٹ کیونکہ:)",
+                "options": [
+                    { "text": "A) Better scavenging and combustion (بہتر سکیوینجنگ اور کمشن)", "correct": 1 },
+                    { "text": "B) More weight (زیادہ وزن)", "correct": 0 },
+                    { "text": "C) Low speed (کم سپیڈ)", "correct": 0 },
+                    { "text": "D) Simple design (سادہ ڈیزائن)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Power Factor",
+                "question": "Power triangle shows relation between: (پاور ٹرائی اینگل دکھاتا ہے:)",
+                "options": [
+                    { "text": "A) Active, reactive and apparent power (ایکٹو، ری ایکٹو اور اپیرنٹ پاور)", "correct": 1 },
+                    { "text": "B) Voltage and current (وولٹیج اور کرنٹ)", "correct": 0 },
+                    { "text": "C) Resistance and reactance (ریزسٹنس اور ری ایکٹنس)", "correct": 0 },
+                    { "text": "D) Speed and torque (سپیڈ اور ٹارک)", "correct": 0 }
+                ]
+            },
+            {
+                "topic": "Energy Conservation",
+                "question": "Overall goal of energy conservation: (انرجی کنزرویشن کا مجموعی ہدف:)",
+                "options": [
+                    { "text": "A) Sustainable future and resource preservation (پائیدار مستقبل اور وسائل کا تحفظ)", "correct": 1 },
+                    { "text": "B) Increased wastage (زیادہ ضیاع)", "correct": 0 },
+                    { "text": "C) Higher emissions (زیادہ اخراج)", "correct": 0 },
+                    { "text": "D) Higher bills (زیادہ بل)", "correct": 0 }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        const quizScreen = document.getElementById('quizScreen');
+        const resultScreen = document.getElementById('resultScreen');
+        const questionText = document.getElementById('questionText');
+        const optionsList = document.getElementById('optionsList');
+        const questionCount = document.getElementById('questionCount');
+        const topicName = document.getElementById('topicName');
+        const nextBtn = document.getElementById('nextBtn');
+        const finalScore = document.getElementById('finalScore');
+        const resultMessage = document.getElementById('resultMessage');
+
+        function loadQuestion() {
+            answered = false;
+            nextBtn.style.display = 'none';
+            const currentQ = quizData[currentQuestionIndex];
+            
+            questionCount.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+            topicName.textContent = `Topic: ${currentQ.topic}`;
+            questionText.textContent = currentQ.question;
+            
+            optionsList.innerHTML = '';
+            currentQ.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.textContent = option.text;
+                li.onclick = () => selectOption(index, li);
+                optionsList.appendChild(li);
+            });
+        }
+
+        function selectOption(selectedIndex, element) {
+            if (answered) return;
+            answered = true;
+
+            const currentQ = quizData[currentQuestionIndex];
+            const options = optionsList.children;
+
+            if (currentQ.options[selectedIndex].correct === 1) {
+                element.classList.add('correct');
+                score++;
+            } else {
+                element.classList.add('incorrect');
+                for (let i = 0; i < currentQ.options.length; i++) {
+                    if (currentQ.options[i].correct === 1) {
+                        options[i].classList.add('correct');
+                        break;
+                    }
+                }
+            }
+
+            for (let opt of options) {
+                opt.classList.add('disabled');
+            }
+
+            nextBtn.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            quizScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+            finalScore.textContent = `${score} / ${quizData.length}`;
+            
+            let percentage = (score / quizData.length) * 100;
+            if (percentage >= 80) {
+                resultMessage.textContent = "شاندار کارکردگی! آپ نے بہت اچھے نمبر حاصل کیے ہیں۔";
+            } else if (percentage >= 50) {
+                resultMessage.textContent = "بہت اچھا! آپ نے ٹیسٹ اچھے طریقے سے پاس کر لیا ہے۔";
+            } else {
+                resultMessage.textContent = "مزید محنت کی ضرورت ہے۔ آپ دوبارہ ٹیسٹ کی کوشش کر سکتے ہیں۔";
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ET-303 Telecommunications Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .quiz-container {
+            background-color: #1e293b;
+            width: 100%;
+            max-width: 650px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        .option-item {
+            background-color: #334155;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            border: 2px solid transparent;
+        }
+        .option-item:hover {
+            background-color: #475569;
+        }
+        .option-item.correct {
+            border-color: #22c55e;
+            background-color: #14532d !important;
+            color: #f0fdf4;
+        }
+        .option-item.incorrect {
+            border-color: #ef4444;
+            background-color: #7f1d1d !important;
+            color: #fef2f2;
+        }
+        .option-item.disabled {
+            cursor: not-allowed;
+        }
+        .next-btn, .action-btn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: none; /* Initially hidden */
+        }
+        .next-btn:hover, .action-btn:hover {
+            background-color: #2563eb;
+        }
+        .score-container {
+            text-align: center;
+        }
+        .score-container h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #38bdf8;
+        }
+        .score-container p {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: #cbd5e1;
+        }
+        .end-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-restart {
+            background-color: #10b981;
+        }
+        .btn-restart:hover {
+            background-color: #059669;
+        }
+        .btn-dashboard {
+            background-color: #64748b;
+        }
+        .btn-dashboard:hover {
+            background-color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quizApp">
+    <div class="quiz-header" id="quizHeader">
+        <span id="subjectTitle">ET-303 Telecommunications</span>
+        <span id="questionCount">Question 1 of 60</span>
+    </div>
+    <div id="questionBox">
+        <div class="question-text" id="questionText">Loading question...</div>
+        <ul class="options-list" id="optionsList"></ul>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">اگلا سوال (Next Question)</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+      {
+        question: "Q1. Telecommunication means:\nٹیلی کمیونیکیشن سے کیا مراد ہے؟",
+        options: [
+          "a) Wireless only — صرف وائرلیس",
+          "b) Communication over distance — فاصلے پر مواصلات",
+          "c) Internet only — صرف انٹرنیٹ",
+          "d) Telephone only — صرف ٹیلی فون"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q2. PSTN stands for:\nPSTN کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Public Switching Telephone Network — پبلک سوئچنگ ٹیلی فون نیٹ ورک",
+          "b) Public Switched Telephone Network — پبلک سوئچڈ ٹیلی فون نیٹ ورک",
+          "c) Private Telephone Network — پرائیویٹ ٹیلی فون نیٹ ورک",
+          "d) Packet Switching Network — پیکٹ سوئچنگ نیٹ ورک"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q3. Basic parts of telephony system include:\nٹیلی فونی سسٹم کے بنیادی حصے کون سے ہیں؟",
+        options: [
+          "a) Transmitter — ٹرانسمیٹر",
+          "b) Receiver — رسیور",
+          "c) Medium — میڈیم",
+          "d) All of these — یہ سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q4. Telephone exchange connects:\nٹیلی فون ایکسچینج کس کو آپس میں ملاتا ہے؟",
+        options: [
+          "a) Computers — کمپیوٹرز",
+          "b) Subscribers — صارفین",
+          "c) Satellites — سیٹلائٹس",
+          "d) Routers — راؤٹرز"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q5. Trunk exchange is used for:\nٹرنک ایکسچینج کس مقصد کے لیے استعمال ہوتا ہے؟",
+        options: [
+          "a) Local calls — مقامی کالز",
+          "b) International calls — بین الاقوامی کالز",
+          "c) Long-distance calls — طویل فاصلے کی کالز",
+          "d) Mobile calls — موبائل کالز"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q6. Signal from microphone is:\nمائیکروفون سے حاصل ہونے والا سگنل کیا ہوتا ہے؟",
+        options: [
+          "a) Digital — ڈیجیٹل",
+          "b) Analog — اینالاگ",
+          "c) Binary — بائنری",
+          "d) Pulse — پلس"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q7. Internet is:\nانٹرنیٹ کیا ہے؟",
+        options: [
+          "a) Small network — چھوٹا نیٹ ورک",
+          "b) Largest data network — سب سے بڑا ڈیٹا نیٹ ورک",
+          "c) Private network — پرائیویٹ نیٹ ورک",
+          "d) LAN — لوکل ایریا نیٹ ورک"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q8. Cable TV network is used for:\nکیبل ٹی وی نیٹ ورک کس کے لیے استعمال ہوتا ہے؟",
+        options: [
+          "a) Voice — آواز",
+          "b) Data — ڈیٹا",
+          "c) Video — ویڈیو",
+          "d) All — سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q9. ADSL is used for:\nADSL کس مقصد کے لیے استعمال ہوتا ہے؟",
+        options: [
+          "a) Power supply — بجلی کی فراہمی",
+          "b) Internet access — انٹرنیٹ تک رسائی",
+          "c) Switching — سوئچنگ",
+          "d) Routing — روٹنگ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q10. Mobile network uses:\nموبائل نیٹ ورک کیا استعمال کرتا ہے؟",
+        options: [
+          "a) Copper cable — تانبے کی کیبل",
+          "b) Optical fiber — آپٹیکل فائبر",
+          "c) Radio waves — ریڈیو لہریں",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q11. Interconnection of networks is needed for:\nنیٹ ورکس کو آپس میں جوڑنے کی ضرورت کس لیے ہوتی ہے؟",
+        options: [
+          "a) Isolation — علیحدگی",
+          "b) Communication — مواصلات",
+          "c) Storage — ذخیرہ",
+          "d) Power — طاقت"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q12. ISDN stands for:\nISDN کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Integrated Service Digital Network — انٹیگریٹڈ سروس ڈیجیٹل نیٹ ورک",
+          "b) Internet Service Data Network — انٹرنیٹ سروس ڈیٹا نیٹ ورک",
+          "c) Internal System Data Network — انٹرنل سسٹم ڈیٹا نیٹ ورک",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q13. Network topology defines:\nنیٹ ورک ٹوپولوجی کیا بیان کرتی ہے؟",
+        options: [
+          "a) Speed — رفتار",
+          "b) Structure — ساخت",
+          "c) Power — طاقت",
+          "d) Cost — لاگت"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q14. Star topology has:\nاسٹار ٹوپولوجی میں کیا ہوتا ہے؟",
+        options: [
+          "a) No center — کوئی مرکز نہیں",
+          "b) Central node — مرکزی نوڈ",
+          "c) Ring structure — رنگ ساخت",
+          "d) Mesh links — میش لنکس"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q15. Ring topology data flows:\nرنگ ٹوپولوجی میں ڈیٹا کس طرح بہتا ہے؟",
+        options: [
+          "a) Random — بے ترتیب",
+          "b) Circular — دائروی",
+          "c) Star — اسٹار",
+          "d) Linear — خطی"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q16. Mesh topology provides:\nمیش ٹوپولوجی کیا فراہم کرتی ہے؟",
+        options: [
+          "a) Low reliability — کم قابلِ اعتماد",
+          "b) High reliability — زیادہ قابلِ اعتماد",
+          "c) No links — کوئی لنک نہیں",
+          "d) Single path — ایک راستہ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q17. Multiplexing is used to:\nملٹی پلیکسنگ کس لیے استعمال ہوتی ہے؟",
+        options: [
+          "a) Divide signal — سگنل تقسیم کرنا",
+          "b) Combine signals — سگنلز کو ملانا",
+          "c) Amplify signal — سگنل کو بڑھانا",
+          "d) Filter signal — سگنل کو فلٹر کرنا"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q18. FDM stands for:\nFDM کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Frequency Division Multiplexing — فریکوئنسی ڈویژن ملٹی پلیکسنگ",
+          "b) Fast Data Mode — فاسٹ ڈیٹا موڈ",
+          "c) Fixed Data Method — فکسڈ ڈیٹا میتھڈ",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q19. TDM stands for:\nTDM کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Time Division Multiplexing — ٹائم ڈویژن ملٹی پلیکسنگ",
+          "b) Transmission Data Mode — ٹرانسمیشن ڈیٹا موڈ",
+          "c) Total Data Method — ٹوٹل ڈیٹا میتھڈ",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q20. Main link components are:\nمین لنک کے بنیادی اجزاء کون سے ہیں؟",
+        options: [
+          "a) Transmitter — ٹرانسمیٹر",
+          "b) Receiver — رسیور",
+          "c) Medium — میڈیم",
+          "d) All — سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q21. AM stands for:\nAM کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Amplitude Modulation — ایمپلی ٹیوڈ ماڈیولیشن",
+          "b) Analog Mode — اینالاگ موڈ",
+          "c) Audio Mode — آڈیو موڈ",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q22. FM varies:\nFM میں کیا تبدیل ہوتا ہے؟",
+        options: [
+          "a) Amplitude — ایمپلی ٹیوڈ",
+          "b) Frequency — فریکوئنسی",
+          "c) Phase — فیز",
+          "d) Voltage — وولٹیج"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q23. PCM is used for:\nPCM کس لیے استعمال ہوتا ہے؟",
+        options: [
+          "a) Analog transmission — اینالاگ ٹرانسمیشن",
+          "b) Digital conversion — ڈیجیٹل تبدیلی",
+          "c) Amplification — ایمپلی فیکیشن",
+          "d) Routing — روٹنگ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q24. PSK stands for:\nPSK کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Phase Shift Keying — فیز شفٹ کیئنگ",
+          "b) Pulse Signal Keying — پلس سگنل کیئنگ",
+          "c) Phase Signal Kernel — فیز سگنل کرنل",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q25. FSK stands for:\nFSK کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Frequency Shift Keying — فریکوئنسی شفٹ کیئنگ",
+          "b) Fast Signal Keying — فاسٹ سگنل کیئنگ",
+          "c) Fixed Signal Kernel — فکسڈ سگنل کرنل",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q26. Optical fiber uses:\nآپٹیکل فائبر کیا استعمال کرتا ہے؟",
+        options: [
+          "a) Electrical signals — برقی سگنلز",
+          "b) Light signals — روشنی کے سگنلز",
+          "c) Magnetic waves — مقناطیسی لہریں",
+          "d) Sound waves — صوتی لہریں"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q27. Coaxial cable is used for:\nکواکسیئل کیبل کس لیے استعمال ہوتی ہے؟",
+        options: [
+          "a) Power — بجلی",
+          "b) Communication — مواصلات",
+          "c) Storage — ذخیرہ",
+          "d) Switching — سوئچنگ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q28. Attenuation means:\nAttenuation سے کیا مراد ہے؟",
+        options: [
+          "a) Signal increase — سگنل میں اضافہ",
+          "b) Signal loss — سگنل کا کم ہونا",
+          "c) Signal delay — سگنل میں تاخیر",
+          "d) Noise — شور"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q29. Satellite communication uses:\nسیٹلائٹ کمیونیکیشن کون سا میڈیم استعمال کرتی ہے؟",
+        options: [
+          "a) Wire — تار",
+          "b) Fiber — فائبر",
+          "c) Free space — آزاد فضا",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q30. PCM frame duration is:\nPCM فریم کا دورانیہ کتنا ہوتا ہے؟",
+        options: [
+          "a) 100 µs",
+          "b) 125 µs",
+          "c) 150 µs",
+          "d) 200 µs"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q31. Access network connects:\nAccess network کس کو connect کرتا ہے؟",
+        options: [
+          "a) Core network — کور نیٹ ورک",
+          "b) End user — آخری صارف",
+          "c) Router — راؤٹر",
+          "d) Server — سرور"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q32. Local loop connects:\nLocal loop کس کو connect کرتا ہے؟",
+        options: [
+          "a) Exchange to user — ایکسچینج کو صارف سے",
+          "b) User to user — صارف کو صارف سے",
+          "c) Router to router — راؤٹر کو راؤٹر سے",
+          "d) Server to client — سرور کو کلائنٹ سے"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q33. Core network connects:\nCore network کس کو connect کرتا ہے؟",
+        options: [
+          "a) Few nodes — چند نوڈز",
+          "b) Many nodes — بہت سے نوڈز",
+          "c) No nodes — کوئی نوڈ نہیں",
+          "d) Single node — ایک نوڈ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q34. PDH stands for:\nPDH کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Plesiochronous Digital Hierarchy — پلیسیوکرونس ڈیجیٹل ہائیرارکی",
+          "b) Packet Data Hub — پیکٹ ڈیٹا ہب",
+          "c) Power Data Hub — پاور ڈیٹا ہب",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q35. SDH stands for:\nSDH کا مکمل نام کیا ہے؟",
+        options: [
+          "a) Synchronous Digital Hierarchy — سنکرونس ڈیجیٹل ہائیرارکی",
+          "b) Signal Data Hub — سگنل ڈیٹا ہب",
+          "c) System Data Hub — سسٹم ڈیٹا ہب",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q36. Broadband provides:\nBroadband کیا فراہم کرتا ہے؟",
+        options: [
+          "a) Low speed — کم رفتار",
+          "b) High speed — زیادہ رفتار",
+          "c) No speed — کوئی رفتار نہیں",
+          "d) Fixed speed — مقررہ رفتار"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q37. Circuit switching establishes:\nCircuit switching کیا قائم کرتی ہے؟",
+        options: [
+          "a) Permanent path — مستقل راستہ",
+          "b) Temporary path — عارضی راستہ",
+          "c) No path — کوئی راستہ نہیں",
+          "d) Wireless path — وائرلیس راستہ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q38. Switching types are:\nSwitching کی اقسام کتنی ہیں؟",
+        options: [
+          "a) 1",
+          "b) 2",
+          "c) 3",
+          "d) 4"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q39. Subscriber line connects to:\nSubscriber line کس سے connect ہوتی ہے؟",
+        options: [
+          "a) Router — راؤٹر",
+          "b) Line card — لائن کارڈ",
+          "c) Satellite — سیٹلائٹ",
+          "d) Switch — سوئچ"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q40. ISDN basic rate is:\nISDN کا Basic Rate کیا ہے؟",
+        options: [
+          "a) 2B+D",
+          "b) 30B+D",
+          "c) Fiber — فائبر",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q41. Primary rate ISDN contains:\nPrimary Rate ISDN میں کیا شامل ہوتا ہے؟",
+        options: [
+          "a) 2B+D",
+          "b) 30B+D",
+          "c) 1B+D",
+          "d) 10B+D"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q42. Switching system is used for:\nSwitching system کس لیے استعمال ہوتا ہے؟",
+        options: [
+          "a) Storage — ذخیرہ",
+          "b) Routing calls — کالز کو روٹ کرنا",
+          "c) Power supply — بجلی کی فراہمی",
+          "d) Cooling — ٹھنڈا کرنا"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q43. Packet switching divides data into:\nPacket switching ڈیٹا کو کس میں تقسیم کرتی ہے؟",
+        options: [
+          "a) Signals — سگنلز",
+          "b) Frames — فریمز",
+          "c) Packets — پیکٹس",
+          "d) Blocks — بلاکس"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q44. Time slot is used in:\nTime slot کہاں استعمال ہوتا ہے؟",
+        options: [
+          "a) FDM",
+          "b) TDM",
+          "c) AM",
+          "d) FM"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q45. Noise in communication causes:\nCommunication میں Noise کیا پیدا کرتا ہے؟",
+        options: [
+          "a) Clarity — وضاحت",
+          "b) Distortion — خرابی/بگاڑ",
+          "c) Amplification — سگنل میں اضافہ",
+          "d) Modulation — ماڈیولیشن"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q46. Bandwidth means:\nBandwidth سے کیا مراد ہے؟",
+        options: [
+          "a) Power — طاقت",
+          "b) Frequency range — فریکوئنسی کی حد",
+          "c) Voltage — وولٹیج",
+          "d) Resistance — مزاحمت"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q47. Optical fiber works on:\nOptical fiber کس اصول پر کام کرتا ہے؟",
+        options: [
+          "a) Reflection — انعکاس",
+          "b) Refraction — انعطاف",
+          "c) Total internal reflection — مکمل اندرونی انعکاس",
+          "d) Diffraction — انعراج"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q48. Repeater is used to:\nRepeater کس لیے استعمال ہوتا ہے؟",
+        options: [
+          "a) Reduce signal — سگنل کم کرنا",
+          "b) Amplify signal — سگنل کو بڑھانا",
+          "c) Store data — ڈیٹا محفوظ کرنا",
+          "d) Filter noise — شور کو فلٹر کرنا"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q49. Router works at:\nRouter کس Layer پر کام کرتا ہے؟",
+        options: [
+          "a) Physical layer — فزیکل لیئر",
+          "b) Data link layer — ڈیٹا لنک لیئر",
+          "c) Network layer — نیٹ ورک لیئر",
+          "d) Application layer — ایپلیکیشن لیئر"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q50. Modem converts:\nModem کیا تبدیل کرتا ہے؟",
+        options: [
+          "a) Digital to analog — ڈیجیٹل کو اینالاگ",
+          "b) Analog to digital — اینالاگ کو ڈیجیٹل",
+          "c) Both — دونوں",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q51. Transmission media are:\nTransmission media کیا ہوتے ہیں؟",
+        options: [
+          "a) Wired — وائرڈ",
+          "b) Wireless — وائرلیس",
+          "c) Both — دونوں",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q52. Twisted pair cable is used in:\nTwisted pair cable کہاں استعمال ہوتی ہے؟",
+        options: [
+          "a) Telephony — ٹیلی فونی",
+          "b) Satellite — سیٹلائٹ",
+          "c) Radio — ریڈیو",
+          "d) Fiber — فائبر"
+        ],
+        answer: 0
+      },
+      {
+        question: "Q53. Propagation delay depends on:\nPropagation delay کس پر منحصر ہوتی ہے؟",
+        options: [
+          "a) Distance — فاصلہ",
+          "b) Speed — رفتار",
+          "c) Medium — میڈیم",
+          "d) All — سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q54. Signal distortion occurs due to:\nSignal distortion کس وجہ سے ہوتی ہے؟",
+        options: [
+          "a) Noise — شور",
+          "b) Attenuation — سگنل کی کمزوری",
+          "c) Interference — مداخلت",
+          "d) All — سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q55. Wireless communication uses:\nWireless communication کیا استعمال کرتی ہے؟",
+        options: [
+          "a) Cable — کیبل",
+          "b) Fiber — فائبر",
+          "c) Air — ہوا",
+          "d) Copper — تانبا"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q56. Satellite orbit is:\nSatellite کا مدار کیا ہوتا ہے؟",
+        options: [
+          "a) Circular — دائروی",
+          "b) Elliptical — بیضوی",
+          "c) Both — دونوں",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 2
+      },
+      {
+        question: "Q57. Multiplexer combines:\nMultiplexer کیا combine کرتا ہے؟",
+        options: [
+          "a) Signals — سگنلز",
+          "b) Data — ڈیٹا",
+          "c) Channels — چینلز",
+          "d) All — سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q58. Demultiplexer separates:\nDemultiplexer کیا الگ کرتا ہے؟",
+        options: [
+          "a) Signals — سگنلز",
+          "b) Data — ڈیٹا",
+          "c) Channels — چینلز",
+          "d) All — سب"
+        ],
+        answer: 3
+      },
+      {
+        question: "Q59. Digital communication is:\nDigital communication کیا ہوتی ہے؟",
+        options: [
+          "a) Continuous — مسلسل",
+          "b) Discrete — منقطع/غیر مسلسل",
+          "c) Analog — اینالاگ",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 1
+      },
+      {
+        question: "Q60. Analog communication is:\nAnalog communication کیا ہوتی ہے؟",
+        options: [
+          "a) Discrete — منقطع",
+          "b) Continuous — مسلسل",
+          "c) Binary — بائنری",
+          "d) None — کوئی نہیں"
+        ],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let isAnswered = false;
+
+    const questionText = document.getElementById("questionText");
+    const optionsList = document.getElementById("optionsList");
+    const questionCount = document.getElementById("questionCount");
+    const nextBtn = document.getElementById("nextBtn");
+    const quizHeader = document.getElementById("quizHeader");
+
+    function loadQuestion() {
+        isAnswered = false;
+        nextBtn.style.display = "none";
+        quizHeader.style.display = "flex";
+        
+        const q = quizData[currentQuestion];
+        questionText.innerText = q.question;
+        questionCount.innerText = `Question ${currentQuestion + 1} of ${quizData.length}`;
+        
+        optionsList.innerHTML = "";
+        q.options.forEach((opt, index) => {
+            const li = document.createElement("li");
+            li.className = "option-item";
+            li.innerText = opt;
+            li.onclick = () => selectOption(index, li);
+            optionsList.appendChild(li);
+        });
+    }
+
+    function selectOption(index, element) {
+        if (isAnswered) return; 
+        isAnswered = true;
+
+        const q = quizData[currentQuestion];
+        const optionsNodes = document.querySelectorAll(".option-item");
+
+        optionsNodes.forEach(el => el.classList.add("disabled"));
+
+        if (index === q.answer) {
+            element.classList.add("correct");
+            score++;
+        } else {
+            element.classList.add("incorrect");
+            optionsNodes[q.answer].classList.add("correct"); 
+        }
+
+        nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        quizHeader.style.display = "none";
+        document.getElementById("questionBox").innerHTML = `
+            <div class="score-container">
+                <h2>ٹیسٹ مکمل ہو گیا ہے! 🎉</h2>
+                <p>آپ کا اسکور: ${score} / ${quizData.length}</p>
+                <div class="end-buttons">
+                    <button class="action-btn btn-restart" onclick="restartQuiz()">دوبارہ ٹیسٹ شروع کریں</button>
+                    <button class="action-btn btn-dashboard" onclick="goToDashboard()">مین ڈیش بورڈ پر جائیں</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        isAnswered = false;
+        
+        // Reset questionBox HTML structure back to original
+        document.getElementById("questionBox").innerHTML = `
+            <div class="question-text" id="questionText">Loading question...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">اگلا سوال (Next Question)</button>
+        `;
+        
+        // Re-assign references after rebuilding innerHTML
+        loadQuestion();
+    }
+
+    function goToDashboard() {
+        // Yahan aap apna dashboard page link kar sakte hain, misaal ke tor par:
+        // window.location.href = "dashboard.html";
+        alert("مین ڈیش بورڈ پر جانے کا لنک یہاں لگایا جا سکتا ہے!");
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
